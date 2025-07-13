@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Date;
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,4 +20,31 @@ public class Posts {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "post_id")
     private int postID;
+
+    @Column(name = "title")
+    private String title;
+
+    @Column(name = "content")
+    private String content;
+
+    @Column(name = "is_published")
+    private boolean isPublished;
+
+    @Column(name = "updated_at")
+    private Date updatedAt;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id",nullable = false)
+    private Users users;
+
+    @ManyToMany
+    @JoinTable(
+            name = "post_tags",
+            joinColumns = @JoinColumn(name = "post_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    private List<Tags> tags;
+
+    @OneToMany(mappedBy = "posts",cascade = CascadeType.ALL)
+    private List<Comments> comments;
 }
