@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Date;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -47,4 +48,9 @@ public class Users {
     @Column(name = "is_deleted")
     private boolean isDeleted;
 
+    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
+    private List<Posts> posts;
+
+    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
+    private List<Comments> comments;
 }

@@ -51,6 +51,7 @@ foreign key (post_id) references posts(post_id),
 foreign key (user_id) references users(user_id),
 content text not null,
 parent_comment_id int,
+is_deleted boolean default false,
 foreign key (parent_comment_id) references comments(comment_id)
 );
 
