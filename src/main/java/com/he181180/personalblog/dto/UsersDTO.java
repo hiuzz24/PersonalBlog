@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 
 @Data
 @AllArgsConstructor
@@ -19,6 +19,5 @@ public class UsersDTO {
     private String bio;
     private String avatarUrl;
     private String role;
-    private Date createdAt;
-
+    private Timestamp createdAt;
 }

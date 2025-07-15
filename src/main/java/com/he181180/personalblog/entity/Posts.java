@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.List;
 
 @Data
@@ -30,8 +31,11 @@ public class Posts {
     @Column(name = "is_published")
     private boolean isPublished;
 
+    @Column(name = "published_at")
+    private Timestamp publishedAt;
+
     @Column(name = "updated_at")
-    private Date updatedAt;
+    private Timestamp updatedAt;
 
     @ManyToOne
     @JoinColumn(name = "user_id",nullable = false)

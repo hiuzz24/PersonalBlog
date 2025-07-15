@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.List;
 
 @Data
@@ -17,7 +18,8 @@ public class PostsDTO {
     private String title;
     private String content;
     private boolean isPublished;
-    private Date updatedAt;
+    private Timestamp publishedAt;
+    private Timestamp updatedAt;
 
     private UsersDTO users;
     private List<TagsDTO> tags;
