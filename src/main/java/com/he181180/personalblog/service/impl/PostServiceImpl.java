@@ -30,6 +30,15 @@ public class PostServiceImpl implements PostService {
     public List<Posts> findTop5RecentPosts() {
         return postRepository.findTop5ByOrderByPublishedAtDesc();
     }
+    @Override
+    public List<Posts> getPaginatedPosts(int page, int size) {
+        int start = (page - 1) * size;
+        return postRepository.findPostsWithPagination(start, size);
+    }
+
+    public int getTotalPostCount() {
+        return (int) postRepository.count(); // hoặc dùng custom SQL
+    }
 
     @Override
     public List<Posts> findPostsByTagID(int tagID) {
