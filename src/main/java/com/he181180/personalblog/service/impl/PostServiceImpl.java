@@ -37,9 +37,8 @@ public class PostServiceImpl implements PostService {
     }
 
     public int getTotalPostCount() {
-        return (int) postRepository.count(); // hoặc dùng custom SQL
+        return (int) postRepository.count();
     }
-
     @Override
     public List<Posts> findPostsByTagID(int tagID) {
         return postRepository.findPostsByTagID(tagID);

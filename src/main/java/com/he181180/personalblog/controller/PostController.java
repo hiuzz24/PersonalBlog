@@ -32,7 +32,11 @@ public class PostController {
     @RequestMapping("/search")
     public String searchByTitleAndContent(@RequestParam("search") String search, Model model){
         List<Posts> posts = postService.searchPostByTitleAndContent(search);
-        model.addAttribute("allPost",posts);
+        model.addAttribute("allPost", posts);
+        model.addAttribute("currentPage", 1);
+        model.addAttribute("totalPages", 1);
+
+        model.addAttribute("searchKeyword", search);
         return "explore";
     }
 
@@ -40,8 +44,8 @@ public class PostController {
     public String getPostsByTag(@PathVariable("tagID") int tagID, Model model){
         List<Posts> posts = postService.findPostsByTagID(tagID);
         model.addAttribute("allPost", posts);
-        model.addAttribute("currentPage", 1); // Bổ sung nếu cần phân trang
-        model.addAttribute("totalPages", 1); // Hoặc tính thực tế nếu cần
+        model.addAttribute("currentPage", 1);
+        model.addAttribute("totalPages", 1);
         return "explore";
     }
 }
