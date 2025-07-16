@@ -32,11 +32,6 @@ public class MainController {
         return "register";
     }
 
-    @GetMapping("/explore")
-    public String explore() {
-        return "explore";
-    }
-
     @PostMapping("/register")
     public String register(@RequestParam String fullName,
                            @RequestParam String username,
