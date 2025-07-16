@@ -28,10 +28,13 @@ public class Posts {
     @Column(name = "content")
     private String content;
 
-    @Column(name = "is_published")
+    @Column(name = "image_url")
+    private String imageUrl;
+
+    @Column(name = "is_published",insertable = false)
     private boolean isPublished;
 
-    @Column(name = "published_at")
+    @Column(name = "published_at",insertable = false)
     private Timestamp publishedAt;
 
     @Column(name = "updated_at")

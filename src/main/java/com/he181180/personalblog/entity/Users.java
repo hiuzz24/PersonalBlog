@@ -40,13 +40,13 @@ public class Users {
     @Column(name = "avatar_url")
     private String avatarUrl;
 
-    @Column(name = "role")
+    @Column(name = "role",insertable = false)
     private String role;
 
-    @Column(name = "created_at")
+    @Column(name = "created_at",insertable = false)
     private Timestamp createdAt;
 
-    @Column(name = "is_deleted")
+    @Column(name = "is_deleted",insertable = false)
     private boolean isDeleted;
 
     @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
