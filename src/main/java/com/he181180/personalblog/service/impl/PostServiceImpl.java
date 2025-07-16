@@ -30,4 +30,9 @@ public class PostServiceImpl implements PostService {
     public List<Posts> findTop5RecentPosts() {
         return postRepository.findTop5ByOrderByPublishedAtDesc();
     }
+
+    @Override
+    public List<Posts> findPostsByTagID(int tagID) {
+        return postRepository.findPostsByTagID(tagID);
+    }
 }

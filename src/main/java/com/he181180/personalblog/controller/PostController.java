@@ -1,14 +1,13 @@
 package com.he181180.personalblog.controller;
 
 import com.he181180.personalblog.entity.Posts;
+import com.he181180.personalblog.entity.Tags;
 import com.he181180.personalblog.service.PostService;
+import com.he181180.personalblog.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -31,9 +30,13 @@ public class PostController {
         return "explore";
     }
 
-    @ModelAttribute("recentPosts")
-    public List<Posts> recentPosts(){
-        return postService.findTop5RecentPosts();
+
+    @RequestMapping("/tags/{tagID}")
+    public String getPostsByTag(@PathVariable("tagID") int tagID,
+                                Model model){
+        List<Posts> posts = postService.findPostsByTagID(tagID);
+        model.addAttribute("allPost",posts);
+        return "explore";
     }
 
 

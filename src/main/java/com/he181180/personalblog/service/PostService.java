@@ -8,4 +8,5 @@ public interface PostService {
     List<Posts> getAll();
     List<Posts> searchPostByTitleAndContent(String search);
     List<Posts> findTop5RecentPosts();
+    List<Posts> findPostsByTagID(int tagID);
 }
