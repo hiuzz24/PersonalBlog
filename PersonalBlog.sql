@@ -69,7 +69,7 @@ VALUES
 
     (2, 'Best Street Food in Ho Chi Minh City', 'Ho Chi Minh City offers an incredible variety of street food. From banh mi to pho, discover the must-try dishes and where to find them in this bustling metropolis.', TRUE, '2024-01-16 14:30:00','https://thumbs.dreamstime.com/b/innovative-medical-device-featuring-eye-image-illustrating-advanced-tracking-technology-generated-ai-358374352.jpg'),
 
-    (3, 'Java 21 New Features Overview', 'https://images.pexels.com/photos/1684187/pexels-photo-1684187.jpeg?cs=srgb&dl=pexels-marcin-dampc-807808-1684187.jpg&fm=jpg'),
+    (3, 'Java 21 New Features Overview','Hello java proiawohtgpiuawhvtuiyawbg 3 itghawiyhvtgwz',TRUE,'2024-11-15 10:00:00','https://images.pexels.com/photos/1684187/pexels-photo-1684187.jpeg?cs=srgb&dl=pexels-marcin-dampc-807808-1684187.jpg&fm=jpg'),
 
     (3, 'Database Design Best Practices', 'Learn the fundamental principles of database design, including normalization, indexing strategies, and performance optimization techniques for modern applications.', TRUE, '2024-01-18 11:45:00','https://cdn.prod.website-files.com/62d84e447b4f9e7263d31e94/6399a4d27711a5ad2c9bf5cd_ben-sweet-2LowviVHZ-E-unsplash-1.jpeg'),
 
@@ -84,7 +84,7 @@ VALUES
 
     (3, 'Building Secure Web Applications', 'Security is paramount in web development. Learn about common vulnerabilities, authentication methods, and how to implement security best practices in your applications.', TRUE, '2024-01-24 12:00:00','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSUfKkAw3WJUy_fow3DjoBxlnBlC_KxUceXeg&s'),
 
-    (2, 'Food Photography Tips for Bloggers', 'https://funstudio.com.vn/_next/static/media/banner_1.163bac79.webp'),
+    (2, 'Food Photography Tips for Bloggers','hfgwegfcuawgifcgawgfcwa content',TRUE,'2024-01-23 10:20:00', 'https://funstudio.com.vn/_next/static/media/banner_1.163bac79.webp'),
 
     (3, 'Clean Code Principles in Java', 'Writing clean, maintainable code is essential for long-term project success. Explore key principles and practices that will make your Java code more readable and robust.', TRUE, '2024-01-26 09:40:00','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcS06-zImX9b-ow_spLhrKaUve-Tquz8pIhQ&s'),
 
