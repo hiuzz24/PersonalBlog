@@ -22,7 +22,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/register", "/img/**", "/css/**").permitAll()
+                        .requestMatchers("/login", "/oauth2/**", "/register", "/img/**", "/css/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(login -> login
@@ -30,6 +30,8 @@ public class SecurityConfig {
                         .defaultSuccessUrl("/explore", true)
                         .failureUrl("/login?error")
                         .permitAll()
+                ).oauth2Login(oauth2 -> oauth2
+                        .loginPage("/login")
                 )
                 .logout(logout -> logout
                         .logoutSuccessUrl("/login?logout")
