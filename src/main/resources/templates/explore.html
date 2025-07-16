@@ -39,7 +39,7 @@
 
         <nav id="navmenu" class="navmenu">
             <ul>
-                <li><a th:href="@{/explore}">Home</a></li>
+                <li><a th:href="@{/}">Home</a></li>
                 <li><a href="about.html">About</a></li>
                 <li class="dropdown"><a href="#"><span>Categories</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
                     <ul>
@@ -127,31 +127,36 @@
                 </section><!-- /Blog Posts Section -->
 
                 <!-- Blog Pagination Section -->
+                <!-- Blog Pagination Section -->
                 <section id="blog-pagination" class="blog-pagination section">
                     <div class="container">
                         <div class="d-flex justify-content-center">
                             <ul>
+                                <!-- Nút Previous -->
                                 <li th:if="${currentPage > 1}">
-                                    <a th:href="@{/explore(page=${currentPage - 1})}">
+                                    <a th:href="${currentPage - 1 == 1} ? @{/explore} : @{/explore(page=${currentPage - 1})}">
                                         <i class="bi bi-chevron-left"></i>
                                     </a>
                                 </li>
 
+                                <!-- Các trang -->
                                 <li th:each="i : ${#numbers.sequence(1, totalPages)}">
-                                    <a th:href="@{/explore(page=${i})}"
+                                    <a th:href="${i == 1} ? @{/explore} : @{/explore(page=${i})}"
                                        th:classappend="${i == currentPage} ? 'active'"
                                        th:text="${i}">1</a>
                                 </li>
 
+                                <!-- Nút Next -->
                                 <li th:if="${currentPage < totalPages}">
-                                    <a th:href="@{/explore(page=${currentPage + 1})}">
+                                    <a th:href="${currentPage + 1 == 1} ? @{/explore} : @{/explore(page=${currentPage + 1})}">
                                         <i class="bi bi-chevron-right"></i>
                                     </a>
                                 </li>
                             </ul>
                         </div>
                     </div>
-                </section><!-- /Blog Posts Section -->
+                </section>
+                <!-- /Blog Posts Section -->
 
                 <!--Blog Pagination Section -->
 

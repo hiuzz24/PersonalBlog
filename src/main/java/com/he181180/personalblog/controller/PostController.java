@@ -39,7 +39,9 @@ public class PostController {
     @RequestMapping("/tags/{tagID}")
     public String getPostsByTag(@PathVariable("tagID") int tagID, Model model){
         List<Posts> posts = postService.findPostsByTagID(tagID);
-        model.addAttribute("allPost",posts);
+        model.addAttribute("allPost", posts);
+        model.addAttribute("currentPage", 1); // Bổ sung nếu cần phân trang
+        model.addAttribute("totalPages", 1); // Hoặc tính thực tế nếu cần
         return "explore";
     }
 }
