@@ -14,4 +14,9 @@ public interface PostRepository extends JpaRepository<Posts,Integer> {
     List<Posts> findByContentAndTitle(@Param("search") String search);
 
     List<Posts> findTop5ByOrderByPublishedAtDesc();
+
+    @Query("select p from Posts p " +
+            "join p.tags t " +
+            "where t.tagID = :tagID")
+    List<Posts> findPostsByTagID(@Param("tagID") int tagID);
 }
