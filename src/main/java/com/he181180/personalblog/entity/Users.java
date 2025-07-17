@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -40,7 +41,8 @@ public class Users {
     @Column(name = "avatar_url")
     private String avatarUrl;
 
-    @Column(name = "role",insertable = false)
+    @Column(name = "role")
+    @ColumnDefault("'writer'")  // 👈 Hibernate annotation
     private String role;
 
     @Column(name = "created_at",insertable = false)
@@ -55,3 +57,4 @@ public class Users {
     @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
     private List<Comments> comments;
 }
+

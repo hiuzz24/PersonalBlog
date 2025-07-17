@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chỉnh sửa bài viết</title>
+    <link rel="stylesheet" th:href="@{/css/blog.css}">
+    <script src="https://cdn.ckeditor.com/ckeditor5/40.2.0/classic/ckeditor.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Chỉnh sửa bài viết</h1>
+        
+        <form th:action="@{/blog/edit/{id}(id=${post.postId})}" method="post" class="blog-form">
+            <div class="form-group">
+                <label for="title">Tiêu đề:</label>
+                <input type="text" id="title" name="title" th:value="${post.title}" required class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="imageUrl">URL ảnh đại diện:</label>
+                <input type="url" id="imageUrl" name="imageUrl" th:value="${post.imageUrl}" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="content">Nội dung:</label>
+                <textarea id="content" name="content" th:text="${post.content}" required></textarea>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Cập nhật</button>
+                <a th:href="@{/blog/post/{id}(id=${post.postId})}" class="btn btn-secondary">Hủy</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        ClassicEditor
+            .create(document.querySelector('#content'), {
+                toolbar: {
+                    items: [
+                        'heading',
+                        '|',
+                        'bold',
+                        'italic',
+                        'link',
+                        'bulletedList',
+                        'numberedList',
+                        '|',
+                        'outdent',
+                        'indent',
+                        '|',
+                        'imageUpload',
+                        'blockQuote',
+                        'insertTable',
+                        'mediaEmbed',
+                        'undo',
+                        'redo',
+                        'alignment',
+                        'fontColor',
+                        'fontSize',
+                        'highlight'
+                    ]
+                },
+                language: 'vi'
+            })
+            .catch(error => {
+                console.error('Error initializing CKEditor:', error);
+            });
+    </script>
+</body>
+</html>

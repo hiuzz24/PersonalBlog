@@ -1,34 +1,46 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <title>Login</title>
+    <title>Register</title>
     <link rel="stylesheet" th:href="@{/css/register.css}">
 </head>
 <body>
 <div class="container">
     <div class="register-container">
         <h2 class="title">Register</h2>
-        <form th:action="@{/register}" method="post" class="register-form">
-            <input placeholder="Full Name" type="text" id="fullName" name="fullName"
-                   required>
-            <br>
-            <input placeholder="Username" type="text" id="username" name="username"
-                   required>
 
+        <!-- ✅ Register Form -->
+        <form th:action="@{/register}" method="post" class="register-form">
+            <!-- Full Name -->
+            <input placeholder="Full Name" type="text" id="fullName" name="fullName" required>
             <br>
-            <input placeholder="Email" type="text" id="email" name="email"
-                   required>
+
+            <!-- Username -->
+            <input placeholder="Username" type="text" id="username" name="username" required>
+            <div th:if="${usernameError}" style="color: red; font-size: 14px;">
+                <span th:text="${usernameError}">Username error</span>
+            </div>
             <br>
-            <input placeholder="Password" type="password" id="password" name="password"
-                   required>
+
+            <!-- Email -->
+            <input placeholder="Email" type="text" id="email" name="email" required>
+            <div th:if="${emailError}" style="color: red; font-size: 14px;">
+                <span th:text="${emailError}">Email error</span>
+            </div>
             <br>
+
+            <!-- Password -->
+            <input placeholder="Password" type="password" id="password" name="password" required>
+            <br>
+
             <button type="submit">Sign Up</button>
         </form>
     </div>
+
     <div class="login-container">
         <h2>Welcome Back!</h2>
         <p>Already have an account?</p>
-        <button onclick="window.location.href= '/login'">Login</button>
+        <button onclick="window.location.href='/login'">Login</button>
     </div>
 </div>
 </body>

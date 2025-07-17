@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,12 +37,26 @@ public class PostServiceImpl implements PostService {
         return postRepository.findPostsWithPagination(start, size);
     }
 
+    @Override
+    public void savePost(Posts post) {
+        postRepository.save(post);
+    }
     public int getTotalPostCount() {
-        return (int) postRepository.count(); // hoặc dùng custom SQL
+        return (int) postRepository.count();
+    }
+
+    @Override
+    public Posts findPostByPostID(int postID) {
+        return postRepository.findPostsByPostID(postID);
     }
 
     @Override
     public List<Posts> findPostsByTagID(int tagID) {
         return postRepository.findPostsByTagID(tagID);
+    }
+
+    @Override
+    public Optional<Posts> getPostByID(int userID) {
+        return postRepository.findById(userID);
     }
 }

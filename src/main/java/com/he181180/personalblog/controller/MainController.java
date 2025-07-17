@@ -1,7 +1,9 @@
 package com.he181180.personalblog.controller;
 
+import com.he181180.personalblog.entity.Posts;
 import com.he181180.personalblog.entity.Users;
 import com.he181180.personalblog.repository.UserRepository;
+import com.he181180.personalblog.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -10,6 +12,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Controller
 public class MainController {
 
@@ -17,6 +21,9 @@ public class MainController {
     UserRepository userRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private PostService postService;
 
     @GetMapping("/")
     public String index() {
@@ -38,26 +45,29 @@ public class MainController {
                            @RequestParam String email,
                            @RequestParam String password,
                            Model model) {
+        boolean hasError = false;
+
         if (userRepository.findByUsername(username).isPresent()) {
             model.addAttribute("usernameError", "Username already exists");
+            hasError = true;
         }
         if (userRepository.findByEmail(email).isPresent()) {
             model.addAttribute("emailError", "Email already exists");
+            hasError = true;
         }
 
-        if (!model.asMap().isEmpty()) {
+        if (hasError) {
             return "register";
-        } else {
-            Users newUser = new Users();
-            System.out.println(username);
-            newUser.setPassword(passwordEncoder.encode(password));
-            newUser.setUsername(username);
-            newUser.setEmail(email);
-            newUser.setFullName(fullName);
-            newUser.setRole("writer");
-            userRepository.save(newUser);
-            return "redirect:/login";
         }
+        Users newUser = new Users();
+        newUser.setFullName(fullName);
+        newUser.setUsername(username);
+        newUser.setEmail(email);
+        newUser.setPassword(passwordEncoder.encode(password));
+//        newUser.setRole("writer");
+
+        userRepository.save(newUser);
+        return "redirect:/login";
     }
 
     @GetMapping("/GoogleLogin")
@@ -67,5 +77,19 @@ public class MainController {
             model.addAttribute("name", oauth2User.getAttribute("name"));
         }
         return "redirect:/explore";
+    }
+
+    @GetMapping("/explore")
+    public String explore(@RequestParam(defaultValue = "1") int page, Model model){
+        int pageSize = 6;
+
+        List<Posts> posts = postService.getPaginatedPosts(page, pageSize);
+        int totalPosts = postService.getTotalPostCount();
+        int totalPages = (int) Math.ceil((double) totalPosts / pageSize);
+
+        model.addAttribute("allPost", posts);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
+        return "explore";
     }
 }

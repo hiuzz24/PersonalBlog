@@ -39,7 +39,7 @@
 
         <nav id="navmenu" class="navmenu">
             <ul>
-                <li><a href="index.html">Home</a></li>
+                <li><a th:href="@{/}">Home</a></li>
                 <li><a href="about.html">About</a></li>
                 <li class="dropdown"><a href="#"><span>Categories</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
                     <ul>
@@ -86,6 +86,9 @@
 
                     <div class="container" >
                         <div class="row gy-4" >
+                            <div th:if="${#lists.isEmpty(allPost)}" class="col-12 text-center">
+                                <p>No results found.</p>
+                            </div>
                             <div class="col-lg-6"  th:each="post :${allPost}">
                                 <article class="position-relative h-100" >
                                     <div class="post-img position-relative overflow-hidden">
@@ -115,7 +118,7 @@
 
                                         <hr>
 
-                                        <a href="blog-details.html" class="readmore stretched-link"><span>Read More</span><i class="bi bi-arrow-right"></i></a>
+                                        <a th:href="@{'/PostDetail/' +${post.postID}}" class="readmore stretched-link"><span>Read More</span><i class="bi bi-arrow-right"></i></a>
 
                                     </div>
 
@@ -131,27 +134,31 @@
                     <div class="container">
                         <div class="d-flex justify-content-center">
                             <ul>
+                                <!-- Nút Previous -->
                                 <li th:if="${currentPage > 1}">
-                                    <a th:href="@{/explore(page=${currentPage - 1})}">
+                                    <a th:href="${currentPage - 1 == 1} ? @{/explore} : @{/explore(page=${currentPage - 1})}">
                                         <i class="bi bi-chevron-left"></i>
                                     </a>
                                 </li>
 
+                                <!-- Các trang -->
                                 <li th:each="i : ${#numbers.sequence(1, totalPages)}">
-                                    <a th:href="@{/explore(page=${i})}"
+                                    <a th:href="${i == 1} ? @{/explore} : @{/explore(page=${i})}"
                                        th:classappend="${i == currentPage} ? 'active'"
                                        th:text="${i}">1</a>
                                 </li>
 
+                                <!-- Nút Next -->
                                 <li th:if="${currentPage < totalPages}">
-                                    <a th:href="@{/explore(page=${currentPage + 1})}">
+                                    <a th:href="${currentPage + 1 == 1} ? @{/explore} : @{/explore(page=${currentPage + 1})}">
                                         <i class="bi bi-chevron-right"></i>
                                     </a>
                                 </li>
                             </ul>
                         </div>
                     </div>
-                </section><!-- /Blog Posts Section -->
+                </section>
+                <!-- /Blog Posts Section -->
 
                 <!--Blog Pagination Section -->
 
