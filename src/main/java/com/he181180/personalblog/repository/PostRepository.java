@@ -22,4 +22,5 @@ public interface PostRepository extends JpaRepository<Posts,Integer> {
     @Query(value = "SELECT * FROM posts LIMIT :size OFFSET :start", nativeQuery = true)
     List<Posts> findPostsWithPagination(@Param("start") int start, @Param("size") int size);
 
+    Posts findPostsByPostID(int postID);
 }
