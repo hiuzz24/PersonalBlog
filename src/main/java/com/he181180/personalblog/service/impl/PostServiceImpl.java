@@ -59,4 +59,11 @@ public class PostServiceImpl implements PostService {
     public Optional<Posts> getPostByID(int userID) {
         return postRepository.findById(userID);
     }
+
+    @Override
+    public List<Posts> getPostByUserID(int userID) {
+        return postRepository.findAll().stream()
+                .filter(post -> post.getUsers().getUserID() == userID)
+                .collect(Collectors.toList());
+    }
 }

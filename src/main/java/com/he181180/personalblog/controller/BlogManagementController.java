@@ -12,18 +12,25 @@ import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
 @RequestMapping("/blog")
-public class BlogCreationController {
+public class BlogManagementController {
 
     @Autowired
     private PostService postService;
 
     @Autowired
     private UserService userService;
+    @GetMapping("/post/userId")
 
+    public List<Posts> getPostsByUserId(Authentication authentication) {
+        String username = authentication.getName();
+        Optional<Users> user = userService.findUserByUsername(username);
+        return postService.getPostByUserID(user.get().getUserID());
+    }
 
     // Hiển thị form tạo bài viết mới
     @GetMapping("/create")

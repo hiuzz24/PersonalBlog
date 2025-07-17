@@ -21,9 +21,6 @@ public class PostController {
     @Autowired
     private PostService postService;
 
-    @Autowired
-    private UserService userService;
-
 
     @RequestMapping("/search")
     public String searchByTitleAndContent(@RequestParam("search") String search, Model model){
@@ -44,6 +41,9 @@ public class PostController {
         model.addAttribute("totalPages", 1);
         return "explore";
     }
+
+
+
 
 
 

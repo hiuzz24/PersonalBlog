@@ -15,5 +15,5 @@ public interface PostService {
     void savePost(Posts post);
     Optional<Posts> getPostByID(int postID);
     Posts findPostByPostID(int postID);
-
+    List<Posts> getPostByUserID(int userID);
 }
