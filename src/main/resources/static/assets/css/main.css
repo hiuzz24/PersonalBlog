@@ -1691,9 +1691,17 @@ section,
   transition: 0.3s;
 }
 
-.blog-posts .post-img img {
-  transition: 0.5s;
+.blog-posts .post-img {
+  height: 220px;
+  overflow: hidden;
 }
+
+.blog-posts .post-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 
 .blog-posts .post-date {
   background-color: var(--accent-color);

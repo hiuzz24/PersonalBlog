@@ -38,25 +38,29 @@ public class MainController {
                            @RequestParam String email,
                            @RequestParam String password,
                            Model model) {
+        boolean hasError = false;
+
         if (userRepository.findByUsername(username).isPresent()) {
             model.addAttribute("usernameError", "Username already exists");
+            hasError = true;
         }
         if (userRepository.findByEmail(email).isPresent()) {
             model.addAttribute("emailError", "Email already exists");
+            hasError = true;
         }
 
-        if (!model.asMap().isEmpty()) {
+        if (hasError) {
             return "register";
-        } else {
-            Users newUser = new Users();
-            newUser.setPassword(passwordEncoder.encode(password));
-            newUser.setUsername(username);
-            newUser.setEmail(email);
-            newUser.setFullName(fullName);
-            newUser.setRole("writer");
-            userRepository.save(newUser);
-            return "redirect:/login";
         }
+        Users newUser = new Users();
+        newUser.setFullName(fullName);
+        newUser.setUsername(username);
+        newUser.setEmail(email);
+        newUser.setPassword(passwordEncoder.encode(password));
+        newUser.setRole("writer");
+
+        userRepository.save(newUser);
+        return "redirect:/login";
     }
 
     @GetMapping("/GoogleLogin")
