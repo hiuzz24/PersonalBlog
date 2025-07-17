@@ -76,7 +76,7 @@ VALUES
     (2, 'Best Street Food in Ho Chi Minh City', 'Ho Chi Minh City offers an incredible variety of street food. From banh mi to pho, discover the must-try dishes and where to find them in this bustling metropolis.', TRUE, '2024-01-16 14:30:00',
     'https://res.klook.com/image/upload/q_85/c_fill,w_750/q_80/blogen/2018/03/viet-street-food1.png'),
 
-    (3, 'Java 21 New Features Overview','Hello java proiawohtgpiuawhvtuiyawbg 3 itghawiyhvtgwz',TRUE,'2024-11-15 10:00:00',
+    (3, 'Java 21 New Features Overview','Java 21, is the latest Long-Term Support (LTS) release of the Java Development Kit (JDK). It introduces several significant features and enhancements, and improvements to the Foreign Function & Memory API.',TRUE,'2024-11-15 10:00:00',
     'https://m.media-amazon.com/images/I/51OVgdGFlPL._UF1000,1000_QL80_.jpg'),
 
     (3, 'Database Design Best Practices', 'Learn the fundamental principles of database design, including normalization, indexing strategies, and performance optimization techniques for modern applications.', TRUE, '2024-01-18 11:45:00',
@@ -100,7 +100,7 @@ VALUES
     (3, 'Building Secure Web Applications', 'Security is paramount in web development. Learn about common vulnerabilities, authentication methods, and how to implement security best practices in your applications.', TRUE, '2024-01-24 12:00:00',
     'https://topdev.vn/blog/wp-content/uploads/2021/04/Website-1024x538.png'),
 
-    (2, 'Food Photography Tips for Bloggers','hfgwegfcuawgifcgawgfcwa content',TRUE,'2024-01-23 10:20:00',
+    (2, 'Food Photography Tips for Bloggers','Photographing food is harder than it seems. My photos have improved with practice. Here are the best tips and tricks I can offer about food photography and equipment.',TRUE,'2024-01-23 10:20:00',
     'https://www.truefoodkitchen.com/wp-content/uploads/2025/01/TFK016_01f_A1B00195-Enhanced-NR_v02.jpg'),
 
     (3, 'Clean Code Principles in Java', 'Writing clean, maintainable code is essential for long-term project success. Explore key principles and practices that will make your Java code more readable and robust.', TRUE, '2024-01-26 09:40:00',
