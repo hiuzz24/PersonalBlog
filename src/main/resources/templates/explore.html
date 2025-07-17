@@ -1,9 +1,302 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <title>Personal Blog</title>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Explore</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+
+    <!-- Favicons -->
+    <link th:href="@{/assets/img/favicon.png}" rel="icon">
+    <link th:href="@{/assets/img/apple-touch-icon.png}" rel="apple-touch-icon">
+
+    <!-- Fonts -->
+    <link th:href="@{https://fonts.googleapis.com}" rel="preconnect">
+    <link th:href="@{https://fonts.gstatic.com}" rel="preconnect" crossorigin>
+    <link th:href="@{https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700;1,800&display=swap}" rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link th:href="@{/assets/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/assets/vendor/bootstrap-icons/bootstrap-icons.css}" rel="stylesheet">
+    <link th:href="@{/assets/vendor/aos/aos.css}" rel="stylesheet">
+    <link th:href="@{/assets/vendor/swiper/swiper-bundle.min.css}" rel="stylesheet">
+
+    <!-- Main CSS File -->
+    <link th:href="@{/assets/css/main.css}" rel="stylesheet">
+
 </head>
-<body>
-<h1>Hello</h1>
+
+<body class="category-page">
+
+<header id="header" class="header d-flex align-items-center sticky-top">
+    <div class="container position-relative d-flex align-items-center justify-content-between">
+
+        <a href="index.html" class="logo d-flex align-items-center me-auto me-xl-0">
+            <h1 class="sitename">DEV</h1>
+        </a>
+
+        <nav id="navmenu" class="navmenu">
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li class="dropdown"><a href="#"><span>Categories</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                    <ul>
+                        <li><a href="category.html" class="active">Category 1</a></li>
+                        <li class="dropdown"><a href="#"><span>Deep Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                            <ul>
+                                <li><a href="#">Deep Dropdown 1</a></li>
+                                <li><a href="#">Deep Dropdown 2</a></li>
+                                <li><a href="#">Deep Dropdown 3</a></li>
+                                <li><a href="#">Deep Dropdown 4</a></li>
+                                <li><a href="#">Deep Dropdown 5</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="category.html" class="active">Category 2</a></li>
+                        <li><a href="category.html" class="active">Category 3</a></li>
+                        <li><a href="category.html" class="active">Category 4</a></li>
+                    </ul>
+                </li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+        </nav>
+
+        <div class="header-social-links">
+            <a href="#" class="twitter"><i class="bi bi-twitter-x"></i></a>
+            <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
+            <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
+            <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>
+        </div>
+
+    </div>
+</header>
+
+<main class="main">
+
+
+    <div class="container">
+        <div class="row">
+
+            <div class="col-lg-8">
+
+                <!-- Blog Posts Section -->
+                <section id="blog-posts" class="blog-posts section">
+
+                    <div class="container" >
+                        <div class="row gy-4" >
+                            <div class="col-lg-6"  th:each="post :${allPost}">
+                                <article class="position-relative h-100" >
+                                    <div class="post-img position-relative overflow-hidden">
+                                        <img th:src="@{${post.imageUrl}}" class="img-fluid" alt="Post Image">
+
+                                        <span class="post-date position-absolute bottom-0 end-0 bg-dark text-white px-2 py-1 small"
+                                              th:text="${#dates.format(post.publishedAt, 'dd MMM yyyy')}"></span>
+                                    </div>
+
+                                    <div class="post-content d-flex flex-column">
+
+                                        <h3 class="post-title" th:text="${post.title}"></h3>
+
+                                        <div class="meta d-flex align-items-center">
+                                            <div class="d-flex align-items-center">
+                                                <i class="bi bi-person"></i> <span class="ps-2" th:text="${post.users.fullName}"></span>
+                                            </div>
+                                            <span class="px-3 text-black-50">/</span>
+                                            <div class="d-flex align-items-center">
+                                                <i class="bi bi-folder2 me-2"></i>
+                                                <span th:each="tag : ${post.tags}" class="me-2" th:text="${tag.tagName}">Tag</span>
+                                            </div>
+
+                                        </div>
+
+                                        <p th:text="${post.content}"></p>
+
+                                        <hr>
+
+                                        <a href="blog-details.html" class="readmore stretched-link"><span>Read More</span><i class="bi bi-arrow-right"></i></a>
+
+                                    </div>
+
+                                </article>
+                            </div><!-- End post list item -->
+                        </div>
+                    </div>
+
+                </section><!-- /Blog Posts Section -->
+
+                <!-- Blog Pagination Section -->
+                <section id="blog-pagination" class="blog-pagination section">
+                    <div class="container">
+                        <div class="d-flex justify-content-center">
+                            <ul>
+                                <li th:if="${currentPage > 1}">
+                                    <a th:href="@{/explore(page=${currentPage - 1})}">
+                                        <i class="bi bi-chevron-left"></i>
+                                    </a>
+                                </li>
+
+                                <li th:each="i : ${#numbers.sequence(1, totalPages)}">
+                                    <a th:href="@{/explore(page=${i})}"
+                                       th:classappend="${i == currentPage} ? 'active'"
+                                       th:text="${i}">1</a>
+                                </li>
+
+                                <li th:if="${currentPage < totalPages}">
+                                    <a th:href="@{/explore(page=${currentPage + 1})}">
+                                        <i class="bi bi-chevron-right"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </section><!-- /Blog Posts Section -->
+
+                <!--Blog Pagination Section -->
+
+            </div>
+
+            <div class="col-lg-4 sidebar">
+
+                <div class="widgets-container">
+                    <!-- Search Widget -->
+                    <div class="search-widget widget-item">
+
+                        <h3 class="widget-title">Search</h3>
+                        <form th:action="@{/search}">
+                            <input name="search" type="text">
+                            <button type="submit" title="Search"><i class="bi bi-search"></i></button>
+                        </form>
+
+                    </div><!--/Search Widget -->
+
+                    <!-- Recent Posts Widget -->
+                    <div class="recent-posts-widget widget-item">
+                        <h3 class="widget-title">Recent Posts</h3>
+
+                        <div class="post-item" th:each="recentPost : ${recentPosts}">
+                            <img th:src="@{${recentPost.imageUrl}}" alt="" class="flex-shrink-0">
+                            <div>
+                                <h4><a href="blog-details.html" th:text="${recentPost.title}"></a></h4>
+                                <time th:text="${#dates.format(recentPost.publishedAt, 'dd MMM yyyy')}"></time>
+                            </div>
+                        </div><!-- End recent post item-->
+                    </div>
+
+                    <!-- Tags Widget -->
+                    <div class="tags-widget widget-item">
+                        <h3 class="widget-title">Tags</h3>
+                        <ul>
+                            <li th:each="tag : ${allTags}">
+                                <a th:href="@{'/tags/' + ${tag.tagID}}" th:text="${tag.tagName}">Tag</a>
+                            </li>
+                        </ul>
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+</main>
+
+<footer id="footer" class="footer dark-background">
+
+    <div class="container footer-top">
+        <div class="row gy-4">
+            <div class="col-lg-4 col-md-6 footer-about">
+                <a href="index.html" class="logo d-flex align-items-center">
+                    <span class="sitename">ZenBlog</span>
+                </a>
+                <div class="footer-contact pt-3">
+                    <p>A108 Adam Street</p>
+                    <p>New York, NY 535022</p>
+                    <p class="mt-3"><strong>Phone:</strong> <span>+1 5589 55488 55</span></p>
+                    <p><strong>Email:</strong> <span>info@example.com</span></p>
+                </div>
+                <div class="social-links d-flex mt-4">
+                    <a href=""><i class="bi bi-twitter-x"></i></a>
+                    <a href=""><i class="bi bi-facebook"></i></a>
+                    <a href=""><i class="bi bi-instagram"></i></a>
+                    <a href=""><i class="bi bi-linkedin"></i></a>
+                </div>
+            </div>
+
+            <div class="col-lg-2 col-md-3 footer-links">
+                <h4>Useful Links</h4>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">About us</a></li>
+                    <li><a href="#">Services</a></li>
+                    <li><a href="#">Terms of service</a></li>
+                    <li><a href="#">Privacy policy</a></li>
+                </ul>
+            </div>
+
+            <div class="col-lg-2 col-md-3 footer-links">
+                <h4>Our Services</h4>
+                <ul>
+                    <li><a href="#">Web Design</a></li>
+                    <li><a href="#">Web Development</a></li>
+                    <li><a href="#">Product Management</a></li>
+                    <li><a href="#">Marketing</a></li>
+                    <li><a href="#">Graphic Design</a></li>
+                </ul>
+            </div>
+
+            <div class="col-lg-2 col-md-3 footer-links">
+                <h4>Hic solutasetp</h4>
+                <ul>
+                    <li><a href="#">Molestiae accusamus iure</a></li>
+                    <li><a href="#">Excepturi dignissimos</a></li>
+                    <li><a href="#">Suscipit distinctio</a></li>
+                    <li><a href="#">Dilecta</a></li>
+                    <li><a href="#">Sit quas consectetur</a></li>
+                </ul>
+            </div>
+
+            <div class="col-lg-2 col-md-3 footer-links">
+                <h4>Nobis illum</h4>
+                <ul>
+                    <li><a href="#">Ipsam</a></li>
+                    <li><a href="#">Laudantium dolorum</a></li>
+                    <li><a href="#">Dinera</a></li>
+                    <li><a href="#">Trodelas</a></li>
+                    <li><a href="#">Flexo</a></li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="container copyright text-center mt-4">
+        <p>© <span>Copyright</span> <strong class="px-1 sitename">DEV</strong> <span>All Rights Reserved</span></p>
+        <div class="credits">
+            Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a> Distributed by <a href=“https://themewagon.com>ThemeWagon
+        </div>
+    </div>
+
+</footer>
+
+<!-- Scroll Top -->
+<a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+<!-- Preloader -->
+<div id="preloader"></div>
+
+<!-- Vendor JS Files -->
+<script th:src="@{/assets/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/assets/vendor/php-email-form/validate.js}"></script>
+<script th:src="@{/assets/vendor/aos/aos.js}"></script>
+<script th:src="@{/assets/vendor/swiper/swiper-bundle.min.js}"></script>
+
+<!-- Main JS File -->
+<script th:src="@{/assets/js/main.js}"></script>
+
 </body>
+
 </html>

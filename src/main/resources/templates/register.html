@@ -8,18 +8,26 @@
 <div class="container">
     <div class="register-container">
         <h2 class="title">Register</h2>
-        <form th:action="@{/login}" method="post" class="register-form">
-            <input placeholder="Username" type="text" id="username" name="username" required>
+        <form th:action="@{/register}" method="post" class="register-form">
+            <input placeholder="Full Name" type="text" id="fullName" name="fullName"
+                   required>
+            <br>
+            <input placeholder="Username" type="text" id="username" name="username"
+                   required>
+
+            <br>
+            <input placeholder="Email" type="text" id="email" name="email"
+                   required>
             <br>
             <input placeholder="Password" type="password" id="password" name="password"
                    required>
             <br>
-            <button type="submit">Login</button>
+            <button type="submit">Sign Up</button>
         </form>
     </div>
     <div class="login-container">
         <h2>Welcome Back!</h2>
-        <p>Already have an account</p>
+        <p>Already have an account?</p>
         <button onclick="window.location.href= '/login'">Login</button>
     </div>
 </div>
