@@ -136,7 +136,7 @@ VALUES
  TRUE, '2024-01-16 14:30:00',
  'https://res.klook.com/image/upload/q_85/c_fill,w_750/q_80/blogen/2018/03/viet-street-food1.png');
 
-(3, 'Java 21 New Features Overview','Hello java proiawohtgpiuawhvtuiyawbg 3 itghawiyhvtgwz',TRUE,'2024-11-15 10:00:00',
+/*(3, 'Java 21 New Features Overview','Hello java proiawohtgpiuawhvtuiyawbg 3 itghawiyhvtgwz',TRUE,'2024-11-15 10:00:00',
     'https://m.media-amazon.com/images/I/51OVgdGFlPL._UF1000,1000_QL80_.jpg'),
 
 (3, 'Database Design Best Practices', 'Learn the fundamental principles of database design, including normalization, indexing strategies, and performance optimization techniques for modern applications.', TRUE, '2024-01-18 11:45:00',
@@ -188,7 +188,7 @@ VALUES
     'https://teambuildinghub.com/wp-content/uploads/2022/04/Build-Strong-Teams-Featured-Image.png'),
 
 (2, 'Exploring Vietnamese National Parks', 'Discover the natural beauty of Vietnam through its national parks. From Phong Nha-Ke Bang to Cat Tien, explore diverse ecosystems and wildlife.', TRUE, '2024-02-03 12:45:00',
-    'https://nationalparksassociation.org/wp-content/uploads/2024/02/Cat-Ba-National-Park.webp');
+    'https://nationalparksassociation.org/wp-content/uploads/2024/02/Cat-Ba-National-Park.webp');*/
 
 INSERT INTO tags (tag_name)
 VALUES
@@ -207,8 +207,8 @@ VALUES
     (3, 4),
     (4, 3),
     (4, 4),
-    (5, 2),
-    (6, 4),
+    (5, 2);
+/*    (6, 4),
     (6, 5),
     (7, 3),
     (7, 5),
@@ -238,7 +238,7 @@ VALUES
     (21, 4),
     (21, 5),
     (22, 5),
-    (23, 1);
+    (23, 1);*/
 
 
 INSERT INTO comments (post_id, user_id, content, parent_comment_id)
