@@ -10,7 +10,7 @@ CREATE TABLE users (
                        full_name VARCHAR(100),
                        bio TEXT,
                        avatar_url VARCHAR(255),
-                       role VARCHAR(50) DEFAULT 'writer',
+                       role VARCHAR(50),
                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                        is_deleted BOOLEAN DEFAULT FALSE
 );
