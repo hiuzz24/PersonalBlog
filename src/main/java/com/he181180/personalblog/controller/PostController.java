@@ -48,5 +48,11 @@ public class PostController {
         model.addAttribute("totalPages", 1);
         return "explore";
     }
-
+    @GetMapping("/PostDetail/{postID}")
+    public String postDetail(@PathVariable("postID") int postID
+            ,Model model){
+        Posts posts = postService.findPostByPostID(postID);
+        model.addAttribute("postDetail",posts);
+        return "postDetail";
+    }
 }

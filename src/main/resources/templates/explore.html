@@ -33,7 +33,7 @@
 <header id="header" class="header d-flex align-items-center sticky-top">
     <div class="container position-relative d-flex align-items-center justify-content-between">
 
-        <a href="index.html" class="logo d-flex align-items-center me-auto me-xl-0">
+        <a th:href="@{/}" class="logo d-flex align-items-center me-auto me-xl-0">
             <h1 class="sitename">PersonalBlog</h1>
         </a>
 
@@ -118,8 +118,7 @@
 
                                         <hr>
 
-                                        <a href="blog-details.html" class="readmore stretched-link"><span>Read More</span><i class="bi bi-arrow-right"></i></a>
-
+                                        <a th:href="@{'/PostDetail/' +${post.postID}}" class="readmore stretched-link"><span>Read More</span><i class="bi bi-arrow-right"></i></a>
                                     </div>
 
                                 </article>
@@ -185,7 +184,7 @@
                         <div class="post-item" th:each="recentPost : ${recentPosts}">
                             <img th:src="@{${recentPost.imageUrl}}" alt="" class="flex-shrink-0">
                             <div>
-                                <h4><a href="blog-details.html" th:text="${recentPost.title}"></a></h4>
+                                <a th:href="@{'/PostDetail/' + ${recentPost.postID}}" th:text="${recentPost.title}"></a>
                                 <time th:text="${#dates.format(recentPost.publishedAt, 'dd MMM yyyy')}"></time>
                             </div>
                         </div><!-- End recent post item-->

@@ -1413,6 +1413,10 @@ section,
     overflow: hidden;
 }
 
+.blog-details .post-img img {
+    width: 100%;
+}
+
 .blog-details .title {
     color: var(--heading-color);
     font-size: 28px;

@@ -11,4 +11,5 @@ public interface PostService {
     List<Posts> findPostsByTagID(int tagID);
     List<Posts> getPaginatedPosts(int page, int size);
     int getTotalPostCount();
+    Posts findPostByPostID(int postID);
 }

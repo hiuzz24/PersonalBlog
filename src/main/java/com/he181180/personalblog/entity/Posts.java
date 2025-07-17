@@ -31,6 +31,10 @@ public class Posts {
     @Column(name = "image_url")
     private String imageUrl;
 
+    @Lob
+    @Column(name = "body",columnDefinition = "text")
+    private String body;
+
     @Column(name = "is_published",insertable = false)
     private boolean isPublished;
 
