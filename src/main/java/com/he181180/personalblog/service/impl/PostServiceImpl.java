@@ -39,6 +39,12 @@ public class PostServiceImpl implements PostService {
     public int getTotalPostCount() {
         return (int) postRepository.count();
     }
+
+    @Override
+    public Posts findPostByPostID(int postID) {
+        return postRepository.findPostsByPostID(postID);
+    }
+
     @Override
     public List<Posts> findPostsByTagID(int tagID) {
         return postRepository.findPostsByTagID(tagID);

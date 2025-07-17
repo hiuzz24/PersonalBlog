@@ -10,7 +10,7 @@ CREATE TABLE users (
                        full_name VARCHAR(100),
                        bio TEXT,
                        avatar_url VARCHAR(255),
-                       role VARCHAR(50) DEFAULT 'writer',
+                       role VARCHAR(50),
                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                        is_deleted BOOLEAN DEFAULT FALSE
 );
@@ -21,6 +21,7 @@ CREATE TABLE posts (
                        title VARCHAR(255) NOT NULL,
                        content TEXT NOT NULL,
                        image_url VARCHAR(500),
+                        body text,
                        is_published BOOLEAN DEFAULT TRUE,
                        published_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                        updated_at TIMESTAMP NULL DEFAULT NULL,
@@ -59,49 +60,115 @@ VALUES
     ('nguyenvananh', 'vananh@blog.vn', 'anh123', 'Nguyễn Văn Anh', 'Passionate about programming and Java.', 'https://example.com/avatar_anh.png', 'writer', FALSE);
 
 
--- Insert 20 additional posts
-INSERT INTO posts (user_id, title, content, is_published, published_at, image_url)
+INSERT INTO posts (post_id, user_id, title, content, body, is_published, published_at, image_url)
 VALUES
-    (1, 'Welcome to the Blog', 'This is the first post by the admin.',TRUE, '2024-01-15 10:00:00','https://img.tripi.vn/cdn-cgi/image/width=700,height=700/https://gcs.tripi.vn/public-tripi/tripi-feed/img/482974vzV/anh-mo-ta.png'),
-    (2, 'Top 5 Destinations in Vietnam', 'Explore the most beautiful places across the country.',TRUE, '2024-01-15 10:00:00', 'https://cdn.pixabay.com/photo/2021/12/12/20/00/play-6865967_640.jpg'),
-    (3, 'Java Programming Guide', 'Learn how to build Java applications using Spring Boot.',TRUE, '2024-01-15 10:00:00','https://www.cameo.com/cdn-cgi/image/fit=cover,format=auto,width=210,height=278/https://cdn.cameo.com/thumbnails/676f52ff3c3c8b378e754b47-processed.jpg'),
-    (2, 'Getting Started with Spring Boot', 'Spring Boot makes it easy to create stand-alone, production-grade Spring based Applications that you can just run. In this guide, we will explore the basics of Spring Boot and how to get started with your first application.', TRUE, '2024-01-15 10:00:00','https://images.unsplash.com/photo-1575936123452-b67c3203c357?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aW1hZ2V8ZW58MHx8MHx8fDA%3D'),
+-- Post 1
+(1, 1, 'Welcome to the Blog', 'This is the first post by the admin.',
+ '<h2>Welcome to Our New Blog!</h2>
+ <p>We are excited to introduce you to our official blog where we will share insightful articles, tutorials, and community updates.</p>
+ <p>Whether you’re a developer, traveler, foodie, or just someone curious — you’ll find something useful here. Stay connected!</p>
+ <hr>
+ <p>Start exploring our <strong>latest posts</strong>, and don’t forget to follow us on social media for regular updates.</p>',
+ TRUE, '2024-01-15 10:00:00',
+ 'https://img.tripi.vn/cdn-cgi/image/width=700,height=700/https://gcs.tripi.vn/public-tripi/tripi-feed/img/482974vzV/anh-mo-ta.png'),
 
-    (2, 'Best Street Food in Ho Chi Minh City', 'Ho Chi Minh City offers an incredible variety of street food. From banh mi to pho, discover the must-try dishes and where to find them in this bustling metropolis.', TRUE, '2024-01-16 14:30:00','https://thumbs.dreamstime.com/b/innovative-medical-device-featuring-eye-image-illustrating-advanced-tracking-technology-generated-ai-358374352.jpg'),
+-- Post 2
+(2, 2, 'Top 5 Destinations in Vietnam', 'Explore the most beautiful places across the country.',
+ '<h2>Vietnam Travel Guide</h2>
+ <p>Vietnam is a beautiful country with a rich cultural heritage and stunning landscapes. Here are our top 5 must-visit destinations:</p>
+ <ol>
+   <li><strong>Ha Long Bay:</strong> A UNESCO World Heritage Site with limestone islands.</li>
+   <li><strong>Sapa:</strong> Mountain scenery and ethnic culture.</li>
+   <li><strong>Hoi An:</strong> Ancient town with lanterns and great food.</li>
+   <li><strong>Da Nang:</strong> Coastal city with modern charm.</li>
+   <li><strong>Phu Quoc Island:</strong> Tropical paradise with white-sand beaches.</li>
+ </ol>
+ <p>Start planning your adventure today!</p>',
+ TRUE, '2024-01-15 10:00:00',
+ 'https://cdn.pixabay.com/photo/2021/12/12/20/00/play-6865967_640.jpg'),
 
-    (3, 'Java 21 New Features Overview', 'https://images.pexels.com/photos/1684187/pexels-photo-1684187.jpeg?cs=srgb&dl=pexels-marcin-dampc-807808-1684187.jpg&fm=jpg'),
+-- Post 3
+(3, 3, 'Java Programming Guide', 'Learn how to build Java applications using Spring Boot.',
+ '<h2>Java Developer Roadmap</h2>
+ <p>Java is a powerful, object-oriented language used for building robust applications. Here are some steps to mastering Java:</p>
+ <ul>
+   <li>Understand the basics: syntax, data types, OOP principles.</li>
+   <li>Work with <strong>collections</strong> and <strong>streams</strong>.</li>
+   <li>Learn frameworks like <em>Spring Boot</em> and <em>Hibernate</em>.</li>
+   <li>Practice building RESTful APIs and use Maven/Gradle.</li>
+ </ul>
+ <p>With consistency, you ll become confident building full-stack applications in Java.</p>',
+TRUE, '2024-01-15 10:00:00',
+'https://www.cameo.com/cdn-cgi/image/fit=cover,format=auto,width=210,height=278/https://cdn.cameo.com/thumbnails/676f52ff3c3c8b378e754b47-processed.jpg'),
 
-    (3, 'Database Design Best Practices', 'Learn the fundamental principles of database design, including normalization, indexing strategies, and performance optimization techniques for modern applications.', TRUE, '2024-01-18 11:45:00','https://cdn.prod.website-files.com/62d84e447b4f9e7263d31e94/6399a4d27711a5ad2c9bf5cd_ben-sweet-2LowviVHZ-E-unsplash-1.jpeg'),
+-- Post 4
+(4, 2, 'Getting Started with Spring Boot', 'Spring Boot makes it easy to create stand-alone Spring applications.',
+'<h2>Spring Boot Essentials</h2>
+<p>Spring Boot is a framework that helps developers build applications faster and with less configuration. It provides:</p>
+<ul>
+  <li>Embedded servers like Tomcat.</li>
+  <li>Auto-configuration and starter dependencies.</li>
+  <li>Easy integration with JPA, Security, and more.</li>
+    </ul>
+    <p>Here’s a basic setup:</p>
+    <pre><code>
+ @SpringBootApplication
+ public class MyApp {
+ public static void main(String[] args) {
+ SpringApplication.run(MyApp.class, args);
+}
+}
+</code></pre>
+<p>Start with Spring Initializr and you re ready to build REST APIs quickly.</p>',
+TRUE, '2024-01-15 10:00:00',
+'https://images.unsplash.com/photo-1575936123452-b67c3203c357?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aW1hZ2V8ZW58MHx8MHx8fDA%3D'),
 
-    (2, 'Hidden Gems in Hanoi Old Quarter', 'Explore the lesser-known attractions in Hanoi Old Quarter. From traditional coffee shops to ancient temples, discover places that most tourists miss.', TRUE, '2024-01-19 16:20:00','https://static.vecteezy.com/system/resources/thumbnails/036/324/708/small/ai-generated-picture-of-a-tiger-walking-in-the-forest-photo.jpg'),
-    (3, 'Microservices Architecture with Spring Cloud', 'Building scalable microservices using Spring Cloud. This comprehensive guide covers service discovery, configuration management, and inter-service communication.', TRUE, '2024-01-20 08:30:00','https://imagekit.io/blog/content/images/2019/12/image-optimization.jpg'),
+-- Post 5
+(5, 2, 'Best Street Food in Ho Chi Minh City', 'Discover the best street food in the bustling city.',
+'<h2>Street Food Heaven</h2>
+<p>Ho Chi Minh City is known for its vibrant street food culture. Here are top dishes you shouldn’t miss:</p>
+<ul>
+  <li><strong>Bánh Mì:</strong> Vietnamese sandwich with meat and pickled veggies.</li>
+  <li><strong>Phở:</strong> Traditional noodle soup served with beef or chicken.</li>
+  <li><strong>Bánh Xèo:</strong> Crispy savory pancake with shrimp and bean sprouts.</li>
+</ul>
+<p>Head to District 1 and Ben Thanh Market for the best street food experience.</p>',
+TRUE, '2024-01-16 14:30:00',
+'https://thumbs.dreamstime.com/b/innovative-medical-device-featuring-eye-image-illustrating-advanced-tracking-technology-generated-ai-358374352.jpg');
 
-    (2, 'RESTful API Design Guidelines', 'Create robust and maintainable REST APIs following industry best practices. Learn about proper HTTP methods, status codes, and resource naming conventions.', TRUE, '2024-01-21 13:10:00','https://petapixel.com/assets/uploads/2024/01/High-resolution-image-of-sun.jpg'),
-
-    (2, 'Vietnamese Coffee Culture', 'Dive deep into Vietnam coffee culture, from traditional drip coffee to modern cafe trends. Discover the history and preparation methods of this beloved beverage.', TRUE, '2024-01-22 15:45:00','https://gratisography.com/wp-content/uploads/2025/01/gratisography-dog-vacation-800x525.jpg'),
-
-    (3, 'Docker Containerization for Java Apps', 'Learn how to containerize Java applications using Docker. This tutorial covers creating Dockerfiles, managing dependencies, and deployment strategies.', TRUE, '2024-01-23 10:20:00','https://www.adobe.com/creativecloud/file-types/image/raster/media_11b1f18d198f70c3c75d86f8d6226caf617240e78.png?width=750&format=png&optimize=medium'),
-
-    (3, 'Building Secure Web Applications', 'Security is paramount in web development. Learn about common vulnerabilities, authentication methods, and how to implement security best practices in your applications.', TRUE, '2024-01-24 12:00:00','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSUfKkAw3WJUy_fow3DjoBxlnBlC_KxUceXeg&s'),
-
-    (2, 'Food Photography Tips for Bloggers', 'https://funstudio.com.vn/_next/static/media/banner_1.163bac79.webp'),
-
-    (3, 'Clean Code Principles in Java', 'Writing clean, maintainable code is essential for long-term project success. Explore key principles and practices that will make your Java code more readable and robust.', TRUE, '2024-01-26 09:40:00','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcS06-zImX9b-ow_spLhrKaUve-Tquz8pIhQ&s'),
-
-    (2, 'Introduction to NoSQL Databases', 'Explore the world of NoSQL databases, including MongoDB, Redis, and Cassandra. Learn when to use NoSQL vs traditional relational databases.', TRUE, '2024-01-27 14:15:00','https://images.ctfassets.net/hrltx12pl8hq/01rJn4TormMsGQs1ZRIpzX/16a1cae2440420d0fd0a7a9a006f2dcb/Artboard_Copy_231.jpg?fit=fill&w=480&h=400'),
-    (2, 'Weekend Getaways from Ho Chi Minh City', 'Escape the city buzz with these amazing weekend destinations. From beach resorts to mountain retreats, find the perfect short trip for relaxation.', TRUE, '2024-01-28 11:30:00','https://static01.nyt.com/images/2025/05/05/multimedia/05dc-trump-pope-lzjb/05dc-trump-pope-lzjb-articleLarge.jpg?quality=75&auto=webp&disable=upscale'),
-
-    (3, 'Testing Strategies for Java Applications', 'Comprehensive guide to testing Java applications. Learn about unit testing, integration testing, and test-driven development with JUnit and Mockito.', TRUE, '2024-01-29 08:50:00','https://th.bing.com/th/id/OIG2.VaLBvwJFzNjPrD3lKJmM'),
-
-    (3, 'Modern Frontend Development Trends', 'Stay updated with the latest frontend technologies and frameworks. Explore React, Vue.js, and Angular, and learn which one suits your project needs.', TRUE, '2024-01-30 16:00:00','https://static.vecteezy.com/system/resources/thumbnails/041/166/062/small/ai-generated-hawk-high-quality-image-free-photo.jpg'),
-
-    (2, 'Traditional Vietnamese Cooking Techniques', 'Master the art of Vietnamese cuisine with these traditional cooking methods. From stir-frying to steaming, learn the techniques that create authentic flavors.', TRUE, '2024-01-31 13:25:00','https://upload.wikimedia.org/wikipedia/commons/5/58/Fun._band.jpg'),
-
-    (3, 'Performance Optimization in Java', 'Optimize your Java applications for better performance. Learn about JVM tuning, memory management, and profiling techniques to identify bottlenecks.', TRUE, '2024-02-01 10:10:00','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSlfmlcpQ3vwI0-vy9RHO7zdTpEnbFAR5nw14V-lXOWKbtvqAuNu3pA2JVV0cBeKf87bcM&usqp=CAU'),
-
-    (2, 'DevOps Best Practices for Development Teams', 'Implement DevOps practices to improve collaboration between development and operations teams. Learn about CI/CD pipelines, automation, and monitoring.', TRUE, '2024-02-02 15:20:00','https://i0.wp.com/picjumbo.com/wp-content/uploads/beautiful-fall-natural-scenery-painting-cabin-by-a-lake-free-image.jpeg?w=600&quality=80'),
-
-    (2, 'Exploring Vietnamese National Parks', 'Discover the natural beauty of Vietnam through its national parks. From Phong Nha-Ke Bang to Cat Tien, explore diverse ecosystems and wildlife.', TRUE, '2024-02-03 12:45:00','https://buffer.com/resources/content/images/2024/11/Instagram-Image-size.png');
+# (3, 'Java 21 New Features Overview','key board match',TRUE, '2024-01-15 10:00:00','https://images.pexels.com/photos/1684187/pexels-photo-1684187.jpeg?cs=srgb&dl=pexels-marcin-dampc-807808-1684187.jpg&fm=jpg'),
+#
+#     (3, 'Database Design Best Practices', 'Learn the fundamental principles of database design, including normalization, indexing strategies, and performance optimization techniques for modern applications.', TRUE, '2024-01-18 11:45:00','https://cdn.prod.website-files.com/62d84e447b4f9e7263d31e94/6399a4d27711a5ad2c9bf5cd_ben-sweet-2LowviVHZ-E-unsplash-1.jpeg'),
+#
+#     (2, 'Hidden Gems in Hanoi Old Quarter', 'Explore the lesser-known attractions in Hanoi Old Quarter. From traditional coffee shops to ancient temples, discover places that most tourists miss.', TRUE, '2024-01-19 16:20:00','https://static.vecteezy.com/system/resources/thumbnails/036/324/708/small/ai-generated-picture-of-a-tiger-walking-in-the-forest-photo.jpg'),
+#     (3, 'Microservices Architecture with Spring Cloud', 'Building scalable microservices using Spring Cloud. This comprehensive guide covers service discovery, configuration management, and inter-service communication.', TRUE, '2024-01-20 08:30:00','https://imagekit.io/blog/content/images/2019/12/image-optimization.jpg'),
+#
+#     (2, 'RESTful API Design Guidelines', 'Create robust and maintainable REST APIs following industry best practices. Learn about proper HTTP methods, status codes, and resource naming conventions.', TRUE, '2024-01-21 13:10:00','https://petapixel.com/assets/uploads/2024/01/High-resolution-image-of-sun.jpg'),
+#
+#     (2, 'Vietnamese Coffee Culture', 'Dive deep into Vietnam coffee culture, from traditional drip coffee to modern cafe trends. Discover the history and preparation methods of this beloved beverage.', TRUE, '2024-01-22 15:45:00','https://gratisography.com/wp-content/uploads/2025/01/gratisography-dog-vacation-800x525.jpg'),
+#
+#     (3, 'Docker Containerization for Java Apps', 'Learn how to containerize Java applications using Docker. This tutorial covers creating Dockerfiles, managing dependencies, and deployment strategies.', TRUE, '2024-01-23 10:20:00','https://www.adobe.com/creativecloud/file-types/image/raster/media_11b1f18d198f70c3c75d86f8d6226caf617240e78.png?width=750&format=png&optimize=medium'),
+#
+#     (3, 'Building Secure Web Applications', 'Security is paramount in web development. Learn about common vulnerabilities, authentication methods, and how to implement security best practices in your applications.', TRUE, '2024-01-24 12:00:00','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSUfKkAw3WJUy_fow3DjoBxlnBlC_KxUceXeg&s'),
+#
+#     (3, 'Java 21 New Features Overview','key board match',TRUE, '2024-01-15 10:00:00','https://images.pexels.com/photos/1684187/pexels-photo-1684187.jpeg?cs=srgb&dl=pexels-marcin-dampc-807808-1684187.jpg&fm=jpg'),
+#
+#     (3, 'Clean Code Principles in Java', 'Writing clean, maintainable code is essential for long-term project success. Explore key principles and practices that will make your Java code more readable and robust.', TRUE, '2024-01-26 09:40:00','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcS06-zImX9b-ow_spLhrKaUve-Tquz8pIhQ&s'),
+#
+#     (2, 'Introduction to NoSQL Databases', 'Explore the world of NoSQL databases, including MongoDB, Redis, and Cassandra. Learn when to use NoSQL vs traditional relational databases.', TRUE, '2024-01-27 14:15:00','https://images.ctfassets.net/hrltx12pl8hq/01rJn4TormMsGQs1ZRIpzX/16a1cae2440420d0fd0a7a9a006f2dcb/Artboard_Copy_231.jpg?fit=fill&w=480&h=400'),
+#     (2, 'Weekend Getaways from Ho Chi Minh City', 'Escape the city buzz with these amazing weekend destinations. From beach resorts to mountain retreats, find the perfect short trip for relaxation.', TRUE, '2024-01-28 11:30:00','https://static01.nyt.com/images/2025/05/05/multimedia/05dc-trump-pope-lzjb/05dc-trump-pope-lzjb-articleLarge.jpg?quality=75&auto=webp&disable=upscale'),
+#
+#     (3, 'Testing Strategies for Java Applications', 'Comprehensive guide to testing Java applications. Learn about unit testing, integration testing, and test-driven development with JUnit and Mockito.', TRUE, '2024-01-29 08:50:00','https://th.bing.com/th/id/OIG2.VaLBvwJFzNjPrD3lKJmM'),
+#
+#     (3, 'Modern Frontend Development Trends', 'Stay updated with the latest frontend technologies and frameworks. Explore React, Vue.js, and Angular, and learn which one suits your project needs.', TRUE, '2024-01-30 16:00:00','https://static.vecteezy.com/system/resources/thumbnails/041/166/062/small/ai-generated-hawk-high-quality-image-free-photo.jpg'),
+#
+#     (2, 'Traditional Vietnamese Cooking Techniques', 'Master the art of Vietnamese cuisine with these traditional cooking methods. From stir-frying to steaming, learn the techniques that create authentic flavors.', TRUE, '2024-01-31 13:25:00','https://upload.wikimedia.org/wikipedia/commons/5/58/Fun._band.jpg'),
+#
+#     (3, 'Performance Optimization in Java', 'Optimize your Java applications for better performance. Learn about JVM tuning, memory management, and profiling techniques to identify bottlenecks.', TRUE, '2024-02-01 10:10:00','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSlfmlcpQ3vwI0-vy9RHO7zdTpEnbFAR5nw14V-lXOWKbtvqAuNu3pA2JVV0cBeKf87bcM&usqp=CAU'),
+#
+#     (2, 'DevOps Best Practices for Development Teams', 'Implement DevOps practices to improve collaboration between development and operations teams. Learn about CI/CD pipelines, automation, and monitoring.', TRUE, '2024-02-02 15:20:00','https://i0.wp.com/picjumbo.com/wp-content/uploads/beautiful-fall-natural-scenery-painting-cabin-by-a-lake-free-image.jpeg?w=600&quality=80'),
+#
+#     (2, 'Exploring Vietnamese National Parks', 'Discover the natural beauty of Vietnam through its national parks. From Phong Nha-Ke Bang to Cat Tien, explore diverse ecosystems and wildlife.', TRUE, '2024-02-03 12:45:00','https://buffer.com/resources/content/images/2024/11/Instagram-Image-size.png');
 
 INSERT INTO tags (tag_name)
 VALUES
@@ -120,38 +187,38 @@ VALUES
     (3, 4),
     (4, 3),
     (4, 4),
-    (5, 2),
-    (6, 4),
-    (6, 5),
-    (7, 3),
-    (7, 5),
-    (8, 1),
-    (9, 3),
-    (9, 4),
-    (9, 5),
-    (10, 3),
-    (10, 5),
-    (11, 2),
-    (12, 3),
-    (12, 4),
-    (12, 5),
-    (13, 3),
-    (13, 5),
-    (14, 2),
-    (15, 3),
-    (15, 4),
-    (16, 3),
-    (16, 5),
-    (17, 1),
-    (18, 3),
-    (18, 4),
-    (19, 5),
-    (20, 2),
-    (21, 3),
-    (21, 4),
-    (21, 5),
-    (22, 5),
-    (23, 1);
+    (5, 2);
+#     (6, 4),
+#     (6, 5),
+#     (7, 3),
+#     (7, 5),
+#     (8, 1),
+#     (9, 3),
+#     (9, 4),
+#     (9, 5),
+#     (10, 3),
+#     (10, 5),
+#     (11, 2),
+#     (12, 3),
+#     (12, 4),
+#     (12, 5),
+#     (13, 3),
+#     (13, 5),
+#     (14, 2),
+#     (15, 3),
+#     (15, 4),
+#     (16, 3),
+#     (16, 5),
+#     (17, 1),
+#     (18, 3),
+#     (18, 4),
+#     (19, 5),
+#     (20, 2),
+#     (21, 3),
+#     (21, 4),
+#     (21, 5),
+#     (22, 5),
+#     (23, 1);
 
 
 INSERT INTO comments (post_id, user_id, content, parent_comment_id)
