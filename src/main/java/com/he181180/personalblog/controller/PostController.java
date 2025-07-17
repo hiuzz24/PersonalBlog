@@ -48,4 +48,5 @@ public class PostController {
         model.addAttribute("totalPages", 1);
         return "explore";
     }
+
 }
