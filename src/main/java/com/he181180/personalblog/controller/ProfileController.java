@@ -1,16 +1,16 @@
 package com.he181180.personalblog.controller;
 
+import com.he181180.personalblog.entity.Posts;
 import com.he181180.personalblog.entity.Users;
+import com.he181180.personalblog.service.PostService;
 import com.he181180.personalblog.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
 import java.util.Optional;
 
 @Controller
@@ -18,6 +18,10 @@ import java.util.Optional;
 public class ProfileController {
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private PostService postService;
+
 
     @GetMapping
     public String profile(Authentication authentication, Model model) {
@@ -29,7 +33,7 @@ public class ProfileController {
         return "UserDashboard/Profile";
     }
 
-    @PutMapping("/update")
+    @PostMapping("/update")
     public Users updateProfile(Authentication authentication, Model model,
                                @ModelAttribute("user") Users userUpdate) {
         String useName = authentication.getName();
@@ -43,4 +47,6 @@ public class ProfileController {
                 .build();
         return userService.updateUser(user1);
     }
+
+
 }

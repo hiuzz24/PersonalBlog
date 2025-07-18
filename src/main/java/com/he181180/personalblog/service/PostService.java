@@ -16,4 +16,5 @@ public interface PostService {
     Optional<Posts> getPostByID(int postID);
     Posts findPostByPostID(int postID);
     List<Posts> getPostByUserID(int userID);
+    void deletePost(int postID);
 }
