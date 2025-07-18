@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tạo bài viết mới</title>
+    <link rel="stylesheet" th:href="@{/css/blog.css}">
+    <!-- CKEditor 5 CDN -->
+    <script src="https://cdn.ckeditor.com/ckeditor5/40.2.0/classic/ckeditor.js"></script>
+</head>
+<body>
+<div class="container">
+    <h1>Tạo bài viết mới</h1>
+
+    <form th:action="@{/blog/create}" method="post" class="blog-form">
+        <!-- Tiêu đề -->
+        <div class="form-group">
+            <label for="title">Tiêu đề:</label>
+            <input type="text" id="title" name="title" required class="form-control">
+        </div>
+
+        <!-- Ảnh đại diện -->
+        <div class="form-group">
+            <label for="imageUrl">URL ảnh đại diện:</label>
+            <input type="url" id="imageUrl" name="imageUrl" class="form-control">
+        </div>
+
+        <!-- Nội dung với CKEditor -->
+        <div class="form-group">
+            <label for="content">Nội dung:</label>
+            <textarea id="content" name="content" required></textarea>
+        </div>
+
+        <!-- Buttons -->
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Đăng bài</button>
+            <a th:href="@{/blog/posts}" class="btn btn-secondary">Hủy</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    ClassicEditor
+        .create(document.querySelector('#content'), {
+            toolbar: {
+                items: [
+                    'heading',
+                    '|',
+                    'bold',
+                    'italic',
+                    'link',
+                    'bulletedList',
+                    'numberedList',
+                    '|',
+                    'outdent',
+                    'indent',
+                    '|',
+                    'imageUpload',
+                    'blockQuote',
+                    'insertTable',
+                    'mediaEmbed',
+                    'undo',
+                    'redo',
+                    'alignment',
+                    'fontColor',
+                    'fontSize',
+                    'highlight'
+                ]
+            },
+            language: 'vi',
+            image: {
+                toolbar: [
+                    'imageTextAlternative',
+                    'imageStyle:full',
+                    'imageStyle:side'
+                ]
+            },
+            table: {
+                contentToolbar: [
+                    'tableColumn',
+                    'tableRow',
+                    'mergeTableCells'
+                ]
+            }
+        })
+        .then(editor => {
+            window.editor = editor;
+        })
+        .catch(error => {
+            console.error('Error initializing CKEditor:', error);
+        });
+</script>
+</body>
+</html>

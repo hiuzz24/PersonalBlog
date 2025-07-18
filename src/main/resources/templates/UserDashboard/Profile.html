@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User Profile</title>
+    <link th:href="@{/assets/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+</head>
+<body class="container mt-5">
+<h2>Your Profile</h2>
+
+<div class="card p-4">
+    <p><strong>Full Name:</strong> <span th:text="${user.fullName}"></span></p>
+    <p><strong>Username:</strong> <span th:text="${user.username}"></span></p>
+    <p><strong>Email:</strong> <span th:text="${user.email}"></span></p>
+</div>
+
+<h4 class="mt-5">Your Blog Posts</h4>
+<ul class="list-group">
+    <li class="list-group-item" th:each="post : ${userPosts}">
+        <a th:href="@{'/PostDetail/' + ${post.postID}}" th:text="${post.title}"></a>
+        <span class="text-muted small float-end" th:text="${#dates.format(post.publishedAt, 'dd MMM yyyy')}"></span>
+    </li>
+</ul>
+</body>
+</html>

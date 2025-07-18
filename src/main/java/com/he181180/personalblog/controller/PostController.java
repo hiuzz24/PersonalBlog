@@ -1,13 +1,21 @@
 package com.he181180.personalblog.controller;
 
 import com.he181180.personalblog.entity.Posts;
+import com.he181180.personalblog.entity.Users;
 import com.he181180.personalblog.service.PostService;
+import com.he181180.personalblog.service.TagService;
+import com.he181180.personalblog.service.UserService;
+import org.aspectj.apache.bcel.generic.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class PostController {
@@ -56,4 +64,5 @@ public class PostController {
         model.addAttribute("postDetail",posts);
         return "postDetail";
     }
+
 }
