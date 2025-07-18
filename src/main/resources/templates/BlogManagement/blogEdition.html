@@ -11,7 +11,7 @@
     <div class="container">
         <h1>Chỉnh sửa bài viết</h1>
         
-        <form th:action="@{/blog/edit/{id}(id=${post.postId})}" method="post" class="blog-form">
+        <form th:action="@{/blog/edit/{id}(id=${post.postID})}" method="post" class="blog-form">
             <div class="form-group">
                 <label for="title">Tiêu đề:</label>
                 <input type="text" id="title" name="title" th:value="${post.title}" required class="form-control">

@@ -80,7 +80,7 @@ public class MainController {
         newUser.setUsername(username);
         newUser.setEmail(email);
         newUser.setPassword(passwordEncoder.encode(password));
-//        newUser.setRole("writer");
+        newUser.setRole("writer");
 
         userRepository.save(newUser);
         return "redirect:/login";

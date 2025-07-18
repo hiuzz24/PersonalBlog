@@ -29,7 +29,7 @@ public class Users {
     @Column(name = "email")
     private String email;
 
-    @Column(name = "password")
+    @Column(name = "password", nullable = false)
     private String password;
 
     @Column(name = "full_name")
@@ -45,10 +45,10 @@ public class Users {
     @ColumnDefault("'writer'")  // 👈 Hibernate annotation
     private String role;
 
-    @Column(name = "created_at",insertable = false)
+    @Column(name = "created_at")
     private Timestamp createdAt;
 
-    @Column(name = "is_deleted",insertable = false)
+    @Column(name = "is_deleted")
     private boolean isDeleted;
 
     @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)

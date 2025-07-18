@@ -81,7 +81,7 @@
     <div class="user-profile">
         <img th:src="${user.avatarUrl ?: '/img/default-avatar.png'}"
              alt="Avatar" class="user-avatar">
-        <h5 class="mt-2 mb-0" th:text="${user.fullName}">Tên người dùng</h5>
+        <h5 class="mt-2 mb-0" >User Name</h5>
         <small th:text="'@' + ${user.username}">@username</small>
     </div>
     <ul class="nav flex-column">
@@ -148,7 +148,7 @@
     <!-- Thông báo -->
     <div th:if="${param.success}" class="alert alert-success alert-dismissible fade show" role="alert">
         <i class="bi bi-check-circle me-2"></i>
-        Cập nhật thông tin thành công!
+        Updated successfully!
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 
@@ -156,7 +156,7 @@
     <div class="dashboard-card">
         <h2 class="mb-4">
             <i class="bi bi-person-circle me-2"></i>
-            Thông tin cá nhân
+            Personal Information
         </h2>
 
         <div class="row">
@@ -168,13 +168,13 @@
             </div>
 
             <div class="col-md-8">
-                <form th:action="@{/profile/update}" method="post">
+                <form th:action="@{/profile/update}" th:object="${userUpdateDTO}" method="post">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="fullName" class="form-label">Họ và tên</label>
+                                <label for="fullName" class="form-label">Full Name</label>
                                 <input type="text" class="form-control" id="fullName"
-                                       name="fullName" th:value="${user.fullName}" required>
+                                       name="fullName" th:field="*{fullName}"  th:value="${user.fullName}" required>
                             </div>
                         </div>
 
@@ -182,23 +182,22 @@
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email</label>
                                 <input type="email" class="form-control" id="email"
-                                       th:value="${user.email}" readonly>
+                                      th:field="*{email}" th:value="${user.email}" readonly>
                                 <div class="form-text">Email không thể thay đổi</div>
                             </div>
                         </div>
                     </div>
 
                     <div class="mb-3">
-                        <label for="bio" class="form-label">Giới thiệu</label>
+                        <label for="bio" class="form-label">Bio</label>
                         <textarea class="form-control" id="bio" name="bio" rows="3"
-                                  th:text="${user.bio}"></textarea>
+                                th:field="*{bio}" th:text="${user.bio}"></textarea>
                     </div>
-
 
                     <div class="d-flex gap-2">
                         <button type="submit" class="btn btn-primary">
                             <i class="bi bi-save me-2"></i>
-                            Lưu thay đổi
+                            Save changes
                         </button>
                         <a th:href="@{/dashboard}" class="btn btn-secondary">Hủy</a>
                     </div>

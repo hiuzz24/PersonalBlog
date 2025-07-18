@@ -1,5 +1,7 @@
 package com.he181180.personalblog.controller;
 
+import com.he181180.personalblog.DTO.UserUpdateDTO;
+import com.he181180.personalblog.Mapper.UserMapper;
 import com.he181180.personalblog.entity.Posts;
 import com.he181180.personalblog.entity.Users;
 import com.he181180.personalblog.service.PostService;
@@ -22,6 +24,9 @@ public class ProfileController {
     @Autowired
     private PostService postService;
 
+    @Autowired
+    private UserMapper userMapper;
+
 
     @GetMapping
     public String profile(Authentication authentication, Model model) {
@@ -29,24 +34,22 @@ public class ProfileController {
         Optional<Users> user = userService.findUserByUsername(username);
         if(user.isPresent()) {
             model.addAttribute("user", user.get());
+            model.addAttribute("userUpdateDTO", new UserUpdateDTO());
         }
         return "UserDashboard/Profile";
     }
 
     @PostMapping("/update")
-    public Users updateProfile(Authentication authentication, Model model,
-                              @ModelAttribute("user") Users userUpdate) {
+    public String updateProfile(Authentication authentication, Model model,
+                              @ModelAttribute("userUpdateDTO") UserUpdateDTO userUpdate) {
         String useName = authentication.getName();
-        Optional<Users> user = userService.findUserByUsername(useName);
-        user.ifPresent(users -> model.addAttribute("user", users));
-        Users user1 = Users.builder()
-                .userID(user.get().getUserID())
-                .fullName(userUpdate.getFullName())
-                .email(userUpdate.getEmail())
-                .password(userUpdate.getPassword())
-                .build();
-        return userService.updateUser(user1);
+        Optional<Users> usersOptional = userService.findUserByUsername(useName);
+        Users user = usersOptional.get() ;
+        userMapper.updateUser(user,userUpdate);
+        userService.saveUser(user);
+        model.addAttribute("user", user);
+        System.out.println(user.toString());
+        return "UserDashboard/Profile";
     }
-
 
 }
