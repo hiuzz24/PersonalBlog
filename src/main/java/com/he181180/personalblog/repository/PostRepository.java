@@ -19,4 +19,8 @@ public interface PostRepository extends JpaRepository<Posts,Integer> {
             "join p.tags t " +
             "where t.tagID = :tagID")
     List<Posts> findPostsByTagID(@Param("tagID") int tagID);
+    @Query(value = "SELECT * FROM posts LIMIT :size OFFSET :start", nativeQuery = true)
+    List<Posts> findPostsWithPagination(@Param("start") int start, @Param("size") int size);
+
+    Posts findPostsByPostID(int postID);
 }

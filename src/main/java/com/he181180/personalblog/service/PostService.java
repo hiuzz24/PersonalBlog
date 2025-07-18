@@ -9,4 +9,7 @@ public interface PostService {
     List<Posts> searchPostByTitleAndContent(String search);
     List<Posts> findTop5RecentPosts();
     List<Posts> findPostsByTagID(int tagID);
+    List<Posts> getPaginatedPosts(int page, int size);
+    int getTotalPostCount();
+    Posts findPostByPostID(int postID);
 }

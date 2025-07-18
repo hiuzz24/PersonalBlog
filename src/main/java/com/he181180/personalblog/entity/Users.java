@@ -40,7 +40,7 @@ public class Users {
     @Column(name = "avatar_url")
     private String avatarUrl;
 
-    @Column(name = "role",insertable = false)
+    @Column(name = "role")
     private String role;
 
     @Column(name = "created_at",insertable = false)
