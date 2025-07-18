@@ -42,9 +42,11 @@ public class PostController {
         return "explore";
     }
 
-
-
-
-
-
+    @GetMapping("/PostDetail/{postID}")
+    public String postDetail(@PathVariable("postID") int postID
+                            ,Model model){
+        Posts posts = postService.findPostByPostID(postID);
+        model.addAttribute("postDetail",posts);
+        return "postDetail";
+    }
 }

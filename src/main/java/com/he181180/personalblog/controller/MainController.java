@@ -4,7 +4,9 @@ import com.he181180.personalblog.entity.Posts;
 import com.he181180.personalblog.entity.Users;
 import com.he181180.personalblog.repository.UserRepository;
 import com.he181180.personalblog.service.PostService;
+import com.he181180.personalblog.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -13,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class MainController {
@@ -24,6 +27,9 @@ public class MainController {
 
     @Autowired
     private PostService postService;
+
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/")
     public String index() {
@@ -37,6 +43,16 @@ public class MainController {
     @GetMapping("/register")
     public String register() {
         return "register";
+    }
+
+    @GetMapping("/dashboard")
+    public String dashboard(Authentication authentication,Model model) {
+        String username = authentication.getName();
+        Optional<Users> user = userService.findUserByUsername(username);
+        if(user.isPresent()) {
+            model.addAttribute("user", user.get());
+        }
+        return "UserDashboard/dashboard";
     }
 
     @PostMapping("/register")

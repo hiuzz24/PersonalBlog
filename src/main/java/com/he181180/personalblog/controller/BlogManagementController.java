@@ -25,18 +25,24 @@ public class BlogManagementController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/post/userId")
-    public List<Posts> getPostsByUserId(Authentication authentication) {
+    @GetMapping
+    public String getPostsByUserId(Authentication authentication,Model model) {
         String username = authentication.getName();
         Optional<Users> user = userService.findUserByUsername(username);
-        return postService.getPostByUserID(user.get().getUserID());
+        if (user.isPresent()) {
+            List<Posts> userPosts = postService.getPostByUserID(user.get().getUserID());
+            model.addAttribute("posts", userPosts);
+            model.addAttribute("user", user.get());
+            model.addAttribute("activeTab", "posts");
+        }
+        return "UserDashboard/SelfBlogManagement";
     }
 
     // Hiển thị form tạo bài viết mới
     @GetMapping("/create")
     public String createPost(Model model) {
         model.addAttribute("post", new Posts());
-        return "blog/create-post";
+        return "BlogManagement/blogCreation";
     }
 
     // Lưu bài viết mới

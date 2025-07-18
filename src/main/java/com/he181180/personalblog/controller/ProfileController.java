@@ -21,16 +21,19 @@ public class ProfileController {
 
     @Autowired
     private PostService postService;
+
+
     @GetMapping
     public String profile(Authentication authentication, Model model) {
         String username = authentication.getName();
-        Optional<Users> user = userService.findUserByUsername(username);        if(user.isPresent()) {
+        Optional<Users> user = userService.findUserByUsername(username);
+        if(user.isPresent()) {
             model.addAttribute("user", user.get());
         }
         return "UserDashboard/Profile";
     }
 
-    @PutMapping("/update")
+    @PostMapping("/update")
     public Users updateProfile(Authentication authentication, Model model,
                               @ModelAttribute("user") Users userUpdate) {
         String useName = authentication.getName();

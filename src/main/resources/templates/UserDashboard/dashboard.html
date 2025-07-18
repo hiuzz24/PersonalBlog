@@ -99,7 +99,7 @@
 <nav class="sidebar">
     <!-- User Profile -->
     <div class="user-profile">
-        <img th:src="${user.avatarUrl ?: '/assets/img/default-avatar.png'}"
+        <img th:src="${user.avatarUrl ?: '/img/default-avatar.png'}"
              alt="Avatar" class="user-avatar">
         <h5 class="mt-2 mb-0" th:text="${user.fullName}">Tên người dùng</h5>
         <small th:text="'@' + ${user.username}">@username</small>
@@ -117,7 +117,7 @@
 
         <li class="nav-item">
             <a class="nav-link" th:classappend="${activeTab == 'profile'} ? 'active'"
-               th:href="@{/dashboard/profile}">
+               th:href="@{/profile}">
                 <i class="bi bi-person me-2"></i>
                 Profile
             </a>
@@ -125,16 +125,16 @@
 
         <li class="nav-item">
             <a class="nav-link" th:classappend="${activeTab == 'posts'} ? 'active'"
-               th:href="@{/dashboard/posts}">
+               th:href="@{/blog}">
                 <i class="bi bi-journal-text me-2"></i>
-                Quản lý bài viết
+                Blog Management
             </a>
         </li>
 
         <li class="nav-item">
-            <a class="nav-link" th:href="@{/dashboard/posts/create}">
+            <a class="nav-link" th:href="@{/blog/create}">
                 <i class="bi bi-plus-circle me-2"></i>
-                Tạo bài viết mới
+                Create new Post
             </a>
         </li>
 
@@ -142,7 +142,7 @@
             <a class="nav-link" th:classappend="${activeTab == 'analytics'} ? 'active'"
                th:href="@{/dashboard/analytics}">
                 <i class="bi bi-bar-chart me-2"></i>
-                Thống kê
+                Charts
             </a>
         </li>
 
@@ -153,7 +153,7 @@
         <li class="nav-item">
             <a class="nav-link" th:href="@{/explore}">
                 <i class="bi bi-globe me-2"></i>
-                Khám phá
+                Explore
             </a>
         </li>
 
@@ -162,7 +162,7 @@
                 <button type="submit" class="nav-link btn btn-link text-start w-100"
                         style="color: rgba(255, 255, 255, 0.8);">
                     <i class="bi bi-box-arrow-right me-2"></i>
-                    Đăng xuất
+                    Logout
                 </button>
             </form>
         </li>
@@ -206,10 +206,10 @@
     <div class="dashboard-card">
         <h4 class="mb-4">
             <i class="bi bi-clock-history me-2"></i>
-            Bài viết gần đây
+            Recent Posts
         </h4>
 
-        <div class="row" th:if="${recentPosts and !recentPosts.empty}">
+        <div class="row" th:if="${recentPosts}">
             <div class="col-md-6 mb-3" th:each="post : ${recentPosts}">
                 <div class="card">
                     <div class="card-body">
@@ -219,11 +219,11 @@
                             Ngày cập nhật
                         </p>
                         <div class="d-flex gap-2">
-                            <a th:href="@{/dashboard/posts/edit/{id}(id=${post.postId})}"
+                            <a th:href="@{/dashboard/posts/edit/{id}(id=${post.postID})}"
                                class="btn btn-sm btn-outline-primary">
                                 <i class="bi bi-pencil"></i>
                             </a>
-                            <a th:href="@{/PostDetail/{id}(id=${post.postId})}"
+                            <a th:href="@{/PostDetail/{id}(id=${post.postID})}"
                                class="btn btn-sm btn-outline-success">
                                 <i class="bi bi-eye"></i>
                             </a>
@@ -233,9 +233,9 @@
             </div>
         </div>
 
-        <div th:if="${!recentPosts or recentPosts.empty}" class="text-center py-4">
+        <div th:if="${!recentPosts}" class="text-center py-4">
             <i class="bi bi-journal-x" style="font-size: 3rem; color: #ccc;"></i>
-            <p class="text-muted mt-3">Bạn chưa có bài viết nào</p>
+            <p class="text-muted mt-3">You have no recent posts</p>
             <a th:href="@{/dashboard/posts/create}" class="btn btn-primary">
                 <i class="bi bi-plus-circle me-2"></i>
                 Tạo bài viết đầu tiên
