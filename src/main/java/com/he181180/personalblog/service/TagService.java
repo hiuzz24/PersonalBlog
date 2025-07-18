@@ -5,5 +5,6 @@ import com.he181180.personalblog.entity.Tags;
 import java.util.List;
 
 public interface TagService {
-    public List<Tags> getAllTags();
+     List<Tags> getAllTags();
+     List<Integer> findTagIDByPostID(int postID);
 }

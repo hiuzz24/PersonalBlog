@@ -314,13 +314,13 @@
 
                     <!-- Recent Posts Widget -->
                     <div class="recent-posts-widget widget-item">
-                        <h3 class="widget-title">Recent Posts</h3>
+                        <h3 class="widget-title">Related Posts</h3>
 
-                        <div class="post-item" th:each="recentPost : ${recentPosts}">
-                            <img th:src="@{${recentPost.imageUrl}}" alt="" class="flex-shrink-0">
+                        <div class="post-item" th:each="relatedPost : ${relatedPosts}">
+                            <img th:src="@{${relatedPost.imageUrl}}" alt="" class="flex-shrink-0">
                             <div>
-                                <a th:href="@{'/PostDetail/' + ${recentPost.postID}}" th:text="${recentPost.title}"></a>
-                                <time th:text="${#dates.format(recentPost.publishedAt, 'dd MMM yyyy')}"></time>
+                                <h4><a href="blog-details.html" th:text="${relatedPost.title}"></a></h4>
+                                <time th:text="${#dates.format(relatedPost.publishedAt, 'dd MMM yyyy')}"></time>
                             </div>
                         </div><!-- End recent post item-->
                     </div>
