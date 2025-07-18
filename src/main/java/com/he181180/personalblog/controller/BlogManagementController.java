@@ -24,8 +24,8 @@ public class BlogManagementController {
 
     @Autowired
     private UserService userService;
-    @GetMapping("/post/userId")
 
+    @GetMapping("/post/userId")
     public List<Posts> getPostsByUserId(Authentication authentication) {
         String username = authentication.getName();
         Optional<Users> user = userService.findUserByUsername(username);
@@ -66,8 +66,9 @@ public class BlogManagementController {
         model.addAttribute("error", "Không thể tạo bài viết");
         return "blog/create-post";
     }
+
     // Cập nhật bài viết
-    @PostMapping("/edit/{id}")
+    @PostMapping("/posts/edit/{id}")
     public String updatePost(@PathVariable int id,
                              @RequestParam String title,
                              @RequestParam String content,
@@ -75,17 +76,37 @@ public class BlogManagementController {
                              Authentication authentication) {
 
         Optional<Posts> postOpt = postService.getPostByID(id);
-        if (postOpt.isPresent() && postOpt.get().getUsers().getUsername().equals(authentication.getName())) {
-            Posts post = postOpt.get();
-            post.setTitle(title);
-            post.setContent(content);
-            post.setImageUrl(imageUrl);
-            post.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
 
-            postService.savePost(post);
+        if (postOpt.isPresent()) {
+            Posts post = postOpt.get();
+
+            if (post.getUsers().getUsername().equals(authentication.getName())) {
+                post.setTitle(title);
+                post.setContent(content);
+                post.setImageUrl(imageUrl);
+                post.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+
+                postService.savePost(post);
+            }
         }
 
-        return "redirect:/blog/post/" + id;
+        return "redirect:/dashboard/posts?updated";
+    }
+
+    // Xóa bài viết
+    @PostMapping("/posts/delete/{id}")
+    public String deletePost(@PathVariable int id, Authentication authentication) {
+        Optional<Posts> postOpt = postService.getPostByID(id);
+
+        if (postOpt.isPresent()) {
+            Posts post = postOpt.get();
+
+            if (post.getUsers().getUsername().equals(authentication.getName())) {
+                postService.deletePost(id);
+            }
+        }
+
+        return "redirect:/dashboard/posts?deleted";
     }
 
 }

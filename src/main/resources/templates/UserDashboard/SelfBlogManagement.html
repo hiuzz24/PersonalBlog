@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý bài viết</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        .sidebar {
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            padding-top: 20px;
+            overflow-y: auto;
+        }
+
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 12px 25px;
+            border-radius: 0;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .main-content {
+            margin-left: 280px;
+            padding: 20px;
+            min-height: 100vh;
+            background: #f8f9fa;
+        }
+
+        .user-profile {
+            text-align: center;
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .dashboard-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .post-card {
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background: white;
+        }
+
+        .post-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+<!-- Sidebar (tương tự dashboard.html) -->
+<nav class="sidebar">
+    <div class="user-profile">
+        <img th:src="${user.avatarUrl ?: '/assets/img/default-avatar.png'}"
+             alt="Avatar" class="user-avatar">
+        <h5 class="mt-2 mb-0" th:text="${user.fullName}">Tên người dùng</h5>
+        <small th:text="'@' + ${user.username}">@username</small>
+    </div>
+
+    <ul class="nav flex-column">
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/dashboard/}">
+                <i class="bi bi-speedometer2 me-2"></i>
+                Dashboard
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/dashboard/profile}">
+                <i class="bi bi-person me-2"></i>
+                Profile
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link active" th:href="@{/dashboard/posts}">
+                <i class="bi bi-journal-text me-2"></i>
+                Quản lý bài viết
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/dashboard/posts/create}">
+                <i class="bi bi-plus-circle me-2"></i>
+                Tạo bài viết mới
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/dashboard/analytics}">
+                <i class="bi bi-bar-chart me-2"></i>
+                Thống kê
+            </a>
+        </li>
+
+        <li class="nav-item mt-3">
+            <hr style="border-color: rgba(255, 255, 255, 0.1);">
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/explore}">
+                <i class="bi bi-globe me-2"></i>
+                Khám phá
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <form th:action="@{/logout}" method="post" style="display: inline;">
+                <button type="submit" class="nav-link btn btn-link text-start w-100"
+                        style="color: rgba(255, 255, 255, 0.8);">
+                    <i class="bi bi-box-arrow-right me-2"></i>
+                    Đăng xuất
+                </button>
+            </form>
+        </li>
+    </ul>
+</nav>
+
+<!-- Main Content -->
+<main class="main-content">
+    <!-- Thông báo -->
+    <div th:if="${param.created}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle me-2"></i>
+        Tạo bài viết thành công!
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div th:if="${param.updated}" class="alert alert-info alert-dismissible fade show" role="alert">
+        <i class="bi bi-info-circle me-2"></i>
+        Cập nhật bài viết thành công!
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div th:if="${param.deleted}" class="alert alert-warning alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle me-2"></i>
+        Xóa bài viết thành công!
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+            <i class="bi bi-journal-text me-2"></i>
+            Quản lý bài viết
+        </h2>
+        <a th:href="@{/dashboard/posts/create}" class="btn btn-primary">
+            <i class="bi bi-plus-circle me-2"></i>
+            Tạo bài viết mới
+        </a>
+    </div>
+
+    <!-- Posts List -->
+    <div class="dashboard-card">
+        <div th:if="${posts and !posts.empty}">
+            <div class="post-card" th:each="post : ${posts}">
+                <div class="row">
+                    <div class="col-md-2">
+                        <img th:src="${post.imageUrl ?: '/assets/img/default-post.jpg'}"
+                             alt="Post image" class="post-image">
+                    </div>
+
+                    <div class="col-md-7">
+                        <h5 th:text="${post.title}">Tiêu đề bài viết</h5>
+                        <p class="text-muted mb-2" th:text="${#strings.abbreviate(post.content, 150)}">
+                            Nội dung tóm tắt...
+                        </p>
+                        <div class="d-flex gap-3">
+                            <small class="text-muted">
+                                <i class="bi bi-calendar me-1"></i>
+                                <span th:text="${#temporals.format(post.updatedAt, 'dd/MM/yyyy HH:mm')}">
+                                        Ngày cập nhật
+                                    </span>
+                            </small>
+                            <small class="text-muted">
+                                <i class="bi bi-eye me-1"></i>
+                                <span th:text="${post.isPublished ? 'Đã xuất bản' : 'Nháp'}">
+                                        Trạng thái
+                                    </span>
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 text-end">
+                        <div class="btn-group" role="group">
+                            <a th:href="@{/PostDetail/{id}(id=${post.postId})}"
+                               class="btn btn-sm btn-outline-success" title="Xem">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a th:href="@{/dashboard/posts/edit/{id}(id=${post.postId})}"
+                               class="btn btn-sm btn-outline-primary" title="Sửa">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <button type="button" class="btn btn-sm btn-outline-danger"
+                                    title="Xóa" onclick="confirmDelete([[${post.postId}]], '[[${post.title}]]')">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${!posts or posts.empty}" class="text-center py-5">
+            <i class="bi bi-journal-x" style="font-size: 4rem; color: #ccc;"></i>
+            <h4 class="mt-3 text-muted">Bạn chưa có bài viết nào</h4>
+            <p class="text-muted">Hãy tạo bài viết đầu tiên của bạn</p>
+            <a th:href="@{/dashboard/posts/create}" class="btn btn-primary">
+                <i class="bi bi-plus-circle me-2"></i>
+                Tạo bài viết mới
+            </a>
+        </div>
+    </div>
+</main>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Xác nhận xóa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Bạn có chắc chắn muốn xóa bài viết <strong id="postTitle"></strong>?</p>
+                <p class="text-danger">Hành động này không thể hoàn tác!</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <form id="deleteForm" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">Xóa</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    function confirmDelete(postId, title) {
+        document.getElementById('postTitle').textContent = title;
+        document.getElementById('deleteForm').action = '/dashboard/posts/delete/' + postId;
+        new bootstrap.Modal(document.getElementById('deleteModal')).show();
+    }
+</script>
+</body>
+</html>
