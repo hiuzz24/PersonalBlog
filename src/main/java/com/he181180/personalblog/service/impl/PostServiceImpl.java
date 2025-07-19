@@ -66,4 +66,9 @@ public class PostServiceImpl implements PostService {
                 .filter(post -> post.getUsers().getUserID() == userID)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public void deletePost(int postID) {
+        postRepository.deleteById(postID);
+    }
 }

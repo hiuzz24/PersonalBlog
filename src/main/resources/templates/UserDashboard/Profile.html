@@ -1,25 +1,214 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>User Profile</title>
-    <link th:href="@{/assets/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thông tin cá nhân</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        .sidebar {
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            padding-top: 20px;
+            overflow-y: auto;
+        }
+
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 12px 25px;
+            border-radius: 0;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .main-content {
+            margin-left: 280px;
+            padding: 20px;
+            min-height: 100vh;
+            background: #f8f9fa;
+        }
+
+        .user-profile {
+            text-align: center;
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .dashboard-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .profile-avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid #667eea;
+        }
+    </style>
 </head>
-<body class="container mt-5">
-<h2>Your Profile</h2>
+<body>
+<!-- Sidebar  -->
+<nav class="sidebar">
+    <div class="user-profile">
+        <img th:src="${user.avatarUrl ?: '/img/default-avatar.png'}"
+             alt="Avatar" class="user-avatar">
+        <h5 class="mt-2 mb-0" th:text="${user.fullName}">Tên người dùng</h5>
+        <small th:text="'@' + ${user.username}">@username</small>
+    </div>
+    <ul class="nav flex-column">
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/dashboard}">
+                <i class="bi bi-speedometer2 me-2"></i>
+                Dashboard
+            </a>
+        </li>
 
-<div class="card p-4">
-    <p><strong>Full Name:</strong> <span th:text="${user.fullName}"></span></p>
-    <p><strong>Username:</strong> <span th:text="${user.username}"></span></p>
-    <p><strong>Email:</strong> <span th:text="${user.email}"></span></p>
-</div>
+        <li class="nav-item">
+            <a class="nav-link active" th:href="@{/profile}">
+                <i class="bi bi-person me-2"></i>
+                Profile
+            </a>
+        </li>
 
-<h4 class="mt-5">Your Blog Posts</h4>
-<ul class="list-group">
-    <li class="list-group-item" th:each="post : ${userPosts}">
-        <a th:href="@{'/PostDetail/' + ${post.postID}}" th:text="${post.title}"></a>
-        <span class="text-muted small float-end" th:text="${#dates.format(post.publishedAt, 'dd MMM yyyy')}"></span>
-    </li>
-</ul>
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/blog}">
+                <i class="bi bi-journal-text me-2"></i>
+                Blog Management
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/blog/create}">
+                <i class="bi bi-plus-circle me-2"></i>
+                Crate new Blog
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/dashboard/analytics}">
+                <i class="bi bi-bar-chart me-2"></i>
+                Chart
+            </a>
+        </li>
+
+        <li class="nav-item mt-3">
+            <hr style="border-color: rgba(255, 255, 255, 0.1);">
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/explore}">
+                <i class="bi bi-globe me-2"></i>
+                Explore
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <form th:action="@{/logout}" method="post" style="display: inline;">
+                <button type="submit" class="nav-link btn btn-link text-start w-100"
+                        style="color: rgba(255, 255, 255, 0.8);">
+                    <i class="bi bi-box-arrow-right me-2"></i>
+                    Logout
+                </button>
+            </form>
+        </li>
+    </ul>
+</nav>
+
+<!-- Main Content -->
+<main class="main-content">
+    <!-- Thông báo -->
+    <div th:if="${param.success}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle me-2"></i>
+        Cập nhật thông tin thành công!
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <!-- Profile Form -->
+    <div class="dashboard-card">
+        <h2 class="mb-4">
+            <i class="bi bi-person-circle me-2"></i>
+            Thông tin cá nhân
+        </h2>
+
+        <div class="row">
+            <div class="col-md-4 text-center">
+                <img th:src="${user.avatarUrl ?: '/img/default-avatar.png'}"
+                     alt="Avatar" class="profile-avatar mb-3">
+                <h5 th:text="${user.fullName}">Tên người dùng</h5>
+                <p class="text-muted" th:text="'@' + ${user.username}">@username</p>
+            </div>
+
+            <div class="col-md-8">
+                <form th:action="@{/profile/update}" method="post">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="fullName" class="form-label">Họ và tên</label>
+                                <input type="text" class="form-control" id="fullName"
+                                       name="fullName" th:value="${user.fullName}" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email"
+                                       th:value="${user.email}" readonly>
+                                <div class="form-text">Email không thể thay đổi</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="bio" class="form-label">Giới thiệu</label>
+                        <textarea class="form-control" id="bio" name="bio" rows="3"
+                                  th:text="${user.bio}"></textarea>
+                    </div>
+
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save me-2"></i>
+                            Lưu thay đổi
+                        </button>
+                        <a th:href="@{/dashboard}" class="btn btn-secondary">Hủy</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
