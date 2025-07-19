@@ -20,7 +20,7 @@ CREATE TABLE posts (
                        user_id INT NOT NULL,
                        title VARCHAR(255) NOT NULL,
                        content TEXT NOT NULL,
-                       image_url VARCHAR(500),
+                       image_url text,
                         body text,
                        is_published BOOLEAN DEFAULT TRUE,
                        published_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

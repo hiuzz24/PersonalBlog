@@ -6,10 +6,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Set;
 
 public interface TagRepository extends JpaRepository<Tags,Integer> {
     @Query("select t.tagID from Tags t " +
             "join t.posts p " +
             "where p.postID = :postID")
     List<Integer> findTagIDByPostID(@Param("postID") int postID);
+
+    Set<Tags> findTagsByTagIDIn(List<Integer> tagID);
 }

@@ -7,41 +7,77 @@
     <link rel="stylesheet" th:href="@{/css/blog.css}">
     <!-- CKEditor 5 CDN -->
     <script src="https://cdn.ckeditor.com/ckeditor5/40.2.0/classic/ckeditor.js"></script>
+    <style>
+        .tag-label {
+            display: inline-block;
+            padding: 6px 12px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            background-color: #f0f0f0;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        input[type="checkbox"]:checked + .tag-label {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+    </style>
 </head>
 <body>
 <div class="container">
     <h1>Tạo bài viết mới</h1>
 
-    <form th:action="@{/blog/create}" method="post" class="blog-form">
+    <form th:action="@{${formAction}}" method="post" class="blog-form">
+        <input type="hidden" name="postID" th:value="${post.postID}">
         <!-- Tiêu đề -->
         <div class="form-group">
-            <label for="title">Tiêu đề:</label>
-            <input type="text" id="title" name="title" required class="form-control">
+            <label for="title">Title:</label>
+            <input type="text" id="title" name="title" th:value="${post.title}" required class="form-control">
+        </div>
+
+        <div class="form-group">
+            <label for="content">Content:</label>
+            <input type="text" id="content" name="content" th:value="${post.content}" required class="form-control">
         </div>
 
         <!-- Ảnh đại diện -->
         <div class="form-group">
             <label for="imageUrl">URL ảnh đại diện:</label>
-            <input type="url" id="imageUrl" name="imageUrl" class="form-control">
+            <input type="url" id="imageUrl" name="imageUrl" th:value="${post.imageUrl}" class="form-control">
         </div>
+
+        <div class="form-group">
+            <label>Tags:</label>
+            <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                <div th:each="tag : ${allTags}">
+                    <input type="checkbox" th:id="'tag_' + ${tag.tagID}" name="tagID" th:value="${tag.tagID}"
+                           th:checked="${selectedTagID.contains(tag.tagID)}" hidden>
+                    <label th:for="'tag_' + ${tag.tagID}" class="tag-label" th:text="${tag.tagName}"></label>
+                </div>
+            </div>
+        </div>
+
 
         <!-- Nội dung với CKEditor -->
         <div class="form-group">
-            <label for="content">Nội dung:</label>
-            <textarea id="content" name="content" required></textarea>
+            <label for="body">Nội dung:</label>
+            <textarea id="body" name="body" th:text="${post.body}"></textarea>
         </div>
 
         <!-- Buttons -->
         <div class="form-actions">
             <button type="submit" class="btn btn-primary">Đăng bài</button>
-            <a th:href="@{/blog/posts}" class="btn btn-secondary">Hủy</a>
+            <a th:href="@{/blog}" class="btn btn-secondary">Hủy</a>
         </div>
     </form>
 </div>
 
 <script>
     ClassicEditor
-        .create(document.querySelector('#content'), {
+        .create(document.querySelector('#body'), {
             toolbar: {
                 items: [
                     'heading',
