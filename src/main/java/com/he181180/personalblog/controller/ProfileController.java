@@ -6,6 +6,7 @@ import com.he181180.personalblog.entity.Posts;
 import com.he181180.personalblog.entity.Users;
 import com.he181180.personalblog.service.PostService;
 import com.he181180.personalblog.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -33,21 +34,27 @@ public class ProfileController {
         String username = authentication.getName();
         Optional<Users> user = userService.findUserByUsername(username);
         if(user.isPresent()) {
+            UserUpdateDTO userUpdateDTO = UserUpdateDTO.builder()
+                    .email(user.get().getEmail())
+                    .fullName(user.get().getFullName())
+                    .bio(user.get().getBio())
+                    .build();
             model.addAttribute("user", user.get());
-            model.addAttribute("userUpdateDTO", new UserUpdateDTO());
+            model.addAttribute("userUpdateDTO", userUpdateDTO);
         }
         return "UserDashboard/Profile";
     }
 
     @PostMapping("/update")
     public String updateProfile(Authentication authentication, Model model,
-                              @ModelAttribute("userUpdateDTO") UserUpdateDTO userUpdate) {
+            @ModelAttribute("userUpdateDTO")  @Valid UserUpdateDTO userUpdate) {
         String useName = authentication.getName();
         Optional<Users> usersOptional = userService.findUserByUsername(useName);
         Users user = usersOptional.get() ;
         userMapper.updateUser(user,userUpdate);
         userService.saveUser(user);
         model.addAttribute("user", user);
+        System.out.println(userUpdate.toString());
         System.out.println(user.toString());
         return "UserDashboard/Profile";
     }

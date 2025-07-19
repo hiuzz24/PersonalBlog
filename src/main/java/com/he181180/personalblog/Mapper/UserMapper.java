@@ -13,4 +13,5 @@ public interface UserMapper {
 
 //    @Mapping(target = "isDeleted", ignore = true)
     void updateUser( @MappingTarget Users user, UserUpdateDTO userUpdateDTO);
+
 }

@@ -81,7 +81,7 @@
     <div class="user-profile">
         <img th:src="${user.avatarUrl ?: '/img/default-avatar.png'}"
              alt="Avatar" class="user-avatar">
-        <h5 class="mt-2 mb-0" >User Name</h5>
+        <h5 class="mt-2 mb-0" th:text="${user.fullName}">Tên người dùng</h5>
         <small th:text="'@' + ${user.username}">@username</small>
     </div>
     <ul class="nav flex-column">
@@ -174,7 +174,7 @@
                             <div class="mb-3">
                                 <label for="fullName" class="form-label">Full Name</label>
                                 <input type="text" class="form-control" id="fullName"
-                                       name="fullName" th:field="*{fullName}"  th:value="${user.fullName}" required>
+                                       name="fullName" th:field="*{fullName}"  required>
                             </div>
                         </div>
 
@@ -182,7 +182,7 @@
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email</label>
                                 <input type="email" class="form-control" id="email"
-                                      th:field="*{email}" th:value="${user.email}" readonly>
+                                      th:field="*{email}" readonly>
                                 <div class="form-text">Email không thể thay đổi</div>
                             </div>
                         </div>
@@ -191,7 +191,7 @@
                     <div class="mb-3">
                         <label for="bio" class="form-label">Bio</label>
                         <textarea class="form-control" id="bio" name="bio" rows="3"
-                                th:field="*{bio}" th:text="${user.bio}"></textarea>
+                                th:field="*{bio}" ></textarea>
                     </div>
 
                     <div class="d-flex gap-2">
