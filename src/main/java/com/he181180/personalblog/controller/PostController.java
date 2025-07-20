@@ -1,7 +1,9 @@
 package com.he181180.personalblog.controller;
 
+import com.he181180.personalblog.entity.Comments;
 import com.he181180.personalblog.entity.Posts;
 import com.he181180.personalblog.entity.Users;
+import com.he181180.personalblog.service.CommentService;
 import com.he181180.personalblog.service.PostService;
 import com.he181180.personalblog.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,8 @@ public class PostController {
     @Autowired
     private PostService postService;
 
+    @Autowired
+    private CommentService commentService;
 
     @RequestMapping("/search")
     public String searchByTitleAndContent(@RequestParam("search") String search, Model model){
@@ -47,6 +51,11 @@ public class PostController {
                             ,Model model){
         Posts posts = postService.findPostByPostID(postID);
         model.addAttribute("postDetail",posts);
+        int countComment = commentService.countCommentByPostId(postID);
+        List<Comments> comments = commentService.getCommentsByPostId(postID);
+        model.addAttribute("comments", comments);
+        model.addAttribute("countComment", countComment);
         return "postDetail";
     }
+
 }
