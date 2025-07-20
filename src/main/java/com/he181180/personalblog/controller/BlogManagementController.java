@@ -103,17 +103,20 @@ public class BlogManagementController {
     @RequestMapping("/saveUpdate")
     public String saveUpdate(@RequestParam int postID,
                             @RequestParam String title,
+                           @RequestParam List<Integer> tagID,
                            @RequestParam String content,
                            @RequestParam String body,
                            @RequestParam String imageUrl,
                              Authentication authentication) {
         String username = authentication.getName();
         Optional<Users> user = userService.findUserByUsername(username);
+        List<Tags> tags = tagService.findTagsByTagID(tagID);
 
         Posts post = postService.findPostByPostID(postID);
         post.setTitle(title);
         post.setContent(content);
         post.setImageUrl(imageUrl);
+        post.setTags(tags);
         post.setBody(body);
         post.setPublishedAt(post.getPublishedAt());
         post.setUsers(user.get());
