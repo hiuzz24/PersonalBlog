@@ -58,7 +58,7 @@ public class Posts {
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
     @JsonIgnore
-    private Set<Tags> tags;
+    private List<Tags> tags;
 
     @OneToMany(mappedBy = "posts",cascade = CascadeType.ALL)
     private List<Comments> comments;

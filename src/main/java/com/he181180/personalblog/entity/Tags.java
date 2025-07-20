@@ -24,5 +24,5 @@ public class Tags {
 
     @ManyToMany(mappedBy = "tags",fetch = FetchType.LAZY)
     @JsonIgnore
-    private Set<Posts> posts;
+    private List<Posts> posts;
 }

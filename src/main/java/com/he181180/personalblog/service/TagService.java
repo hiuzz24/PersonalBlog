@@ -8,5 +8,5 @@ import java.util.Set;
 public interface TagService {
      List<Tags> getAllTags();
      List<Integer> findTagIDByPostID(int postID);
-     Set<Tags> findTagsByTagID(List<Integer> tagID);
+     List<Tags> findTagsByTagID(List<Integer> tagID);
 }

@@ -61,7 +61,7 @@ public class BlogManagementController {
                            Authentication authentication,
                            Model model) {
 
-        Set<Tags> tags = tagService.findTagsByTagID(tagID);
+        List<Tags> tags = tagService.findTagsByTagID(tagID);
 
         String username = authentication.getName();
         Optional<Users> user = userService.findUserByUsername(username);
@@ -90,9 +90,9 @@ public class BlogManagementController {
     public String updatePost(@PathVariable("postID") int postID,
                              Model model) {
         Posts post = postService.findPostByPostID(postID);
-        Set<Integer> selectedTagID = post.getTags().stream()
+        List<Integer> selectedTagID = post.getTags().stream()
                 .map(Tags::getTagID)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
 
         model.addAttribute("selectedTagID",selectedTagID);
         model.addAttribute("post",post);
