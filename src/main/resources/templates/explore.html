@@ -140,7 +140,6 @@
                                         <hr>
 
                                         <a th:href="@{'/PostDetail/' +${post.postID}}" class="readmore stretched-link"><span>Read More</span><i class="bi bi-arrow-right"></i></a>
-
                                     </div>
 
                                 </article>
@@ -206,7 +205,7 @@
                         <div class="post-item" th:each="recentPost : ${recentPosts}">
                             <img th:src="@{${recentPost.imageUrl}}" alt="" class="flex-shrink-0">
                             <div>
-                                <h4><a href="blog-details.html" th:text="${recentPost.title}"></a></h4>
+                                <a th:href="@{'/PostDetail/' + ${recentPost.postID}}" th:text="${recentPost.title}"></a>
                                 <time th:text="${#dates.format(recentPost.publishedAt, 'dd MMM yyyy')}"></time>
                             </div>
                         </div><!-- End recent post item-->
@@ -302,10 +301,7 @@
     </div>
 
     <div class="container copyright text-center mt-4">
-        <p>© <span>Copyright</span> <strong class="px-1 sitename">DEV</strong> <span>All Rights Reserved</span></p>
-        <div class="credits">
-            Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a> Distributed by <a href=“https://themewagon.com>ThemeWagon
-        </div>
+        <p>© <span>Copyright</span> <strong class="px-1 sitename">PersonalBlog</strong> <span>All Rights Reserved</span></p>
     </div>
 
 </footer>

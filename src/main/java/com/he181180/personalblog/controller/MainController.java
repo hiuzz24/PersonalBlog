@@ -1,12 +1,15 @@
 package com.he181180.personalblog.controller;
 
-import com.he181180.personalblog.entity.Posts;
 import com.he181180.personalblog.entity.Users;
 import com.he181180.personalblog.repository.UserRepository;
 import com.he181180.personalblog.service.PostService;
 import com.he181180.personalblog.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -87,25 +90,60 @@ public class MainController {
     }
 
     @GetMapping("/GoogleLogin")
-    public String googleLoginSuccess(@AuthenticationPrincipal OAuth2User oauth2User,
-                                     Model model) {
+    public String googleLoginSuccess(@AuthenticationPrincipal OAuth2User oauth2User, Model model) {
         if (oauth2User != null) {
-            model.addAttribute("name", oauth2User.getAttribute("name"));
+            String email = oauth2User.getAttribute("email");
+            String name = oauth2User.getAttribute("name");
+
+            // Find user by email
+            Users user = userRepository.findByEmail(email).orElse(null);
+
+            if (user == null) {
+                user = new Users();
+                user.setEmail(email);
+                user.setFullName(name);
+                user.setRole("writer");
+                userRepository.save(user);
+            }
+
+            // If user does not have a username → ask for username
+            if (user.getUsername() == null || user.getUsername().isEmpty()) {
+                model.addAttribute("email", email);
+                return "complete-username";
+            }
         }
+
         return "redirect:/explore";
     }
+    @PostMapping("/complete-username")
+    public String completeUsername(@RequestParam String email,
+                                   @RequestParam String username,
+                                   Model model,
+                                   HttpServletRequest request) {
+        // Check if username exists
+        if (userRepository.findByUsername(username).isPresent()) {
+            model.addAttribute("email", email);
+            model.addAttribute("error", "Username already taken");
+            return "complete-username";
+        }
 
-    @GetMapping("/explore")
-    public String explore(@RequestParam(defaultValue = "1") int page, Model model){
-        int pageSize = 6;
+        // Update username
+        Users user = userRepository.findByEmail(email).orElse(null);
+        if (user != null) {
+            user.setUsername(username);
+            userRepository.save(user);
 
-        List<Posts> posts = postService.getPaginatedPosts(page, pageSize);
-        int totalPosts = postService.getTotalPostCount();
-        int totalPages = (int) Math.ceil((double) totalPosts / pageSize);
+            // 👉 Recreate Authentication with the updated user
+            Authentication auth = new UsernamePasswordAuthenticationToken(
+                    user.getUsername(), null, List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole()))
+            );
+            SecurityContextHolder.getContext().setAuthentication(auth);
+        }
 
-        model.addAttribute("allPost", posts);
-        model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", totalPages);
-        return "explore";
+        return "redirect:/profile";
     }
+
+
+
+
 }

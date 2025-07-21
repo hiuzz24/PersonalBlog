@@ -1,0 +1,29 @@
+<!-- Thymeleaf template for recursive comments -->
+<li class="comment odd parent" th:each="child : ${childComments}" th:fragment="commentList(childComments)">
+    <div class="comment-body">
+        <div class="comment-author vcard">
+            <img class="avatar photo" src="assets/images/testimonials/pic1.jpg" alt="">
+            <cite class="fn" th:text="${child.user.username}">User Name</cite>
+            <span class="says">says:</span>
+        </div>
+        <div class="comment-meta">
+            <a href="#" th:text="${child.createdAt}">Date</a>
+        </div>
+        <p th:text="${child.content}">Comment content</p>
+        <div class="reply">
+            <a class="comment-reply-link" onclick="toggleReplyBox(event, this)">Reply</a>
+        </div>
+        <form action="/comments/add" method="post">
+            <div class="reply-box" style="display: none; margin-top: 10px; margin-bottom : 10px">
+                <input type="hidden" name="parentId" th:value="${child.commentId}">
+                <input type="hidden" name="post.postID" th:value="${post.postID}">
+                <textarea placeholder="Enter your reply..." rows="3" name="content" class="form-control" required></textarea>
+                <button type="submit" class="btn btn-primary btn-sm mt-2">Submit Reply</button>
+            </div>
+        </form>
+    </div>
+    <ol class="children" th:if="${child.children != null and !child.children.empty}">
+        <!-- Recursive inclusion for nested comments -->
+        <div th:replace="~{comment-recursive :: commentList(childComments=${child.children})}"></div>
+    </ol>
+</li>

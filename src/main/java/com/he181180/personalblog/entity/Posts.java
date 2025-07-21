@@ -1,5 +1,6 @@
 package com.he181180.personalblog.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -28,7 +30,8 @@ public class Posts {
     @Column(name = "content")
     private String content;
 
-    @Column(name = "image_url")
+    @Lob
+    @Column(name = "image_url",columnDefinition = "text")
     private String imageUrl;
 
     @Lob
@@ -48,12 +51,13 @@ public class Posts {
     @JoinColumn(name = "user_id",nullable = false)
     private Users users;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "post_tags",
             joinColumns = @JoinColumn(name = "post_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
+    @JsonIgnore
     private List<Tags> tags;
 
     @OneToMany(mappedBy = "post",cascade = CascadeType.ALL)

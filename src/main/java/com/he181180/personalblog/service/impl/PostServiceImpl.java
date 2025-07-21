@@ -18,8 +18,10 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<Posts> getAll() {
-        List<Posts> posts = postRepository.findAll();
-        return posts;
+        return postRepository.findAll()
+                .stream()
+                .filter(Posts::isPublished)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -29,8 +31,9 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<Posts> findTop5RecentPosts() {
-        return postRepository.findTop5ByOrderByPublishedAtDesc();
+        return postRepository.findTop5ByIsPublishedTrueOrderByPublishedAtDesc();
     }
+
     @Override
     public List<Posts> getPaginatedPosts(int page, int size) {
         int start = (page - 1) * size;
@@ -41,13 +44,19 @@ public class PostServiceImpl implements PostService {
     public void savePost(Posts post) {
         postRepository.save(post);
     }
+
+    @Override
     public int getTotalPostCount() {
-        return (int) postRepository.count();
+        return (int) postRepository.findAll()
+                .stream()
+                .filter(Posts::isPublished)
+                .count();
     }
 
     @Override
     public Posts findPostByPostID(int postID) {
-        return postRepository.findPostsByPostID(postID);
+        Posts post = postRepository.findPostsByPostID(postID);
+        return (post != null && post.isPublished()) ? post : null;
     }
 
     @Override
@@ -56,19 +65,24 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Optional<Posts> getPostByID(int userID) {
-        return postRepository.findById(userID);
+    public Optional<Posts> getPostByID(int postID) {
+        Optional<Posts> post = postRepository.findById(postID);
+        return post.filter(Posts::isPublished);
     }
 
     @Override
     public List<Posts> getPostByUserID(int userID) {
         return postRepository.findAll().stream()
-                .filter(post -> post.getUsers().getUserID() == userID)
+                .filter(post -> post.isPublished() && post.getUsers().getUserID() == userID)
                 .collect(Collectors.toList());
     }
 
     @Override
     public void deletePost(int postID) {
-        postRepository.deleteById(postID);
+        Posts post = postRepository.findPostsByPostID(postID);
+        if (post != null) {
+            post.setPublished(false);
+            postRepository.save(post);
+        }
     }
 }
