@@ -79,7 +79,7 @@
 
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                     <li>
-                        <form th:action="@{/profile}" method="post" style="display: inline;">
+                        <form th:action="@{/profile}" method="get" style="display: inline;">
                             <button type="submit" class="dropdown-item">Profile</button>
                         </form>
                     </li>
@@ -142,16 +142,9 @@
                             </div><!-- End post content -->
 
                             <div class="meta-bottom">
-                                <i class="bi bi-folder"></i>
-                                <ul class="cats">
-                                    <li><a href="#">Business</a></li>
-                                </ul>
-
                                 <i class="bi bi-tags"></i>
-                                <ul class="tags">
-                                    <li><a href="#">Creative</a></li>
-                                    <li><a href="#">Tips</a></li>
-                                    <li><a href="#">Marketing</a></li>
+                                <ul class="tags" th:each="tag: ${postDetail.tags}">
+                                    <li><a th:href="@{/tags/{tagID}(tagID = ${tag.tagID})}" th:text="${tag.tagName}"></a></li>
                                 </ul>
                             </div><!-- End meta bottom -->
 

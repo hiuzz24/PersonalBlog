@@ -7,19 +7,22 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface PostRepository extends JpaRepository<Posts,Integer> {
+public interface PostRepository extends JpaRepository<Posts, Integer> {
+
     @Query("select p from Posts p " +
-            "where lower(p.title) like lower(concat('%',:search,'%'))  " +
-            "or lower(p.content) like lower(concat('%',:search,'%'))")
+            "where p.isPublished = true and " +
+            "(lower(p.title) like lower(concat('%',:search,'%')) " +
+            "or lower(p.content) like lower(concat('%',:search,'%')))")
     List<Posts> findByContentAndTitle(@Param("search") String search);
 
-    List<Posts> findTop5ByOrderByPublishedAtDesc();
+    List<Posts> findTop5ByIsPublishedTrueOrderByPublishedAtDesc();
 
     @Query("select p from Posts p " +
             "join p.tags t " +
-            "where t.tagID = :tagID")
+            "where p.isPublished = true and t.tagID = :tagID")
     List<Posts> findPostsByTagID(@Param("tagID") int tagID);
-    @Query(value = "SELECT * FROM posts LIMIT :size OFFSET :start", nativeQuery = true)
+
+    @Query(value = "SELECT * FROM posts WHERE is_published = 1 LIMIT :size OFFSET :start", nativeQuery = true)
     List<Posts> findPostsWithPagination(@Param("start") int start, @Param("size") int size);
 
     Posts findPostsByPostID(int postID);
