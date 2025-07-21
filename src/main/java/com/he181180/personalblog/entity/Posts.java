@@ -60,6 +60,6 @@ public class Posts {
     @JsonIgnore
     private List<Tags> tags;
 
-    @OneToMany(mappedBy = "posts",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "post",cascade = CascadeType.ALL)
     private List<Comments> comments;
 }

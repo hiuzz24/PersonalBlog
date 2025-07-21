@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Complete Username</title>
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            display: flex;
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(3px);
+            background-color: rgba(255, 255, 255, 0.14);
+            width: 700px;
+        }
+        .login-container h2 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: white; /* bạn đã yêu cầu */
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .login-form input {
+            padding: 10px;
+            margin-bottom: 1rem;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 300px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+
+
+        }
+
+        .login-form .form-group {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+
+        .login-form button {
+            width: 100%;
+            max-width: 300px;
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 6px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+
+        .login-form button:hover {
+            background-color: #0056b3;
+        }
+
+        .error-message {
+            color: red;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            margin-bottom: 16px;
+        }
+        .black-text {
+            color: black !important;
+        }
+
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="login-container">
+        <div class="login-container">
+            <h2 style="color: white;">Choose your username</h2>
+            <form th:action="@{/complete-username}" method="post" class="login-form">
+                <input type="hidden" name="email" th:value="${email}">
+
+                <div class="form-group">
+                    <input type="text" name="username" id="username" placeholder="Enter a username" required>
+
+                    <div th:if="${error}" class="error-message">
+                        <span th:text="${error}"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary black-text">Continue</button>
+                </div>
+            </form>
+        </div>
+
+
+    </div>
+</div>
+</body>
+</html>

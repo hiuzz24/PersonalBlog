@@ -5,6 +5,7 @@ import com.he181180.personalblog.repository.UserRepository;
 import com.he181180.personalblog.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 
@@ -28,4 +29,22 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
+    @Override
+    public Optional<Users> findUserByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+    @Override
+    public String saveAvatar(MultipartFile file, String username) {
+        // Implement the logic to save the avatar file and return the URL
+        // This is a placeholder implementation
+        return "/img/default-avatar.png"; // Replace with actual file saving logic
+    }
+    @Override
+    public Users findByUsername(String username) {
+        return userRepository.findByUsername(username).orElse(null);
+    }
+    @Override
+    public Users saveUser(Users user) {
+        return userRepository.save(user);
+    }
 }
