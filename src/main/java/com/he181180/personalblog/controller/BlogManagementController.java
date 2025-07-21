@@ -15,6 +15,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
@@ -136,9 +139,19 @@ public class BlogManagementController {
         }
 
     // Xóa bài viết
-    @RequestMapping("/delete/{postID}")
-    public String deletePost(@PathVariable int postID) {
-        postService.deletePost(postID);
-        return "redirect:/blog";
+    @PostMapping("/posts/delete/{id}")
+    public String deletePost(@PathVariable int id, Authentication authentication) {
+        Optional<Posts> postOpt = postService.getPostByID(id);
+
+        if (postOpt.isPresent()) {
+            Posts post = postOpt.get();
+
+            if (post.getUsers().getUsername().equals(authentication.getName())) {
+                postService.deletePost(id);
+            }
+        }
+
+        return "redirect:/dashboard/posts?deleted";
     }
-    }
+
+}

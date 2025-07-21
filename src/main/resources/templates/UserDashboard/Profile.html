@@ -20,6 +20,8 @@
     <link th:href="@{/assets/vendor/aos/aos.css}" rel="stylesheet">
     <link th:href="@{/assets/vendor/swiper/swiper-bundle.min.css}" rel="stylesheet">
     <link th:href="@{/assets/css/main.css}" rel="stylesheet">
+
+
 </head>
 
     <script>
@@ -141,9 +143,8 @@
         </nav>
         <div class="header-social-links d-flex align-items-center pe-3" style="margin-left:auto;">
             <div class="dropdown">
-                <a href="#" class="d-flex align-items-center dropdown-toggle"
-                   id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-gear-fill fs-4"></i>
+                <a href="#" class="d-flex align-items-center" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding:0; border:none; background:none;">
+                    <img th:src="${user != null && user.avatarUrl != null && !#strings.isEmpty(user.avatarUrl) ? user.avatarUrl : '/assets/img/user.png'}" alt="avatar" style="width:36px; height:36px; border-radius:50%; object-fit:cover;">
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                     <li>
@@ -222,9 +223,9 @@
         </ul>
     </nav>
 <!-- Main Content -->
-<main class="main">
+<main class="main container ">
     <div class="container mt-5">
-        <div class="row">
+        <div class="row" >
         <!-- Thông báo -->
             <div th:if="${param.success}" class="alert alert-success alert-dismissible fade show" role="alert">
                 <i class="bi bi-check-circle me-2"></i>
@@ -233,9 +234,8 @@
             </div>
 
             <!-- Title -->
-            <div class="section-title">
-                <h2>
-                    <i class="bi bi-person"></i>
+                <h2 class="d-flex align-items-center" >
+                    <i class="bi bi-person text me-2" ></i>
                     <span>My profile</span>
                 </h2>
             </div>

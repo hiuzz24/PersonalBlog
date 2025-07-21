@@ -1,13 +1,17 @@
 package com.he181180.personalblog.controller;
 
+import com.he181180.personalblog.DTO.CommentReplyDTO;
+import com.he181180.personalblog.entity.Comments;
 import com.he181180.personalblog.entity.Posts;
 import com.he181180.personalblog.entity.Users;
+import com.he181180.personalblog.service.CommentService;
 import com.he181180.personalblog.service.PostService;
 import com.he181180.personalblog.service.TagService;
 import com.he181180.personalblog.service.TagService;
 import com.he181180.personalblog.service.UserService;
 import org.aspectj.apache.bcel.generic.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +28,13 @@ public class PostController {
 
     @Autowired
     private PostService postService;
+
+    @Autowired
+    private CommentService commentService;
+
+    @Autowired
+    private UserService userService;
+
     @Autowired
     private TagService tagService;
 
@@ -76,6 +87,18 @@ public class PostController {
                 .limit(5).collect(Collectors.toList());
         model.addAttribute("relatedPosts",randomFive);
         model.addAttribute("postDetail",posts);
+        model.addAttribute("post", posts);
+        int countComment = commentService.countCommentByPostId(postID);
+        List<Comments> comments = commentService.getCommentsByPostId(postID);
+
+        // Initialize CommentReplyDTO with post information
+        CommentReplyDTO commentReplyDTO = CommentReplyDTO.builder()
+                .post(posts)
+                .build();
+        model.addAttribute("commentReplyDTO", commentReplyDTO);
+
+        model.addAttribute("comments", comments);
+        model.addAttribute("countComment", countComment);
         return "postDetail";
     }
 

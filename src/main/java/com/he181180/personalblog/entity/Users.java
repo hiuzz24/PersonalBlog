@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -40,7 +41,7 @@ public class Users {
     @Column(name = "avatar_url")
     private String avatarUrl;
 
-    @Column(name = "role")
+    @Column(name = "role",nullable = false)
     private String role;
 
     @Column(name = "created_at",insertable = false)
