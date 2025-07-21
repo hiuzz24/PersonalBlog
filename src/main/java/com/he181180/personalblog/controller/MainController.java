@@ -142,8 +142,4 @@ public class MainController {
 
         return "redirect:/profile";
     }
-
-
-
-
 }

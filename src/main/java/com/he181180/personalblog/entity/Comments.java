@@ -40,6 +40,6 @@ public class Comments {
     private Comments parentComment;
 
     @OneToMany(mappedBy = "parentComment",cascade = CascadeType.ALL)
-    private ArrayList<Comments> children ;
+    private List<Comments> children ;
 
 }
