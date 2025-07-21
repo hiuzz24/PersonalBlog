@@ -150,6 +150,17 @@ h6 {
   padding: 10px 0;
   transition: all 0.5s;
   z-index: 997;
+  background: #f2f2f2;
+  box-shadow: 0 2px 8px rgba(60,60,60,0.07);
+  height: 56px;
+  border-bottom: none;
+}
+
+.header .container-fluid {
+  height: 56px;
+  min-height: 56px;
+  padding-left: 0;
+  padding-right: 0;
 }
 
 .header .logo {
@@ -168,8 +179,68 @@ h6 {
   color: var(--heading-color);
 }
 
+.logo .sitename {
+  color: #535353 !important;
+  font-weight: 600;
+  font-size: 1.5rem;
+  margin-bottom: 0;
+  letter-spacing: 0.5px;
+}
+
+.header .navmenu ul {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  list-style: none;
+  align-items: center;
+  height: 56px;
+}
+
+.header .navmenu ul li {
+  position: relative;
+}
+
+.header .navmenu ul li a,
+.header .navmenu ul li a:focus {
+  color: #444;
+  padding: 0 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  line-height: 56px;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.header .navmenu ul li a:hover {
+  color: #1a73e8;
+}
+
 .header .header-social-links {
-  padding-right: 15px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header .dropdown-toggle {
+  color: #444;
+  font-size: 1.25rem;
+  padding: 0 8px;
+  background: none;
+  border: none;
+}
+
+.header .dropdown-menu {
+  font-size: 1rem;
+}
+
+.header .bi-list {
+  font-size: 28px !important;
+  width: 28px;
+  height: 28px;
 }
 
 .header .header-social-links a {
@@ -2241,4 +2312,4 @@ section,
 }
 .avatar-container:hover .upload-button {
   opacity: 1; /* Hiển thị khi hover */
-}>
+}

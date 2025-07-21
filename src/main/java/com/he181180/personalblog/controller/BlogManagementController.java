@@ -32,12 +32,21 @@ public class BlogManagementController {
 
     @GetMapping
     public String getPostsByUserId(Authentication authentication,Model model) {
-        String username = authentication.getName();
-        Optional<Users> user = userService.findUserByUsername(username);
-        if (user.isPresent()) {
-            List<Posts> userPosts = postService.getPostByUserID(user.get().getUserID());
+        Users user = null;
+        if (authentication != null) {
+            Object principal = authentication.getPrincipal();
+            if (principal instanceof org.springframework.security.oauth2.core.user.OAuth2User oauth2User) {
+                String email = oauth2User.getAttribute("email");
+                user = userService.findUserByEmail(email).orElse(null);
+            } else {
+                String username = authentication.getName();
+                user = userService.findUserByUsername(username).orElse(null);
+            }
+        }
+        if (user != null) {
+            List<Posts> userPosts = postService.getPostByUserID(user.getUserID());
             model.addAttribute("posts", userPosts);
-            model.addAttribute("user", user.get());
+            model.addAttribute("user", user);
             model.addAttribute("activeTab", "posts");
         }
         return "UserDashboard/SelfBlogManagement";
@@ -133,5 +142,3 @@ public class BlogManagementController {
         return "redirect:/blog";
     }
     }
-
-
