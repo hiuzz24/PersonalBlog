@@ -102,16 +102,28 @@ public class ProfileController {
         }
         user.setBio(userUpdate.getBio());
 
+        // Handle avatar file upload
         if (avatarFile != null && !avatarFile.isEmpty()) {
-            String savedUrl = saveFileSomewhere(avatarFile);
-            if (savedUrl != null) {
-                user.setAvatarUrl(savedUrl);
+            // Save to src/main/resources/static/img/ so it works in both dev and prod
+            String uploadDir = System.getProperty("user.dir") + "/src/main/resources/static/img/";
+            File dir = new File(uploadDir);
+            if (!dir.exists()) dir.mkdirs();
+            String fileName = System.currentTimeMillis() + "_" + avatarFile.getOriginalFilename();
+            File dest = new File(dir, fileName);
+            try {
+                avatarFile.transferTo(dest);
+                user.setAvatarUrl("/img/" + fileName);
+            } catch (IOException e) {
+                e.printStackTrace();
+                // Optionally, add error handling/flash message
             }
         } else if (avatarUrl != null && !avatarUrl.trim().isEmpty()) {
             user.setAvatarUrl(avatarUrl.trim());
+        } else if (user.getAvatarUrl() == null || user.getAvatarUrl().isEmpty()) {
+            // Set default avatar if none is set
+            user.setAvatarUrl("/img/default-avatar.png");
         }
-
-        userService.updateUser(user);
+        userService.saveUser(user);
 
         return "redirect:/profile";
     }

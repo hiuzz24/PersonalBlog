@@ -105,6 +105,7 @@
     });
     document.getElementById('avatarFile').addEventListener('change', function() {
         document.getElementById('avatarUrl').value = '';
+        document.getElementById('avatarForm').submit(); // Auto-submit on file select
     });
     document.getElementById('avatarUrl').addEventListener('input', function() {
         document.getElementById('avatarFile').value = '';
@@ -250,7 +251,7 @@
                             <!-- Photo change frame -->
                             <div id="changeBox" class="change-avatar-box mt-2" style="display:none; width:100%; max-width:220px;">
                                 <label class="btn btn-sm btn-secondary mb-2 w-100 d-block text-center">
-                                    Upload image from computer
+                                        Upload image from computer
                                     <input type="file" name="avatarFile" id="avatarFile" accept="image/*" style="display:none;">
                                 </label>
                                 <input type="url" name="avatarUrl" id="avatarUrl" class="form-control mt-2" placeholder="Paste image URL">
