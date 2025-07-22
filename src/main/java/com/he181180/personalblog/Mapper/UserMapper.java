@@ -8,8 +8,6 @@ import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
-    Users toUser(Users user);
-
 
 //    @Mapping(target = "isDeleted", ignore = true)
     void updateUser( @MappingTarget Users user, UserUpdateDTO userUpdateDTO);

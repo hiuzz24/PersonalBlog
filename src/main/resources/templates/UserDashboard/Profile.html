@@ -244,19 +244,26 @@
             <!-- Profile Info -->
             <div class="row gy-4 align-items-center">
                 <div class="col-md-4 text-center">
-                    <form th:action="@{/profile/updateAvatar}" method="post" enctype="multipart/form-data" id="avatarForm">
+                    <form th:action="@{/profile/updateAvatar}" method="post" enctype="multipart/form-data"
+                          id="avatarForm">
                         <div class="avatar-wrapper position-relative d-flex flex-column align-items-center">
                             <!-- Avatar -->
-                            <img th:src="${user.avatarUrl}" id="previewAvatar" alt="Avatar" class="profile-avatar mb-2" style="cursor:pointer;" onclick="toggleChangeBox()">
+                            <img th:src="${avatarSrc}" id="previewAvatar" alt="Avatar" class="profile-avatar mb-2"
+                                 style="cursor:pointer;" onclick="toggleChangeBox()">
                             <!-- Photo change frame -->
-                            <div id="changeBox" class="change-avatar-box mt-2" style="display:none; width:100%; max-width:220px;">
+                            <div id="changeBox" class="change-avatar-box mt-2"
+                                 style="display:none; width:100%; max-width:220px;">
                                 <label class="btn btn-sm btn-secondary mb-2 w-100 d-block text-center">
-                                        Upload image from computer
-                                    <input type="file" name="avatarFile" id="avatarFile" accept="image/*" style="display:none;">
+                                    Upload image from computer
+                                    <input type="file" name="avatarFile" id="avatarFile" accept="image/*"
+                                           style="display:none;">
                                 </label>
-                                <input type="url" name="avatarUrl" id="avatarUrl" class="form-control mt-2" placeholder="Paste image URL">
+                                <input type="url" name="avatarUrl" id="avatarUrl" class="form-control mt-2"
+                                       placeholder="Paste image URL">
                                 <div class="d-flex justify-content-center gap-2 mt-2">
-                                    <button type="button" class="btn btn-info btn-sm" onclick="handlePreview()">Preview</button>
+                                    <button type="button" class="btn btn-info btn-sm" onclick="handlePreview()">
+                                        Preview
+                                    </button>
                                     <button type="submit" class="btn btn-sm btn-primary">Save image</button>
                                 </div>
                             </div>

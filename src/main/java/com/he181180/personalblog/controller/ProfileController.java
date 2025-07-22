@@ -113,9 +113,10 @@ public class ProfileController {
             try {
                 avatarFile.transferTo(dest);
                 user.setAvatarUrl("/img/" + fileName);
+                System.out.println("Avatar uploaded successfully: " + user.getAvatarUrl());
             } catch (IOException e) {
                 e.printStackTrace();
-                // Optionally, add error handling/flash message
+                return "redirect:/profile?error=upload-failed";
             }
         } else if (avatarUrl != null && !avatarUrl.trim().isEmpty()) {
             user.setAvatarUrl(avatarUrl.trim());
@@ -125,7 +126,8 @@ public class ProfileController {
         }
         userService.saveUser(user);
 
-        return "redirect:/profile";
+        // Add cache-busting parameter to force browser to reload the image
+        return "redirect:/profile?updated=" + System.currentTimeMillis();
     }
 
     @PostMapping("/update")
@@ -138,7 +140,6 @@ public class ProfileController {
         userService.saveUser(user);
         model.addAttribute("user", user);
         System.out.println(userUpdate.toString());
-        System.out.println(user.toString());
         return "UserDashboard/Profile";
     }
 
