@@ -265,3 +265,135 @@ input[type="checkbox"]:checked + .tag-label {
         width: 100%;
     }
 }
+/*--------------------------------------------------------------
+# Global Header
+--------------------------------------------------------------*/
+.headera {
+    --background-color: #f2f2f2;
+    color: var(--default-color);
+    background-color: var(--background-color);
+    padding: 10px 0;
+    transition: all 0.5s;
+    z-index: 997;
+    background: #f2f2f2;
+    box-shadow: 0 2px 8px rgba(60,60,60,0.07);
+    height: 56px;
+    border-bottom: none;
+}
+
+.headera .container-fluid {
+    height: 56px;
+    min-height: 56px;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.headera .logo {
+    line-height: 1;
+}
+
+.headera .logo img {
+    max-height: 36px;
+    margin-right: 8px;
+}
+
+.headera .logo h2 {
+    font-size: 30px;
+    margin: 0;
+    font-weight: 500;
+    color: var(--heading-color);
+}
+
+.logo .sitename {
+    color: #535353 !important;
+    font-weight: 600;
+    font-size: 1.5rem;
+    margin-bottom: 0;
+    letter-spacing: 0.5px;
+}
+
+.headera .navmenu ul {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    list-style: none;
+    align-items: center;
+    height: 56px;
+}
+
+.headera .navmenu ul li {
+    position: relative;
+}
+
+.headera .navmenu ul li a,
+.headera .navmenu ul li a:focus {
+    color: #444;
+    padding: 0 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    line-height: 56px;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.headera .navmenu ul li a:hover {
+    color: #1a73e8;
+}
+
+.headera .header-social-links {
+    height: 56px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.headera .dropdown-toggle {
+    color: #444;
+    font-size: 1.25rem;
+    padding: 0 8px;
+    background: none;
+    border: none;
+}
+
+.headera .dropdown-menu {
+    font-size: 1rem;
+}
+
+.headera .bi-list {
+    font-size: 28px !important;
+    width: 28px;
+    height: 28px;
+}
+
+.headera .header-social-links a {
+    color: color-mix(in srgb, var(--default-color), transparent 40%);
+    padding-left: 6px;
+    display: inline-block;
+    transition: 0.3s;
+    font-size: 16px;
+}
+
+.headera .header-social-links a:hover {
+    color: var(--accent-color);
+}
+
+.headera .header-social-links a i {
+    line-height: 0px;
+}
+
+@media (max-width: 1200px) {
+    .headera .logo {
+        order: 1;
+    }
+
+    .headera .header-social-links {
+        order: 2;
+    }
+
+    .headera .navmenu {
+        order: 3;
+    }
+}
