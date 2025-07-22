@@ -4,6 +4,7 @@ import com.he181180.personalblog.entity.Users;
 import com.he181180.personalblog.repository.UserRepository;
 import com.he181180.personalblog.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,6 +14,8 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public Optional<Users> findUserByUsername(String username) {
@@ -46,5 +49,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public Users saveUser(Users user) {
         return userRepository.save(user);
+    }
+    @Override
+    public void changeUserPassword(Users user, String password) {
+        user.setPassword(passwordEncoder.encode(password));
+        userRepository.save(user);
     }
 }

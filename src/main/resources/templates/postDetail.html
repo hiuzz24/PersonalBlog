@@ -312,7 +312,7 @@
                         <div class="post-item" th:each="relatedPost : ${relatedPosts}">
                             <img th:src="@{${relatedPost.imageUrl}}" alt="" class="flex-shrink-0">
                             <div>
-                                <h4><a href="blog-details.html" th:text="${relatedPost.title}"></a></h4>
+                                <a th:href="@{'/PostDetail/' + ${relatedPost.postID}}" th:text="${relatedPost.title}"></a>
                                 <time th:text="${#dates.format(relatedPost.publishedAt, 'dd MMM yyyy')}"></time>
                             </div>
                         </div><!-- End recent post item-->

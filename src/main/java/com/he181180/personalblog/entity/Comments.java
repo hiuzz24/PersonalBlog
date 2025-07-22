@@ -39,7 +39,7 @@ public class Comments {
     @JoinColumn(name = "parent_comment_id")
     private Comments parentComment;
 
-    @OneToMany(mappedBy = "parentComment",cascade = CascadeType.ALL)
+    @Transient
     private ArrayList<Comments> children ;
 
 }
