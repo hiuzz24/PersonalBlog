@@ -11,13 +11,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Timestamp;
 import java.util.*;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
@@ -70,6 +67,7 @@ public class BlogManagementController {
                            @RequestParam List<Integer> tagID,
                            @RequestParam String body,
                            @RequestParam String imageUrl,
+                           @RequestParam(required = false) MultipartFile fileImage,
                            Authentication authentication,
                            Model model) {
 
@@ -89,6 +87,13 @@ public class BlogManagementController {
             post.setUsers(user.get());
             post.setPublished(true);
             post.setUpdatedAt(new Timestamp(new Date().getTime()));
+            try {
+                String finalImage = postService.handleImageUrl(imageUrl, fileImage);
+                post.setImageUrl(finalImage);
+            } catch (Exception e) {
+                model.addAttribute("error", "Lỗi khi xử lý ảnh: " + e.getMessage());
+                return "redirect:/blog/create";
+            }
             postService.savePost(post);
             return "redirect:/blog";
         }
@@ -115,28 +120,39 @@ public class BlogManagementController {
     @RequestMapping("/saveUpdate")
     public String saveUpdate(@RequestParam int postID,
                             @RequestParam String title,
-                           @RequestParam List<Integer> tagID,
-                           @RequestParam String content,
-                           @RequestParam String body,
-                           @RequestParam String imageUrl,
-                             Authentication authentication) {
+                            @RequestParam List<Integer> tagID,
+                            @RequestParam String content,
+                            @RequestParam String body,
+                            @RequestParam String imageUrl,
+                            @RequestParam(required = false) MultipartFile fileImage,
+                            Authentication authentication) {
         String username = authentication.getName();
         Optional<Users> user = userService.findUserByUsername(username);
         List<Tags> tags = tagService.findTagsByTagID(tagID);
 
-        Posts post = postService.findPostByPostID(postID);
-        post.setTitle(title);
-        post.setContent(content);
-        post.setImageUrl(imageUrl);
-        post.setTags(tags);
-        post.setBody(body);
-        post.setPublishedAt(post.getPublishedAt());
-        post.setUsers(user.get());
-        post.setPublished(true);
-        post.setUpdatedAt(new Timestamp(new Date().getTime()));
-        postService.savePost(post);
-        return "redirect:/blog";
+        if (user.isPresent()) {
+            Posts post = postService.findPostByPostID(postID);
+            post.setTitle(title);
+            post.setContent(content);
+            post.setImageUrl(imageUrl);
+            post.setTags(tags);
+            post.setBody(body);
+            post.setPublishedAt(post.getPublishedAt());
+            post.setUsers(user.get());
+            post.setPublished(true);
+            post.setUpdatedAt(new Timestamp(new Date().getTime()));
+            try {
+                String finalImage = postService.handleImageUrl(imageUrl, fileImage);
+                post.setImageUrl(finalImage);
+            } catch (Exception e) {
+                // Optionally, you can add a model attribute for error and redirect
+                return "redirect:/blog/edit/" + postID + "?error=img";
+            }
+            postService.savePost(post);
+            return "redirect:/blog";
         }
+        return "redirect:/blog/edit/" + postID + "?error=user";
+    }
 
     // Xóa bài viết
     @PostMapping("/posts/delete/{id}")

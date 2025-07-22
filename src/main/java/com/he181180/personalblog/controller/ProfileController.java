@@ -133,7 +133,7 @@ public class ProfileController {
                                 @ModelAttribute("userUpdateDTO")  @Valid UserUpdateDTO userUpdate) {
         String useName = authentication.getName();
         Optional<Users> usersOptional = userService.findUserByUsername(useName);
-        Users user = usersOptional.get() ;
+        Users user = usersOptional.get();
         userMapper.updateUser(user,userUpdate);
         userService.saveUser(user);
         model.addAttribute("user", user);

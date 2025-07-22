@@ -155,6 +155,7 @@
                 <section id="blog-comments" class="blog-comments section">
 
                     <div class="container">
+                        <h4 class="comments-count" th:text="${countComment} +' comments'"></h4>
 
                         <ol class="comment-list" style="list-style: none; padding-left: 0;">
                             <li class="comment" th:each="parent : ${comments}">

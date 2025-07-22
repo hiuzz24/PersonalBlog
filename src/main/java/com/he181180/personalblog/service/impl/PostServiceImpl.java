@@ -5,9 +5,15 @@ import com.he181180.personalblog.repository.PostRepository;
 import com.he181180.personalblog.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -85,4 +91,21 @@ public class PostServiceImpl implements PostService {
             postRepository.save(post);
         }
     }
+
+    @Override
+    public String handleImageUrl(String imageUrl, MultipartFile fileImage) throws IOException {
+        if(imageUrl != null && !imageUrl.isEmpty()){
+            return imageUrl;
+        }
+         if(!fileImage.isEmpty()){
+             String uploadDir = "D:/uploads/";
+             String fileName = UUID.randomUUID() + "_" +fileImage.getOriginalFilename();
+             Files.createDirectories(Path.of(uploadDir));
+             Path path = Path.of(uploadDir + fileName);
+             Files.copy(fileImage.getInputStream(),path, StandardCopyOption.REPLACE_EXISTING);
+             return "/uploads/" +fileName;
+    }
+         return null;
+}
+
 }

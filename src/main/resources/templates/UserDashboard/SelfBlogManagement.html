@@ -164,9 +164,9 @@
                 <div th:if="${posts}">
                     <div class="post-card" th:each="post : ${posts}">
                         <div class="row">
-                            <div class="col-md-2">
+                            <div class="col-md-2 d-flex align-items-center justify-content-center">
                                 <img th:src="${post.imageUrl ?: '/img/default-post.png'}"
-                                     alt="Post image" class="post-image">
+                                     alt="Post image" class="post-image" style="width:100px; height:100px; object-fit:cover; border-radius:8px;">
                             </div>
 
                             <div class="col-md-7">
@@ -223,9 +223,6 @@
         </div>
     </div>
 </main>
-
-
-
 
 <!-- Delete Confirmation Modal -->
 <div class="modal fade" id="deleteModal" tabindex="-1">
