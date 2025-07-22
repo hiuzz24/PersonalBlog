@@ -24,7 +24,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login", "/oauth2/**",
                                          "/register", "/img/**",
-                                         "/css/**", "/forgotPassword", "/resetPassword").permitAll()
+                                         "/css/**", "/forgotPassword", "/resetPassword", "/savePassword").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(login -> login
@@ -41,6 +41,8 @@ public class SecurityConfig {
                         .logoutSuccessUrl("/login?logout")
                         .permitAll()
                 );
+           http.csrf(csrf -> csrf.disable());
+
         return http.build();
     }
 

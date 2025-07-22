@@ -12,7 +12,8 @@
     <!-- Fonts -->
     <link th:href="@{https://fonts.googleapis.com}" rel="preconnect">
     <link th:href="@{https://fonts.gstatic.com}" rel="preconnect" crossorigin>
-    <link th:href="@{https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700;1,800&display=swap}" rel="stylesheet">
+    <link th:href="@{https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700;1,800&display=swap}"
+          rel="stylesheet">
 
     <!-- CSS -->
     <link th:href="@{/assets/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
@@ -22,7 +23,7 @@
     <link th:href="@{/assets/css/main.css}" rel="stylesheet">
 </head>
 
-    <script>
+<script>
     function toggleSidebar() {
         const sidebar = document.getElementById('sidebark');
         sidebar.classList.toggle('closed');
@@ -49,6 +50,7 @@
     function triggerFileInput() {
         document.getElementById('avatarFile').click();
     }
+
     function previewFile() {
         const input = document.getElementById('avatarFile');
         const preview = document.getElementById('avatarPreview');
@@ -60,6 +62,7 @@
             mainPreview.src = url;
         }
     }
+
     function previewUrl() {
         const url = document.getElementById('avatarUrl').value;
         const preview = document.getElementById('avatarPreview');
@@ -70,9 +73,11 @@
             mainPreview.src = url;
         }
     }
+
     function saveAvatar() {
         document.getElementById('avatarForm').submit();
     }
+
     function handlePreview() {
         const fileInput = document.getElementById('avatarFile');
         const urlInput = document.getElementById('avatarUrl');
@@ -88,6 +93,7 @@
     function showChangeBox() {
         document.getElementById('changeBox').style.display = 'block';
     }
+
     function hideChangeBox() {
         document.getElementById('changeBox').style.display = 'none';
     }
@@ -103,6 +109,7 @@
     });
     document.getElementById('avatarFile').addEventListener('change', function() {
         document.getElementById('avatarUrl').value = '';
+        document.getElementById('avatarForm').submit(); // Auto-submit on file select
     });
     document.getElementById('avatarUrl').addEventListener('input', function() {
         document.getElementById('avatarFile').value = '';
@@ -141,9 +148,8 @@
         </nav>
         <div class="header-social-links d-flex align-items-center pe-3" style="margin-left:auto;">
             <div class="dropdown">
-                <a href="#" class="d-flex align-items-center dropdown-toggle"
-                   id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-gear-fill fs-4"></i>
+                <a href="#" class="d-flex align-items-center" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding:0; border:none; background:none;">
+                    <img th:src="${user != null && user.avatarUrl != null && !#strings.isEmpty(user.avatarUrl) ? user.avatarUrl : '/assets/img/user.png'}" alt="avatar" style="width:36px; height:36px; border-radius:50%; object-fit:cover;">
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                     <li>
@@ -222,9 +228,9 @@
         </ul>
     </nav>
 <!-- Main Content -->
-<main class="main">
+<main class="main container ">
     <div class="container mt-5">
-        <div class="row">
+        <div class="row" >
         <!-- Thông báo -->
             <div th:if="${param.success}" class="alert alert-success alert-dismissible fade show" role="alert">
                 <i class="bi bi-check-circle me-2"></i>
@@ -233,9 +239,8 @@
             </div>
 
             <!-- Title -->
-            <div class="section-title">
-                <h2>
-                    <i class="bi bi-person"></i>
+                <h2 class="d-flex align-items-center" >
+                    <i class="bi bi-person text me-2" ></i>
                     <span>My profile</span>
                 </h2>
             </div>
@@ -250,7 +255,7 @@
                             <!-- Photo change frame -->
                             <div id="changeBox" class="change-avatar-box mt-2" style="display:none; width:100%; max-width:220px;">
                                 <label class="btn btn-sm btn-secondary mb-2 w-100 d-block text-center">
-                                    Upload image from computer
+                                        Upload image from computer
                                     <input type="file" name="avatarFile" id="avatarFile" accept="image/*" style="display:none;">
                                 </label>
                                 <input type="url" name="avatarUrl" id="avatarUrl" class="form-control mt-2" placeholder="Paste image URL">
@@ -302,12 +307,7 @@
 </div>
 </main>
 
-<!-- Footer -->
-<footer id="footer" class="footer dark-background">
-    <div class="container copyright text-center mt-4">
-        <p>© <span>Copyright</span> <strong class="px-1 sitename">PersonalBlog</strong> <span>All Rights Reserved</span></p>
-    </div>
-</footer>
+
 
 <!-- Scroll Top -->
 <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>

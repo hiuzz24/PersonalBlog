@@ -72,9 +72,8 @@
 
         <div class="header-social-links">
             <div class="dropdown">
-                <a href="#" class="d-flex align-items-center dropdown-toggle"
-                   id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-gear-fill fs-4"></i>
+                <a href="#" class="d-flex align-items-center" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding:0; border:none; background:none;">
+                    <img th:src="${user != null && user.avatarUrl != null && !#strings.isEmpty(user.avatarUrl) ? user.avatarUrl : '/assets/img/user.png'}" alt="avatar" style="width:36px; height:36px; border-radius:50%; object-fit:cover;">
                 </a>
 
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
@@ -144,7 +143,7 @@
                             <div class="meta-bottom">
                                 <i class="bi bi-tags"></i>
                                 <ul class="tags" th:each="tag: ${postDetail.tags}">
-                                    <li><a th:href="@{/tags/{tagID}(tagID = ${tag.tagID})}" th:text="${tag.tagName}"></a></li>
+                                    <li><a th:href="@{/tags/{tagID}(tagID = ${tag.tagName})}" th:text="${tag.tagName}"></a></li>
                                 </ul>
                             </div><!-- End meta bottom -->
 
@@ -157,99 +156,59 @@
                 <section id="blog-comments" class="blog-comments section">
 
                     <div class="container">
+                        <h4 class="comments-count" th:text="${countComment} +' comments'"></h4>
 
-                        <h4 class="comments-count">8 Comments</h4>
-
-                        <div id="comment-1" class="comment">
-                            <div class="d-flex">
-                                <div class="comment-img"><img src="assets/img/blog/comments-1.jpg" alt=""></div>
-                                <div>
-                                    <h5><a href="">Georgia Reader</a> <a href="#" class="reply"><i class="bi bi-reply-fill"></i> Reply</a></h5>
-                                    <time datetime="2020-01-01">01 Jan,2022</time>
-                                    <p>
-                                        Et rerum totam nisi. Molestiae vel quam dolorum vel voluptatem et et. Est ad aut sapiente quis molestiae est qui cum soluta.
-                                        Vero aut rerum vel. Rerum quos laboriosam placeat ex qui. Sint qui facilis et.
-                                    </p>
-                                </div>
-                            </div>
-                        </div><!-- End comment #1 -->
-
-                        <div id="comment-2" class="comment">
-                            <div class="d-flex">
-                                <div class="comment-img"><img src="assets/img/blog/comments-2.jpg" alt=""></div>
-                                <div>
-                                    <h5><a href="">Aron Alvarado</a> <a href="#" class="reply"><i class="bi bi-reply-fill"></i> Reply</a></h5>
-                                    <time datetime="2020-01-01">01 Jan,2022</time>
-                                    <p>
-                                        Ipsam tempora sequi voluptatem quis sapiente non. Autem itaque eveniet saepe. Officiis illo ut beatae.
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div id="comment-reply-1" class="comment comment-reply">
-                                <div class="d-flex">
-                                    <div class="comment-img"><img src="assets/img/blog/comments-3.jpg" alt=""></div>
-                                    <div>
-                                        <h5><a href="">Lynda Small</a> <a href="#" class="reply"><i class="bi bi-reply-fill"></i> Reply</a></h5>
-                                        <time datetime="2020-01-01">01 Jan,2022</time>
-                                        <p>
-                                            Enim ipsa eum fugiat fuga repellat. Commodi quo quo dicta. Est ullam aspernatur ut vitae quia mollitia id non. Qui ad quas nostrum rerum sed necessitatibus aut est. Eum officiis sed repellat maxime vero nisi natus. Amet nesciunt nesciunt qui illum omnis est et dolor recusandae.
-
-                                            Recusandae sit ad aut impedit et. Ipsa labore dolor impedit et natus in porro aut. Magnam qui cum. Illo similique occaecati nihil modi eligendi. Pariatur distinctio labore omnis incidunt et illum. Expedita et dignissimos distinctio laborum minima fugiat.
-
-                                            Libero corporis qui. Nam illo odio beatae enim ducimus. Harum reiciendis error dolorum non autem quisquam vero rerum neque.
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div id="comment-reply-2" class="comment comment-reply">
-                                    <div class="d-flex">
-                                        <div class="comment-img"><img src="assets/img/blog/comments-4.jpg" alt=""></div>
-                                        <div>
-                                            <h5><a href="">Sianna Ramsay</a> <a href="#" class="reply"><i class="bi bi-reply-fill"></i> Reply</a></h5>
-                                            <time datetime="2020-01-01">01 Jan,2022</time>
-                                            <p>
-                                                Et dignissimos impedit nulla et quo distinctio ex nemo. Omnis quia dolores cupiditate et. Ut unde qui eligendi sapiente omnis ullam. Placeat porro est commodi est officiis voluptas repellat quisquam possimus. Perferendis id consectetur necessitatibus.
-                                            </p>
+                        <ol class="comment-list" style="list-style: none; padding-left: 0;">
+                            <li class="comment" th:each="parent : ${comments}">
+                                <div class="d-flex align-items-start">
+                                    <img class="avatar photo me-2" th:src="${parent.user.avatarUrl != null ? parent.user.avatarUrl : '/assets/img/user.png'}" alt="avatar" style="width:32px; height:32px; border-radius:50%; object-fit:cover; font-size:1.5rem;">
+                                    <div class="comment-body flex-grow-1">
+                                        <div class="comment-author vcard d-flex align-items-center mb-1">
+                                            <cite class="fn fw-bold me-1" style="font-size:1rem;" th:text="${parent.user.username}">User Name</cite>
+                                            <span th:if="${parent.createdAt != null}" class="text-muted ms-2" style="font-size:0.95rem;">| <span th:text="${#dates.format(parent.createdAt, 'yyyy-MM-dd HH:mm')}"></span></span>
+                                            <span th:if="${parent.createdAt == null}" class="text-muted ms-2">| No date</span>
                                         </div>
+                                        <p th:text="${parent.content}" style="font-size:1.08rem; border-radius:10px; padding:10px 16px; margin-bottom:0.5rem; line-height:1.7; font-family:'Inter', 'Segoe UI', Arial, sans-serif; letter-spacing:0.01em;">Comment content</p>
+                                        <div class="reply">
+                                            <div class="d-flex align-items-center gap-3 mb-1">
+                                                <a href="#" class="comment-reply-link" onclick="toggleReplyBox(event, this)">Reply</a>
+                                            </div>
+                                        </div>
+                                        <form action="/comments/add" method="post">
+                                            <div class="reply-box" style="display: none; margin-top: 10px; margin-bottom : 10px">
+                                                <input type="hidden" name="parentId" th:value="${parent.commentId}">
+                                                <input type="hidden" name="post.postID" th:value="${post.postID}">
+                                                <textarea placeholder="Enter your reply..." rows="3" name="content" class="form-control" required></textarea>
+                                                <button type="submit" class="btn btn-primary btn-sm mt-2">Submit Reply</button>
+                                            </div>
+                                        </form>
                                     </div>
-
-                                </div><!-- End comment reply #2-->
-
-                            </div><!-- End comment reply #1-->
-
-                        </div><!-- End comment #2-->
-
-                        <div id="comment-3" class="comment">
-                            <div class="d-flex">
-                                <div class="comment-img"><img src="assets/img/blog/comments-5.jpg" alt=""></div>
-                                <div>
-                                    <h5><a href="">Nolan Davidson</a> <a href="#" class="reply"><i class="bi bi-reply-fill"></i> Reply</a></h5>
-                                    <time datetime="2020-01-01">01 Jan,2022</time>
-                                    <p>
-                                        Distinctio nesciunt rerum reprehenderit sed. Iste omnis eius repellendus quia nihil ut accusantium tempore. Nesciunt expedita id dolor exercitationem aspernatur aut quam ut. Voluptatem est accusamus iste at.
-                                        Non aut et et esse qui sit modi neque. Exercitationem et eos aspernatur. Ea est consequuntur officia beatae ea aut eos soluta. Non qui dolorum voluptatibus et optio veniam. Quam officia sit nostrum dolorem.
-                                    </p>
                                 </div>
-                            </div>
-
-                        </div><!-- End comment #3 -->
-
-                        <div id="comment-4" class="comment">
-                            <div class="d-flex">
-                                <div class="comment-img"><img src="assets/img/blog/comments-6.jpg" alt=""></div>
-                                <div>
-                                    <h5><a href="">Kay Duggan</a> <a href="#" class="reply"><i class="bi bi-reply-fill"></i> Reply</a></h5>
-                                    <time datetime="2020-01-01">01 Jan,2022</time>
-                                    <p>
-                                        Dolorem atque aut. Omnis doloremque blanditiis quia eum porro quis ut velit tempore. Cumque sed quia ut maxime. Est ad aut cum. Ut exercitationem non in fugiat.
-                                    </p>
-                                </div>
-                            </div>
-
-                        </div><!-- End comment #4 -->
-
+                                <ul class="children" th:if="${parent.children != null and !parent.children.empty}">
+                                    <div th:replace="~{comment-recursive :: commentList(childComments=${parent.children})}"></div>
+                                </ul>
+                            </li>
+                        </ol>
                     </div>
+
+                    <script>
+                        function toggleReplyBox(event, element) {
+                            event.preventDefault(); // Chặn hành vi mặc định của thẻ <a>
+
+                            // Tìm phần tử cha gần nhất có class .comment
+                            let commentContainer = element.closest('.comment');
+
+                            // Tìm phần tử .reply-box bên trong comment đó
+                            let replyBox = commentContainer.querySelector('.reply-box');
+
+                            // Hiển thị hoặc ẩn phần nhập comment
+                            if (replyBox.style.display === "none") {
+                                replyBox.style.display = "block";
+                            } else {
+                                replyBox.style.display = "none";
+                            }
+                        }
+                    </script>
 
                 </section><!-- /Blog Comments Section -->
 
@@ -257,26 +216,27 @@
                 <section id="comment-form" class="comment-form section">
                     <div class="container">
 
-                        <form action="">
+                        <!-- Flash Messages -->
+                        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                            <span th:text="${success}"></span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
 
+                        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <span th:text="${error}"></span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+
+                        <form action="/comments/add" method="post" th:object="${commentReplyDTO}">
                             <h4>Post Comment</h4>
-                            <p>Your email address will not be published. Required fields are marked * </p>
-                            <div class="row">
-                                <div class="col-md-6 form-group">
-                                    <input name="name" type="text" class="form-control" placeholder="Your Name*">
-                                </div>
-                                <div class="col-md-6 form-group">
-                                    <input name="email" type="text" class="form-control" placeholder="Your Email*">
-                                </div>
-                            </div>
+                            <p>Share your thoughts about this post</p>
+
+                            <input type="hidden" th:field="*{post.postID}" th:value="${post.postID}">
+
                             <div class="row">
                                 <div class="col form-group">
-                                    <input name="website" type="text" class="form-control" placeholder="Your Website">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col form-group">
-                                    <textarea name="comment" class="form-control" placeholder="Your Comment*"></textarea>
+                                    <textarea th:field="*{content}" class="form-control" placeholder="Your Comment*"
+                                              rows="5" required></textarea>
                                 </div>
                             </div>
 

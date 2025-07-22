@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tạo bài viết mới</title>
+    <title>Create new post</title>
     <link rel="stylesheet" th:href="@{/css/blog.css}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -12,9 +12,9 @@
 </head>
 <body>
 <div class="container">
-    <h1>Tạo bài viết mới</h1>
+    <h1>Create new post</h1>
 
-    <form th:action="@{${formAction}}" method="post" class="blog-form">
+    <form th:action="@{${formAction}}" enctype="multipart/form-data" method="post" class="blog-form">
         <input type="hidden" name="postID" th:value="${post.postID}">
         <!-- Tiêu đề -->
         <div class="form-group">
@@ -29,18 +29,30 @@
 
         <!-- Ảnh đại diện -->
         <div class="form-group">
-            <label for="imageUrl">URL ảnh đại diện:</label>
-            <input type="url" id="imageUrl" name="imageUrl" th:value="${post.imageUrl}" class="form-control">
-            <div th:if="${post.imageUrl != null}">
-                <img th:src="@{${post.imageUrl}}" class="img-thumbnail mb-2" style="max-width: 200px;">
+            <label>Choose how to add post images:</label><br>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="imageOption" id="optionUrl" value="url" checked>
+                <label class="form-check-label" for="optionUrl">Enter URL</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="imageOption" id="optionUpload" value="upload">
+                <label class="form-check-label" for="optionUpload">Upload photo</label>
             </div>
         </div>
 
-        <div class="form-group">
-            <label for="fileImage" class="form-label">Ảnh bài viết:</label>
-            <input type="file" id="fileImage" name="fileImage" class="form-control" accept="image/*">
-            <img th:src="@{/img/user.png}" id="imgThumbnail" class="img-thumbnail" style="width: 200px;" alt="User Image">
+        <!-- Nhập URL ảnh -->
+        <div class="form-group" id="urlInputGroup">
+            <label for="imageUrl">Post image URL:</label>
+            <input type="url" id="imageUrl" name="imageUrl" th:value="${post.imageUrl}" class="form-control">
         </div>
+
+        <!-- Upload ảnh -->
+        <div class="form-group d-none" id="fileInputGroup">
+            <label for="fileImage" class="form-label">Select post image from file:</label>
+            <input type="file" id="fileImage" name="fileImage" class="form-control" accept="image/*">
+        </div>
+        <img th:src="${post.imageUrl != null} ? ${post.imageUrl} : @{/img/user.png}" id="imgThumbnail" class="img-thumbnail" style="width: 200px;" alt="User Image">
+
 
 
         <div class="form-group">
@@ -66,82 +78,115 @@
 
         <!-- Buttons -->
         <div class="form-actions">
-            <button type="submit" class="btn btn-primary">Đăng bài</button>
-            <a th:href="@{/blog}" class="btn btn-secondary">Hủy</a>
+            <button type="submit" class="btn btn-primary">Post</button>
+            <a th:href="@{/blog}" class="btn btn-secondary">Cancel</a>
         </div>
     </form>
 </div>
 
 <script>
-    ClassicEditor
-        .create(document.querySelector('#body'), {
-            mediaEmbed: {
-                previewsInData: true
-            },
-            toolbar: {
-                items: [
-                    'heading',
-                    '|',
-                    'bold',
-                    'italic',
-                    'link',
-                    'bulletedList',
-                    'numberedList',
-                    '|',
-                    'outdent',
-                    'indent',
-                    '|',
-                    'imageUpload',
-                    'blockQuote',
-                    'insertTable',
-                    'mediaEmbed',
-                    'undo',
-                    'redo',
-                    'alignment',
-                    'fontColor',
-                    'fontSize',
-                    'highlight'
-                ]
-            },
-            language: 'vi',
-            image: {
-                toolbar: [
-                    'imageTextAlternative',
-                    'imageStyle:full',
-                    'imageStyle:side'
-                ]
-            },
-            table: {
-                contentToolbar: [
-                    'tableColumn',
-                    'tableRow',
-                    'mergeTableCells'
-                ]
+    document.addEventListener("DOMContentLoaded", function () {
+        // Khởi tạo CKEditor
+        ClassicEditor
+            .create(document.querySelector('#body'), {
+                mediaEmbed: {
+                    previewsInData: true
+                },
+                toolbar: {
+                    items: [
+                        'heading',
+                        '|',
+                        'bold',
+                        'italic',
+                        'link',
+                        'bulletedList',
+                        'numberedList',
+                        '|',
+                        'outdent',
+                        'indent',
+                        '|',
+                        'imageUpload',
+                        'blockQuote',
+                        'insertTable',
+                        'mediaEmbed',
+                        'undo',
+                        'redo',
+                        'alignment',
+                        'fontColor',
+                        'fontSize',
+                        'highlight'
+                    ]
+                },
+                language: 'vi',
+                image: {
+                    toolbar: [
+                        'imageTextAlternative',
+                        'imageStyle:full',
+                        'imageStyle:side'
+                    ]
+                }
+            })
+            .then(editor => {
+                window.editor = editor;
+            })
+            .catch(error => {
+                console.error('Error initializing CKEditor:', error);
+            });
+
+        let imageUrl = document.getElementById("imageUrl");
+        let imageFile = document.getElementById("fileImage");
+
+        let radioUrl = document.getElementById("optionUrl");
+        let radioUpload = document.getElementById("optionUpload");
+        let urlInputGroup = document.getElementById("urlInputGroup");
+        let fileInputGroup = document.getElementById("fileInputGroup");
+
+        function toggleImageInput() {
+            if (radioUrl.checked) {
+                urlInputGroup.classList.remove("d-none");
+                fileInputGroup.classList.add("d-none");
+                imageUrl.disabled = false;
+                imageFile.disabled = true;
+            } else {
+                urlInputGroup.classList.add("d-none");
+                fileInputGroup.classList.remove("d-none");
+                imageUrl.disabled = true;
+                imageFile.disabled = false;
             }
-        })
-        .then(editor => {
-            window.editor = editor;
-        })
-        .catch(error => {
-            console.error('Error initializing CKEditor:', error);
+        }
+
+        radioUrl.addEventListener("change", toggleImageInput);
+        radioUpload.addEventListener("change", toggleImageInput);
+        toggleImageInput();
+
+        let fileImage = document.getElementById("fileImage");
+        fileImage.addEventListener("change", function () {
+            showThumbnail(this);
         });
 
-    document.addEventListener("DOMContentLoaded",function (){
-        let fileImage = document.getElementById("fileImage");
-        fileImage.addEventListener("change",function (){
-            showThumbnail(this);
-        })
-    })
-
-    function showThumbnail(fileInput){
-        let file = fileInput.files[0];
-        let reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = function (e){
-           let thumbnail = document.getElementById("imgThumbnail");
-           thumbnail.setAttribute('src',e.target.result);
+        function showThumbnail(fileInput) {
+            let file = fileInput.files[0];
+            let reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function (e) {
+                let thumbnail = document.getElementById("imgThumbnail");
+                thumbnail.setAttribute('src', e.target.result);
+            }
         }
-    }
+
+        let inputImageUrl = document.getElementById("imageUrl");
+        inputImageUrl.addEventListener("input",function (){
+            let thumbnail = document.getElementById("imgThumbnail");
+            if(inputImageUrl.value){
+                thumbnail.setAttribute('src',inputImageUrl.value);
+            }else{
+                thumbnail.setAttribute('src','/img/user.png');
+            }
+        })
+        if(inputImageUrl.value){
+            document.getElementById("imgThumbnail").setAttribute('src',inputImageUrl.value);
+        }
+    });
 </script>
 </body>
 </html>

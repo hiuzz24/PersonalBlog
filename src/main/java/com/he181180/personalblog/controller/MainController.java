@@ -95,7 +95,7 @@ public class MainController {
         newUser.setEmail(email);
         newUser.setPassword(passwordEncoder.encode(password));
         newUser.setRole("writer");
-
+        newUser.setAvatarUrl("/static/img/default-avatar.png");
         userRepository.save(newUser);
         return "redirect:/login";
     }
@@ -203,9 +203,10 @@ public class MainController {
         Calendar cal = Calendar.getInstance();
 
         if (passToken == null) {
-            model.addAttribute("tokenError", "The link is invalid: token cannot be found.");
+            model.addAttribute("tokenError", "The link is invalid: Invalid token.");
         } else if (passToken.getExpiryDate().before(cal.getTime())) {
-            model.addAttribute("tokenError", "The link is invalid: token has expired.");
+            passwordResetTokenRepository.delete(passToken);
+            model.addAttribute("tokenError", "The link is invalid: Token expired and is deleted.");
         } else {
             model.addAttribute("token", token);
         }
@@ -220,32 +221,33 @@ public class MainController {
 
     @PostMapping("/savePassword")
     public String savePassword(@RequestParam("newPassword") String newPassword,
-                                @RequestParam("token") String token,
+                               @RequestParam("token") String token,
                                Model model) {
 
         PasswordResetToken passToken = passwordResetTokenRepository.findByToken(token);
         Calendar cal = Calendar.getInstance();
         boolean faultyToken = false;
 
-        if (passToken != null) {
-            model.addAttribute("tokenError", "The link is invalid: token cannot be found.");
+        if (passToken == null) {
+            model.addAttribute("tokenError", "Error: Invalid token.");
             faultyToken = true;
         } else if (passToken.getExpiryDate().before(cal.getTime())) {
-            model.addAttribute("tokenError", "The link is invalid: token has expired.");
+            model.addAttribute("tokenError", "Error: Token expired and is deleted.");
+            passwordResetTokenRepository.delete(passToken);
             faultyToken = true;
         }
 
         if(faultyToken) {return "resetPassword";}
 
         Users user = passToken.getUser();
-        if (user == null) {
+        if (user != null) {
             userService.changeUserPassword(user, newPassword);
             passwordResetTokenRepository.delete(passToken);
             model.addAttribute("message", "Password reset successfully.");
             return "resetPassword";
         }
 
-        model.addAttribute("tokenError", "The link is invalid: user cannot be found through token.");
+        model.addAttribute("tokenError", "Error: User cannot be found through token.");
         return "resetPassword";
     }
 

@@ -69,9 +69,8 @@
         </nav>
         <div class="header-social-links d-flex align-items-center pe-3" style="margin-left:auto;">
             <div class="dropdown">
-                <a href="#" class="d-flex align-items-center dropdown-toggle"
-                   id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-gear-fill fs-4"></i>
+                <a href="#" class="d-flex align-items-center" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding:0; border:none; background:none;">
+                    <img th:src="${user != null && user.avatarUrl != null && !#strings.isEmpty(user.avatarUrl) ? user.avatarUrl : '/assets/img/user.png'}" alt="avatar" style="width:36px; height:36px; border-radius:50%; object-fit:cover;">
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                     <li>
@@ -151,97 +150,76 @@
     </nav>
 
 <!-- Main Content -->
-<main class="main-content">
-    <div class="row">
-    <!-- Thông báo -->
-    <div th:if="${param.created}" class="alert alert-success alert-dismissible fade show" role="alert">
-        <i class="bi bi-check-circle me-2"></i>
-        Successfully created!
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
+<main class="main container">
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="d-flex justify-content-between align-items-center mb-4" style="width: 100%;">
+                <h2 class="d-flex align-items-center" >
+                    <i class="bi bi-journal-text me-2" ></i>
+                    Blog Management
+                </h2>
+            </div>
+            <!-- Posts List -->
+            <div class="dashboard-card w-100" style="max-width: 1400px; margin: 0 auto;">
+                <div th:if="${posts}">
+                    <div class="post-card" th:each="post : ${posts}">
+                        <div class="row">
+                            <div class="col-md-2 d-flex align-items-center justify-content-center">
+                                <img th:src="${post.imageUrl ?: '/img/default-post.png'}"
+                                     alt="Post image" class="post-image" style="width:100px; height:100px; object-fit:cover; border-radius:8px;">
+                            </div>
 
-    <div th:if="${param.updated}" class="alert alert-info alert-dismissible fade show" role="alert">
-        <i class="bi bi-info-circle me-2"></i>
-        Successfully updated!
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-
-    <div th:if="${param.deleted}" class="alert alert-warning alert-dismissible fade show" role="alert">
-        <i class="bi bi-exclamation-triangle me-2"></i>
-        Successfully deleted!
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-
-    <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>
-            <i class="bi bi-journal-text me-2"></i>
-            Blog Management
-        </h2>
-        <a th:href="@{/dashboard/posts/create}" class="btn btn-primary">
-            <i class="bi bi-plus-circle me-2"></i>
-            Create new blog
-        </a>
-    </div>
-    <!-- Posts List -->
-    <div class="dashboard-card">
-        <div th:if="${posts}">
-            <div class="post-card" th:each="post : ${posts}">
-                <div class="row">
-                    <div class="col-md-2">
-                        <img th:src="${post.imageUrl ?: '/img/default-post.png'}"
-                             alt="Post image" class="post-image">
-                    </div>
-
-                    <div class="col-md-7">
-                        <h5 th:text="${post.title}">Title</h5>
-                        <p class="text-muted mb-2" th:text="${#strings.abbreviate(post.content, 150)}">
-                            Content
-                        </p>
-                        <div class="d-flex gap-3">
-                            <small class="text-muted">
-                                <i class="bi bi-calendar me-1"></i>
-                                <span th:text="${#dates.format(post.updatedAt, 'dd/MMMM/yyyy HH:mm')}">
+                            <div class="col-md-7">
+                                <h5 th:text="${post.title}">Title</h5>
+                                <p class="text-muted mb-2" th:text="${#strings.abbreviate(post.content, 150)}">
+                                    Content
+                                </p>
+                                <div class="d-flex gap-3">
+                                    <small class="text-muted">
+                                        <i class="bi bi-calendar me-1"></i>
+                                        <span th:text="${#dates.format(post.updatedAt, 'dd/MMMM/yyyy HH:mm')}">
                                         Updated date
                                     </span>
-                            </small>
-                            <small class="text-muted">
-                                <i class="bi bi-eye me-1"></i>
-                                <span th:text="${post.isPublished ? 'Public' : 'Waiting'}">
+                                    </small>
+                                    <small class="text-muted">
+                                        <i class="bi bi-eye me-1"></i>
+                                        <span th:text="${post.isPublished ? 'Public' : 'Waiting'}">
                                         Status
                                     </span>
-                            </small>
-                        </div>
-                    </div>
+                                    </small>
+                                </div>
+                            </div>
 
-                    <div class="col-md-3 text-end">
-                        <div class="btn-group" role="group">
-                            <a th:href="@{/PostDetail/{postID}(postID=${post.postID})}"
-                               class="btn btn-sm btn-outline-success" title="Xem">
-                                <i class="bi bi-eye"></i>
-                            </a>
-                            <a th:href="@{/blog/edit/{postID}(postID=${post.postID})}"
-                               class="btn btn-sm btn-outline-primary" title="Sửa">
-                                <i class="bi bi-pencil"></i>
-                            </a>
-                            <a th:href="@{/blog/delete/{postID}(postID=${post.postID})}"
-                               class="btn btn-sm btn-outline-danger" title="Xóa">
-                                <i class="bi bi-trash"></i>
-                            </a>
+                            <div class="col-md-3 text-end">
+                                <div class="btn-group" role="group">
+                                    <a th:href="@{/PostDetail/{postID}(postID=${post.postID})}"
+                                       class="btn btn-sm btn-outline-success" title="Xem">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a th:href="@{/blog/edit/{postID}(postID=${post.postID})}"
+                                       class="btn btn-sm btn-outline-primary" title="Sửa">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <a th:href="@{/blog/delete/{postID}(postID=${post.postID})}"
+                                       class="btn btn-sm btn-outline-danger" title="Xóa">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <div th:if="${posts}" class="text-center py-5">
-            <i class="bi bi-journal-x" style="font-size: 4rem; color: #ccc;"></i>
-            <h4 class="mt-3 text-muted">You have no posts</h4>
-            <p class="text-muted">You can create a new blog post.</p>
-            <a th:href="@{/blog/create}" class="btn btn-primary">
-                <i class="bi bi-plus-circle me-2"></i>
-                Create new blog
-            </a>
+                <div th:if="${posts}" class="text-center py-5">
+                    <i class="bi bi-journal-x" style="font-size: 4rem; color: #ccc;"></i>
+                    <h4 class="mt-3 text-muted">You have no posts</h4>
+                    <p class="text-muted">You can create a new blog post.</p>
+                    <a th:href="@{/blog/create}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle me-2"></i>
+                        Create new blog
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 </main>

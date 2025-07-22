@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +41,8 @@ public class Comments {
     private Comments parentComment;
 
     @Transient
-    private ArrayList<Comments> children ;
+    private List<Comments> children ;
 
+    @Column(name = "created_at")
+    private Timestamp createdAt;
 }
