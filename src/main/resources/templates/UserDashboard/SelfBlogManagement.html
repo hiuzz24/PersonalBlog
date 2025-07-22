@@ -193,15 +193,15 @@
                             <div class="col-md-3 text-end">
                                 <div class="btn-group" role="group">
                                     <a th:href="@{/PostDetail/{postID}(postID=${post.postID})}"
-                                       class="btn btn-sm btn-outline-success" title="Xem">
+                                       class="btn btn-sm btn-outline-success" title="View">
                                         <i class="bi bi-eye"></i>
                                     </a>
                                     <a th:href="@{/blog/edit/{postID}(postID=${post.postID})}"
-                                       class="btn btn-sm btn-outline-primary" title="Sửa">
+                                       class="btn btn-sm btn-outline-primary" title="Edit">
                                         <i class="bi bi-pencil"></i>
                                     </a>
                                     <a th:href="@{/blog/delete/{postID}(postID=${post.postID})}"
-                                       class="btn btn-sm btn-outline-danger" title="Xóa">
+                                       class="btn btn-sm btn-outline-danger" title="Delete">
                                         <i class="bi bi-trash"></i>
                                     </a>
                                 </div>
@@ -234,7 +234,7 @@
             </div>
             <div class="modal-body">
                 <p>You are about to delete <strong id="postTitle"></strong>?</p>
-                <p class="text-danger">Hành động này không thể hoàn tác!</p>
+                <p class="text-danger">This action cannot be undone.!</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
