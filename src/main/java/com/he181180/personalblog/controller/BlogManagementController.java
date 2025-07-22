@@ -73,10 +73,19 @@ public class BlogManagementController {
 
         List<Tags> tags = tagService.findTagsByTagID(tagID);
 
-        String username = authentication.getName();
-        Optional<Users> user = userService.findUserByUsername(username);
+        Users user = null;
+        if (authentication != null) {
+            Object principal = authentication.getPrincipal();
+            if (principal instanceof org.springframework.security.oauth2.core.user.OAuth2User oauth2User) {
+                String email = oauth2User.getAttribute("email");
+                user = userService.findUserByEmail(email).orElse(null);
+            } else {
+                String username = authentication.getName();
+                user = userService.findUserByUsername(username).orElse(null);
+            }
+        }
 
-        if (user.isPresent()) {
+        if (user != null) {
             Posts post = new Posts();
             post.setTitle(title);
             post.setContent(content);
@@ -84,7 +93,7 @@ public class BlogManagementController {
             post.setTags(tags);
             post.setBody(body);
             post.setPublishedAt(new Timestamp(new Date().getTime()));
-            post.setUsers(user.get());
+            post.setUsers(user);
             post.setPublished(true);
             post.setUpdatedAt(new Timestamp(new Date().getTime()));
             try {
@@ -161,5 +170,3 @@ public class BlogManagementController {
         return "redirect:/blog";
     }
     }
-
-

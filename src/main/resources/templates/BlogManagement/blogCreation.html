@@ -312,9 +312,10 @@
             let reader = new FileReader();
             reader.onload = function (e) {
                 let thumbnail = document.getElementById("imgThumbnail");
-                thumbnail.setAttribute('src', e.target.result);
-                // Force reload by appending a timestamp
-                thumbnail.src = e.target.result + '?t=' + new Date().getTime();
+                // Remove any previous cache-busting param
+                let url = e.target.result.split('?')[0];
+                // Add a unique timestamp to force reload
+                thumbnail.setAttribute('src', url + '?t=' + new Date().getTime());
             }
             if (file) {
                 reader.readAsDataURL(file);
