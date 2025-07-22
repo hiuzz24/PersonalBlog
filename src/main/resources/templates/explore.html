@@ -65,15 +65,14 @@
 
         <div class="header-social-links">
             <div class="dropdown">
-                <a href="#" class="d-flex align-items-center dropdown-toggle"
-                   id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-gear-fill fs-4"></i>
+                <a href="#" class="d-flex align-items-center" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding:0; border:none; background:none;">
+                    <img th:src="${user != null && user.avatarUrl != null && !#strings.isEmpty(user.avatarUrl) ? user.avatarUrl : '/assets/img/user.png'}" alt="avatar" style="width:36px; height:36px; border-radius:50%; object-fit:cover;">
                 </a>
 
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                     <li>
-                        <form th:action="@{/profile}"  style="display: inline;">
-                            <button type="submit" class="dropdown-item">Dashboard</button>
+                        <form th:action="@{/profile}" style="display: inline;">
+                            <button type="submit" class="dropdown-item">Profile</button>
                         </form>
                     </li>
 

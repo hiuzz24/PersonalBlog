@@ -31,11 +31,11 @@ public class CommentServiceImpl implements CommentService {
     public List<Comments> getCommentsByPostId(int postId) {
         // Get all comments for the post
         List<Comments> allComments = commentRepository.getCommentsByPostIDHierarchical(postId);
-        
+
         if (allComments.isEmpty()) {
             return new ArrayList<>();
         }
-        
+
         List<Comments> rootComments = new ArrayList<>();
         Map<Integer, Comments> commentMap = new HashMap<>();
 
@@ -58,7 +58,7 @@ public class CommentServiceImpl implements CommentService {
                 }
             }
         }
-        
+
         return rootComments;
     }
 }

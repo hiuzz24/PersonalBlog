@@ -32,7 +32,9 @@ public class SecurityConfig {
                         .permitAll()
                 ).oauth2Login(oauth2 -> oauth2
                         .loginPage("/login")
+                        .defaultSuccessUrl("/GoogleLogin", true)  //
                 )
+
                 .logout(logout -> logout
                         .logoutSuccessUrl("/login?logout")
                         .permitAll()
@@ -51,12 +53,14 @@ public class SecurityConfig {
     public UserDetailsService userDetailsService() {
         return username -> {
             Users u = userRepository.findByUsername(username)
-                    .orElseThrow(() -> new UsernameNotFoundException("user not found"));
+                    .orElseGet(() -> userRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("user not found")));
 
             return User.withUsername(u.getUsername())
-                    .password(u.getPassword())
+                    .password(u.getPassword() == null ? "" : u.getPassword())
                     .roles(u.getRole())
                     .build();
         };
+
     }
+
 }

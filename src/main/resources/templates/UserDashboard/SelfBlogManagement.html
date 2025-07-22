@@ -189,7 +189,7 @@
             <div class="post-card" th:each="post : ${posts}">
                 <div class="row">
                     <div class="col-md-2">
-                        <img th:src="${post.imageUrl ?: '/img/default-post.png'}"
+                        <img th:src="@{${post.imageUrl}}"
                              alt="Post image" class="post-image">
                     </div>
 

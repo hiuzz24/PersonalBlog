@@ -16,11 +16,11 @@ public interface CommentRepository extends JpaRepository<Comments,Integer> {
     // Get all comments for a post ordered by creation time
     @Query(value = "SELECT * FROM comments WHERE post_id = :postID AND is_deleted = false ORDER BY created_at ASC", nativeQuery = true)
     List<Comments> getCommentsByPostIDHierarchical(@Param("postID") int postID);
-    
+
     // Alternative method to get root comments only
     @Query(value = "SELECT * FROM comments WHERE post_id = :postID AND parent_comment_id IS NULL AND is_deleted = false ORDER BY created_at ASC", nativeQuery = true)
     List<Comments> getRootCommentsByPostID(@Param("postID") int postID);
-    
+
     // Get child comments for a specific parent
     @Query(value = "SELECT * FROM comments WHERE parent_comment_id = :parentId AND is_deleted = false ORDER BY created_at ASC", nativeQuery = true)
     List<Comments> getChildCommentsByParentId(@Param("parentId") int parentId);

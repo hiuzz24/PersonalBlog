@@ -13,22 +13,22 @@
 
     <form th:action="@{/blog/edit/{id}(id=${post.postId})}" method="post" class="blog-form">
         <div class="form-group">
-            <label for="title">Tiêu đề:</label>
+            <label for="title">Title:</label>
             <input type="text" id="title" name="title" th:value="${post.title}" required class="form-control">
         </div>
 
         <div class="form-group">
-            <label for="imageUrl">URL ảnh đại diện:</label>
+            <label for="imageUrl">URL image:</label>
             <input type="url" id="imageUrl" name="imageUrl" th:value="${post.imageUrl}" class="form-control">
         </div>
 
         <div class="form-group">
-            <label for="content">Nội dung:</label>
+            <label for="content">Content:</label>
             <textarea id="content" name="content" th:text="${post.content}" required></textarea>
         </div>
 
         <div class="form-actions">
-            <button type="submit" class="btn btn-primary">Cập nhật</button>
+            <button type="submit" class="btn btn-primary">Update</button>
             <a th:href="@{/blog/post/{id}(id=${post.postId})}" class="btn btn-secondary">Hủy</a>
         </div>
     </form>

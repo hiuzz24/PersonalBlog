@@ -72,9 +72,8 @@
 
         <div class="header-social-links">
             <div class="dropdown">
-                <a href="#" class="d-flex align-items-center dropdown-toggle"
-                   id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-gear-fill fs-4"></i>
+                <a href="#" class="d-flex align-items-center" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding:0; border:none; background:none;">
+                    <img th:src="${user != null && user.avatarUrl != null && !#strings.isEmpty(user.avatarUrl) ? user.avatarUrl : '/assets/img/user.png'}" alt="avatar" style="width:36px; height:36px; border-radius:50%; object-fit:cover;">
                 </a>
 
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
@@ -144,7 +143,7 @@
                             <div class="meta-bottom">
                                 <i class="bi bi-tags"></i>
                                 <ul class="tags" th:each="tag: ${postDetail.tags}">
-                                    <li><a th:href="@{/tags/{tagID}(tagID = ${tag.tagID})}" th:text="${tag.tagName}"></a></li>
+                                    <li><a th:href="@{/tags/{tagID}(tagID = ${tag.tagName})}" th:text="${tag.tagName}"></a></li>
                                 </ul>
                             </div><!-- End meta bottom -->
 
@@ -273,7 +272,7 @@
                         <div class="post-item" th:each="relatedPost : ${relatedPosts}">
                             <img th:src="@{${relatedPost.imageUrl}}" alt="" class="flex-shrink-0">
                             <div>
-                                <h4><a href="blog-details.html" th:text="${relatedPost.title}"></a></h4>
+                                <a th:href="@{'/PostDetail/' + ${relatedPost.postID}}" th:text="${relatedPost.title}"></a>
                                 <time th:text="${#dates.format(relatedPost.publishedAt, 'dd MMM yyyy')}"></time>
                             </div>
                         </div><!-- End recent post item-->
@@ -353,18 +352,6 @@
                 </ul>
             </div>
 
-            <div class="col-lg-2 col-md-3 footer-links">
-                <h4>Nobis illum</h4>
-                <ul>
-                    <li><a href="#">Ipsam</a></li>
-                    <li><a href="#">Laudantium dolorum</a></li>
-                    <li><a href="#">Dinera</a></li>
-                    <li><a href="#">Trodelas</a></li>
-                    <li><a href="#">Flexo</a></li>
-                </ul>
-            </div>
-
-        </div>
     </div>
 
     <div class="container copyright text-center mt-4">

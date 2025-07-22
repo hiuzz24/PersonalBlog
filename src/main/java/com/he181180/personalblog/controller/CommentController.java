@@ -23,10 +23,10 @@ public class CommentController {
 
     @Autowired
     private CommentService commentService;
-    
+
     @Autowired
     private PostService postService;
-    
+
     @Autowired
     private UserService userService;
 
@@ -35,24 +35,36 @@ public class CommentController {
                            @RequestParam(value = "parentId", required = false) Integer parentId,
                            Authentication authentication,
                            RedirectAttributes redirectAttributes) {
-        
+
         try {
-            // Get current user
-            String username = authentication.getName();
-            Optional<Users> userOptional = userService.findUserByUsername(username);
-            
+            // Check authentication
+            if (authentication == null || !authentication.isAuthenticated()) {
+                redirectAttributes.addFlashAttribute("error", "You must be logged in to comment");
+                return "redirect:/PostDetail/" + commentReplyDTO.getPost().getPostID();
+            }
+            // Support both standard and OAuth2 (Google) users
+            Optional<Users> userOptional = Optional.empty();
+            Object principal = authentication.getPrincipal();
+            if (principal instanceof org.springframework.security.oauth2.core.user.OAuth2User oauth2User) {
+                String email = oauth2User.getAttribute("email");
+                userOptional = userService.findUserByEmail(email);
+            } else {
+                String username = authentication.getName();
+                userOptional = userService.findUserByUsername(username);
+            }
+
             if (userOptional.isEmpty()) {
                 redirectAttributes.addFlashAttribute("error", "User not found");
                 return "redirect:/PostDetail/" + commentReplyDTO.getPost().getPostID();
             }
-            
+
             // Get post
             Posts post = postService.findPostByPostID(commentReplyDTO.getPost().getPostID());
             if (post == null) {
                 redirectAttributes.addFlashAttribute("error", "Post not found");
                 return "redirect:/PostDetail/" + commentReplyDTO.getPost().getPostID();
             }
-            
+
             // Create comment from DTO
             Comments comment = Comments.builder()
                     .content(commentReplyDTO.getContent())
@@ -61,22 +73,22 @@ public class CommentController {
                     .createdAt(Timestamp.valueOf(LocalDateTime.now()))
                     .isDeleted(false)
                     .build();
-            
+
             // Set parent comment if this is a reply
             if (parentId != null && parentId > 0) {
                 Comments parentComment = new Comments();
                 parentComment.setCommentId(parentId);
                 comment.setParentComment(parentComment);
             }
-            
+
             // Save comment
             commentService.saveComment(comment);
             redirectAttributes.addFlashAttribute("success", "Comment added successfully");
-            
+
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Failed to add comment: " + e.getMessage());
         }
-        
+
         return "redirect:/PostDetail/" + commentReplyDTO.getPost().getPostID();
     }
 

@@ -102,31 +102,44 @@ public class ProfileController {
         }
         user.setBio(userUpdate.getBio());
 
+        // Handle avatar file upload
         if (avatarFile != null && !avatarFile.isEmpty()) {
-            String savedUrl = saveFileSomewhere(avatarFile);
-            if (savedUrl != null) {
-                user.setAvatarUrl(savedUrl);
+            // Save to src/main/resources/static/img/ so it works in both dev and prod
+            String uploadDir = System.getProperty("user.dir") + "/src/main/resources/static/img/";
+            File dir = new File(uploadDir);
+            if (!dir.exists()) dir.mkdirs();
+            String fileName = System.currentTimeMillis() + "_" + avatarFile.getOriginalFilename();
+            File dest = new File(dir, fileName);
+            try {
+                avatarFile.transferTo(dest);
+                user.setAvatarUrl("/img/" + fileName);
+                System.out.println("Avatar uploaded successfully: " + user.getAvatarUrl());
+            } catch (IOException e) {
+                e.printStackTrace();
+                return "redirect:/profile?error=upload-failed";
             }
         } else if (avatarUrl != null && !avatarUrl.trim().isEmpty()) {
             user.setAvatarUrl(avatarUrl.trim());
+        } else if (user.getAvatarUrl() == null || user.getAvatarUrl().isEmpty()) {
+            // Set default avatar if none is set
+            user.setAvatarUrl("/img/default-avatar.png");
         }
+        userService.saveUser(user);
 
-        userService.updateUser(user);
-
-        return "redirect:/profile";
+        // Add cache-busting parameter to force browser to reload the image
+        return "redirect:/profile?updated=" + System.currentTimeMillis();
     }
 
     @PostMapping("/update")
     public String updateProfile(Authentication authentication, Model model,
-                                @ModelAttribute("userUpdateDTO") @Valid UserUpdateDTO userUpdate) {
+                                @ModelAttribute("userUpdateDTO")  @Valid UserUpdateDTO userUpdate) {
         String useName = authentication.getName();
         Optional<Users> usersOptional = userService.findUserByUsername(useName);
         Users user = usersOptional.get();
-        userMapper.updateUser(user, userUpdate);
+        userMapper.updateUser(user,userUpdate);
         userService.saveUser(user);
         model.addAttribute("user", user);
         System.out.println(userUpdate.toString());
-        System.out.println(user.toString());
         return "UserDashboard/Profile";
     }
 
@@ -155,4 +168,7 @@ public class ProfileController {
         // Return URL for static/img/
         return "/img/" + filename;
     }
+
+
+
 }
