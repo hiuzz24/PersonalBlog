@@ -44,16 +44,12 @@
         <div class="form-group" id="urlInputGroup">
             <label for="imageUrl">Post image URL:</label>
             <input type="url" id="imageUrl" name="imageUrl" th:value="${post.imageUrl}" class="form-control">
-            <div th:if="${post.imageUrl != null}">
-                <img th:src="@{${post.imageUrl}}" class="img-thumbnail mb-2" style="max-width: 200px;">
-            </div>
         </div>
 
         <!-- Upload ảnh -->
         <div class="form-group d-none" id="fileInputGroup">
             <label for="fileImage" class="form-label">Select post image from file:</label>
             <input type="file" id="fileImage" name="fileImage" class="form-control" accept="image/*">
-            <img th:src="@{/img/user.png}" id="imgThumbnail" class="img-thumbnail" style="width: 200px;" alt="User Image">
         </div>
         <img th:src="${post.imageUrl != null} ? ${post.imageUrl} : @{/img/user.png}" id="imgThumbnail" class="img-thumbnail" style="width: 200px;" alt="User Image">
 

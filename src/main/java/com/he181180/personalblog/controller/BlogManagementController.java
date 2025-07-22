@@ -155,19 +155,11 @@ public class BlogManagementController {
     }
 
     // Xóa bài viết
-    @PostMapping("/posts/delete/{id}")
-    public String deletePost(@PathVariable int id, Authentication authentication) {
-        Optional<Posts> postOpt = postService.getPostByID(id);
-
-        if (postOpt.isPresent()) {
-            Posts post = postOpt.get();
-
-            if (post.getUsers().getUsername().equals(authentication.getName())) {
-                postService.deletePost(id);
-            }
-        }
-
-        return "redirect:/dashboard/posts?deleted";
+    @RequestMapping("/delete/{postID}")
+    public String deletePost(@PathVariable int postID) {
+        postService.deletePost(postID);
+        return "redirect:/blog";
+    }
     }
 
-}
+
