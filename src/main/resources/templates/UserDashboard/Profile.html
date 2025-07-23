@@ -110,6 +110,25 @@
     document.getElementById('avatarUrl').addEventListener('input', function() {
         document.getElementById('avatarFile').value = '';
     });
+    function requestConfirmationCode() {
+        fetch('/profile/send-confirmation-code', {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                if (response.ok) {
+                    alert('Confirmation code sent to your email!');
+                } else {
+                    alert('Failed to send confirmation code.');
+                }
+            })
+            .catch(error => {
+                alert('Error sending confirmation code.');
+            });
+    }
 </script>
 
 
@@ -127,19 +146,6 @@
             </a>
         </div>
         <nav id="navmenu" class="navmenu mx-auto flex-grow-1 d-flex justify-content-center">
-            <ul>
-                <li><a th:href="@{/}">Home</a></li>
-                <li><a href="about.html">About</a></li>
-                <li class="dropdown"><a href="#"><span>Categories</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-                    <ul>
-                        <li><a href="category.html">Category 1</a></li>
-                        <li><a href="category.html">Category 2</a></li>
-                        <li><a href="category.html">Category 3</a></li>
-                        <li><a href="category.html">Category 4</a></li>
-                    </ul>
-                </li>
-                <li><a href="contact.html">Contact</a></li>
-            </ul>
             <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
         </nav>
         <div class="header-social-links d-flex align-items-center pe-3" style="margin-left:auto;">
@@ -302,6 +308,58 @@
                         </div>
                     </form>
                 </div>
+                <!-- Password Change Section Start -->
+                <div class="col-md-8 mt-4">
+                    <h2 class="d-flex align-items-center" >
+                        <i class="bi bi-person text me-2" ></i>
+                        <span>Change Password</span>
+                    </h2>
+                        <div class="card">
+                            <div class="card-body">
+                                <form id="changePasswordForm" th:action="@{/profile/change-password}" method="post">
+                                    <!-- If user has password -->
+                                    <div id="changePasswordStep1" th:if="${user.hasPassword}">
+                                        <button type="button" class="btn btn-primary mb-3" onclick="showSendCodeSection()">Change Password</button>
+                                    </div>
+                                    <div id="changePasswordStep2" th:if="${user.hasPassword}" style="display:none;">
+                                        <div class="mb-3 d-flex align-items-center gap-2">
+                                            <input type="text" class="form-control" id="confirmationCode" name="confirmationCode" placeholder="6-digit code" maxlength="6" style="max-width: 150px;">
+                                            <button type="button" class="btn btn-outline-primary" onclick="requestConfirmationCode()">Send Code</button>
+                                            <button type="button" class="btn btn-success" onclick="verifyConfirmationCode()">Verify Code</button>
+                                        </div>
+                                    </div>
+                                    <div id="changePasswordStep3" th:if="${user.hasPassword}" style="display:none;">
+                                        <div class="mb-3">
+                                            <label for="currentPassword" class="form-label">Current Password</label>
+                                            <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="newPassword" class="form-label">New Password</label>
+                                            <input type="password" class="form-control" id="newPassword" name="newPassword" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Change Password</button>
+                                    </div>
+                                    <!-- If user does NOT have password -->
+                                    <div th:if="${!user.hasPassword}">
+                                        <div class="mb-3">
+                                            <label for="newPasswordNoCurrent" class="form-label">New Password</label>
+                                            <input type="password" class="form-control" id="newPasswordNoCurrent" name="newPassword" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="confirmPasswordNoCurrent" class="form-label">Confirm New Password</label>
+                                            <input type="password" class="form-control" id="confirmPasswordNoCurrent" name="confirmPassword" required>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Set Password</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                </div>
+                <!-- Password Change Section End -->
             </div>
 
         </div>
@@ -324,6 +382,33 @@
 <script th:src="@{/assets/vendor/aos/aos.js}"></script>
 <script th:src="@{/assets/vendor/swiper/swiper-bundle.min.js}"></script>
 <script th:src="@{/assets/js/main.js}"></script>
+<script>
+function showSendCodeSection() {
+    document.getElementById('changePasswordStep1').style.display = 'none';
+    document.getElementById('changePasswordStep2').style.display = 'block';
+}
+function verifyConfirmationCode() {
+    const code = document.getElementById('confirmationCode').value;
+    fetch('/profile/verify-confirmation-code', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify({ code })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById('changePasswordStep2').style.display = 'none';
+            document.getElementById('changePasswordStep3').style.display = 'block';
+        } else {
+            alert('Invalid or expired code.');
+        }
+    })
+    .catch(() => alert('Error verifying code.'));
+}
+</script>
 
 </body>
 </html>

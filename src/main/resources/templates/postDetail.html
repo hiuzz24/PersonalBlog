@@ -15,7 +15,8 @@
     <!-- Fonts -->
     <link th:href="@{https://fonts.googleapis.com}" rel="preconnect">
     <link th:href="@{https://fonts.gstatic.com}" rel="preconnect" crossorigin>
-    <link th:href="@{https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700;1,800&display=swap}" rel="stylesheet">
+    <link th:href="@{https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700;1,800&display=swap}"
+          rel="stylesheet">
 
     <!-- Vendor CSS Files -->
     <link th:href="@{/assets/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
@@ -48,10 +49,12 @@
             <ul>
                 <li><a th:href="@{/}">Home</a></li>
                 <li><a href="about.html">About</a></li>
-                <li class="dropdown"><a href="#"><span>Categories</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                <li class="dropdown"><a href="#"><span>Categories</span> <i
+                        class="bi bi-chevron-down toggle-dropdown"></i></a>
                     <ul>
                         <li><a href="category.html">Category 1</a></li>
-                        <li class="dropdown"><a href="#"><span>Deep Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                        <li class="dropdown"><a href="#"><span>Deep Dropdown</span> <i
+                                class="bi bi-chevron-down toggle-dropdown"></i></a>
                             <ul>
                                 <li><a href="#">Deep Dropdown 1</a></li>
                                 <li><a href="#">Deep Dropdown 2</a></li>
@@ -72,8 +75,10 @@
 
         <div class="header-social-links">
             <div class="dropdown">
-                <a href="#" class="d-flex align-items-center" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding:0; border:none; background:none;">
-                    <img th:src="${user != null && user.avatarUrl != null && !#strings.isEmpty(user.avatarUrl) ? user.avatarUrl : '/assets/img/user.png'}" alt="avatar" style="width:36px; height:36px; border-radius:50%; object-fit:cover;">
+                <a href="#" class="d-flex align-items-center" id="userDropdown" data-bs-toggle="dropdown"
+                   aria-expanded="false" style="padding:0; border:none; background:none;">
+                    <img th:src="${user != null && user.avatarUrl != null && !#strings.isEmpty(user.avatarUrl) ? user.avatarUrl : '/assets/img/user.png'}"
+                         alt="avatar" style="width:36px; height:36px; border-radius:50%; object-fit:cover;">
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                     <li>
@@ -82,7 +87,9 @@
                         </form>
                     </li>
 
-                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
                     <li>
                         <form th:action="@{/logout}" method="post" style="display: inline;">
                             <button type="submit" class="dropdown-item">Logout</button>
@@ -129,9 +136,16 @@
 
                             <div class="meta-top">
                                 <ul>
-                                    <li class="d-flex align-items-center"><i class="bi bi-person" th:text="${postDetail.users.fullName}"></i></li>
-                                    <li class="d-flex align-items-center"><i class="bi bi-clock"></i> <a href="blog-details.html"><time th:text="${postDetail.publishedAt}"></time></a></li>
-                                    <li class="d-flex align-items-center"><i class="bi bi-chat-dots" th:text="${' ' + postDetail.comments.size() + ' comments'}"></i></a></li>
+                                    <li class="d-flex align-items-center"><i class="bi bi-person"
+                                                                             th:text="${postDetail.users.fullName}"></i>
+                                    </li>
+                                    <li class="d-flex align-items-center"><i class="bi bi-clock"></i> <a
+                                            href="blog-details.html">
+                                        <time th:text="${postDetail.publishedAt}"></time>
+                                    </a></li>
+                                    <li class="d-flex align-items-center"><i class="bi bi-chat-dots"
+                                                                             th:text="${' ' + postDetail.comments.size() + ' comments'}"></i></a>
+                                    </li>
                                 </ul>
                             </div><!-- End meta top -->
 
@@ -142,9 +156,21 @@
                             <div class="meta-bottom">
                                 <i class="bi bi-tags"></i>
                                 <ul class="tags" th:each="tag: ${postDetail.tags}">
-                                    <li><a th:href="@{/tags/{tagID}(tagID = ${tag.tagName})}" th:text="${tag.tagName}"></a></li>
+                                    <li><a th:href="@{/tags/{tagID}(tagID = ${tag.tagName})}"
+                                           th:text="${tag.tagName}"></a></li>
                                 </ul>
                             </div><!-- End meta bottom -->
+
+
+                            <!-- Chat with Author Button (only show if not the author) -->
+                            <div th:if="${#authentication.name != postDetail.users.username}" class="mt-4">
+                                <button type="button" class="btn btn-primary" id="chatWithAuthorBtn"
+                                        th:data-author-id="${postDetail.users.userID}"
+                                        th:data-author-name="${postDetail.users.fullName != null ? postDetail.users.fullName : postDetail.users.username}">
+                                    <i class="bi bi-chat-dots"></i> Chat with the author
+                                </button>
+                            </div>
+
 
                         </article>
 
@@ -160,25 +186,38 @@
                         <ol class="comment-list" style="list-style: none; padding-left: 0;">
                             <li class="comment" th:each="parent : ${comments}">
                                 <div class="d-flex align-items-start">
-                                    <img class="avatar photo me-2" th:src="${parent.user.avatarUrl != null ? parent.user.avatarUrl : '/assets/img/user.png'}" alt="avatar" style="width:32px; height:32px; border-radius:50%; object-fit:cover; font-size:1.5rem;">
+                                    <img class="avatar photo me-2"
+                                         th:src="${parent.user.avatarUrl != null ? parent.user.avatarUrl : '/assets/img/user.png'}"
+                                         alt="avatar"
+                                         style="width:32px; height:32px; border-radius:50%; object-fit:cover; font-size:1.5rem;">
                                     <div class="comment-body flex-grow-1">
                                         <div class="comment-author vcard d-flex align-items-center mb-1">
-                                            <cite class="fn fw-bold me-1" style="font-size:1rem;" th:text="${parent.user.username}">User Name</cite>
-                                            <span th:if="${parent.createdAt != null}" class="text-muted ms-2" style="font-size:0.95rem;">| <span th:text="${#dates.format(parent.createdAt, 'yyyy-MM-dd HH:mm')}"></span></span>
-                                            <span th:if="${parent.createdAt == null}" class="text-muted ms-2">| No date</span>
+                                            <cite class="fn fw-bold me-1" style="font-size:1rem;"
+                                                  th:text="${parent.user.username}">User Name</cite>
+                                            <span th:if="${parent.createdAt != null}" class="text-muted ms-2"
+                                                  style="font-size:0.95rem;">| <span
+                                                    th:text="${#dates.format(parent.createdAt, 'yyyy-MM-dd HH:mm')}"></span></span>
+                                            <span th:if="${parent.createdAt == null}"
+                                                  class="text-muted ms-2">| No date</span>
                                         </div>
-                                        <p th:text="${parent.content}" style="font-size:1.08rem; border-radius:10px; padding:10px 16px; margin-bottom:0.5rem; line-height:1.7; font-family:'Inter', 'Segoe UI', Arial, sans-serif; letter-spacing:0.01em;">Comment content</p>
+                                        <p th:text="${parent.content}"
+                                           style="font-size:1.08rem; border-radius:10px; padding:10px 16px; margin-bottom:0.5rem; line-height:1.7; font-family:'Inter', 'Segoe UI', Arial, sans-serif; letter-spacing:0.01em;">
+                                            Comment content</p>
                                         <div class="reply">
                                             <div class="d-flex align-items-center gap-3 mb-1">
-                                                <a href="#" class="comment-reply-link" onclick="toggleReplyBox(event, this)">Reply</a>
+                                                <a href="#" class="comment-reply-link"
+                                                   onclick="toggleReplyBox(event, this)">Reply</a>
                                             </div>
                                         </div>
                                         <form action="/comments/add" method="post">
-                                            <div class="reply-box" style="display: none; margin-top: 10px; margin-bottom : 10px">
+                                            <div class="reply-box"
+                                                 style="display: none; margin-top: 10px; margin-bottom : 10px">
                                                 <input type="hidden" name="parentId" th:value="${parent.commentId}">
                                                 <input type="hidden" name="post.postID" th:value="${post.postID}">
-                                                <textarea placeholder="Enter your reply..." rows="3" name="content" class="form-control" required></textarea>
-                                                <button type="submit" class="btn btn-primary btn-sm mt-2">Submit Reply</button>
+                                                <textarea placeholder="Enter your reply..." rows="3" name="content"
+                                                          class="form-control" required></textarea>
+                                                <button type="submit" class="btn btn-primary btn-sm mt-2">Submit Reply
+                                                </button>
                                             </div>
                                         </form>
                                     </div>
@@ -269,7 +308,8 @@
                         <div class="post-item" th:each="relatedPost : ${relatedPosts}">
                             <img th:src="@{${relatedPost.imageUrl}}" alt="" class="flex-shrink-0">
                             <div>
-                                <a th:href="@{'/PostDetail/' + ${relatedPost.postID}}" th:text="${relatedPost.title}"></a>
+                                <a th:href="@{'/PostDetail/' + ${relatedPost.postID}}"
+                                   th:text="${relatedPost.title}"></a>
                                 <time th:text="${#dates.format(relatedPost.publishedAt, 'dd MMM yyyy')}"></time>
                             </div>
                         </div><!-- End recent post item-->
@@ -292,21 +332,222 @@
         </div>
     </div>
 
+
+    <!-- Chat Modal -->
+    <div class="modal fade" id="chatModal" tabindex="-1" aria-labelledby="chatModalLabel" aria-hidden="true" style="position: fixed; bottom: 0; left: 0; z-index: 1055; width: 100%; max-width: 400px; margin: 0; pointer-events: none;">
+        <div class="modal-dialog modal-lg m-0" style="position: absolute; bottom: 0; left: 0; width: 100%; max-width: 400px; pointer-events: auto;">
+            <div class="modal-content" style="border-radius: 1rem 1rem 0 0; box-shadow: 0 0 20px rgba(0,0,0,0.15);">
+                <div class="modal-header bg-primary text-white rounded-top">
+                    <h5 class="modal-title" id="chatModalLabel">
+                        <i class="bi bi-chat-dots me-2"></i>Chat with <span id="chatPartnerName" class="fw-bold"></span>
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <div id="chatMessages" class="chat-messages bg-light"
+                         style="height: 350px; overflow-y: auto; border-bottom: 1px solid #ddd; padding: 20px 20px; margin-bottom: 0;">
+                        <!-- Messages will be loaded here -->
+                    </div>
+                    <div class="input-group p-3 bg-white border-top align-items-center" style="border-radius: 0 0 1rem 1rem;">
+                        <input type="text" id="messageInput" class="form-control rounded-pill me-2" placeholder="Type your message..." maxlength="500" style="background: #f8f9fa;">
+                        <button class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center" type="button" id="sendMessageBtn" style="width: 45px; height: 45px;">
+                            <i class="bi bi-send fs-5"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- WebSocket and Chat JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+
+    <script>
+        let stompClient = null;
+        let currentChatUserId = null;
+        let currentUsername = null;
+
+        // Get current username from authentication
+        document.addEventListener('DOMContentLoaded', function () {
+            // Get username from server-side
+            fetch('/api/user/current')
+                .then(response => response.json())
+                .then(data => {
+                    currentUsername = data.username;
+                })
+                .catch(error => {
+                    console.error('Error getting current user:', error);
+                });
+        });
+
+        function connect() {
+            const socket = new SockJS('/ws');
+            stompClient = Stomp.over(socket);
+
+            stompClient.connect({}, function (frame) {
+                console.log('Connected: ' + frame);
+
+                // Subscribe to private messages
+                stompClient.subscribe('/user/queue/messages', function (message) {
+                    const messageData = JSON.parse(message.body);
+                    displayMessage(messageData);
+                });
+            }, function (error) {
+                console.error('WebSocket connection error:', error);
+            });
+        }
+
+        function disconnect() {
+            if (stompClient !== null) {
+                stompClient.disconnect();
+            }
+            console.log("Disconnected");
+        }
+
+        function sendMessage() {
+            const messageInput = document.getElementById('messageInput');
+            const content = messageInput.value.trim();
+
+            if (content && currentChatUserId && stompClient) {
+                const messageData = {
+                    receiverId: currentChatUserId,
+                    content: content
+                };
+                console.log('=== SENDING MESSAGE ===');
+                console.log('Connected:', stompClient.connected);
+                console.log('Current chat user ID:', currentChatUserId);
+                console.log('Message data:', messageData);
+
+                if (stompClient.connected) {
+                    stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(messageData));
+                    messageInput.value = '';
+                    console.log('Message sent successfully');
+                } else {
+                    console.error('WebSocket not connected!');
+                }
+            } else {
+                console.log('Cannot send message:', {
+                    content: !!content,
+                    currentChatUserId: !!currentChatUserId,
+                    stompClient: !!stompClient
+                });
+            }
+        }
+
+        function displayMessage(message) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message mb-2';
+
+            const isCurrentUser = message.senderName === currentUsername;
+            const alignClass = isCurrentUser ? 'text-end' : 'text-start';
+            const bgClass = isCurrentUser ? 'bg-primary text-white' : 'bg-light';
+
+            messageDiv.innerHTML = `
+        <div class="${alignClass}">
+            <div class="d-inline-block p-2 rounded ${bgClass}" style="max-width: 70%;">
+                <div class="message-content">${escapeHtml(message.content)}</div>
+                <small class="message-time">${formatTime(message.createdAt)}</small>
+            </div>
+        </div>
+    `;
+
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function loadChatHistory(userId) {
+            fetch(`/api/chat/messages/${userId}`)
+                .then(response => response.json())
+                .then(messages => {
+                    const chatMessages = document.getElementById('chatMessages');
+                    chatMessages.innerHTML = '';
+
+                    messages.forEach(message => {
+                        displayMessage(message);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading chat history:', error);
+                });
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function formatTime(dateTime) {
+            const date = new Date(dateTime);
+            return date.toLocaleTimeString('vi-VN', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function () {
+            const chatBtn = document.getElementById('chatWithAuthorBtn');
+            const chatModal = new bootstrap.Modal(document.getElementById('chatModal'));
+            const sendBtn = document.getElementById('sendMessageBtn');
+            const messageInput = document.getElementById('messageInput');
+
+            if (chatBtn) {
+                chatBtn.addEventListener('click', function () {
+                    const authorId = this.getAttribute('data-author-id');
+                    const authorName = this.getAttribute('data-author-name');
+
+                    currentChatUserId = parseInt(authorId);
+                    document.getElementById('chatPartnerName').textContent = authorName;
+
+                    // Connect to WebSocket if not connected
+                    if (!stompClient || !stompClient.connected) {
+                        connect();
+                    }
+
+                    // Load chat history
+                    loadChatHistory(authorId);
+
+                    // Show modal
+                    chatModal.show();
+                });
+            }
+
+            if (sendBtn) {
+                sendBtn.addEventListener('click', sendMessage);
+            }
+
+            if (messageInput) {
+                messageInput.addEventListener('keypress', function (e) {
+                    if (e.key === 'Enter') {
+                        sendMessage();
+                    }
+                });
+            }
+        });
+
+        // Disconnect when page unloads
+        window.addEventListener('beforeunload', function () {
+            disconnect();
+        });
+    </script>
 </main>
 
 <footer id="footer" class="footer dark-background">
 
 
-    </div>
-
     <div class="container copyright text-center mt-4">
-        <p>© <span>Copyright</span> <strong class="px-1 sitename">PersonalBlog</strong> <span>All Rights Reserved</span></p>
+        <p>© <span>Copyright</span> <strong class="px-1 sitename">PersonalBlog</strong> <span>All Rights Reserved</span>
+        </p>
     </div>
 
 </footer>
 
 <!-- Scroll Top -->
-<a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+<a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i
+        class="bi bi-arrow-up-short"></i></a>
 
 <!-- Preloader -->
 <div id="preloader"></div>
@@ -322,3 +563,4 @@
 </body>
 
 </html>
+

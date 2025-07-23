@@ -1,11 +1,14 @@
 package com.he181180.personalblog.config;
 
+import com.he181180.personalblog.DTO.UserUpdateDTO;
 import com.he181180.personalblog.entity.Users;
 import com.he181180.personalblog.repository.UserRepository;
+import com.he181180.personalblog.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -18,11 +21,14 @@ public class SecurityConfig {
     @Autowired
     private UserRepository userRepository;
 
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/oauth2/**", "/register", "/img/**", "/css/**").permitAll()
+                        .requestMatchers("/login", "/oauth2/**",
+                                         "/register", "/img/**",
+                                         "/css/**", "/forgotPassword", "/resetPassword", "/savePassword").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(login -> login
@@ -62,5 +68,6 @@ public class SecurityConfig {
         };
 
     }
+
 
 }

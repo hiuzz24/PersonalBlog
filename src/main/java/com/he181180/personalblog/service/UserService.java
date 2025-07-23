@@ -15,4 +15,12 @@ public interface UserService {
 
     Users findByUsername(String username);
     public Users saveUser(Users user);
+
+    public void changeUserPassword(Users user, String password);
+
+    void sendConfirmationCodeEmail(String email, String code);
+
+    boolean checkPassword(Users user, String rawPassword);
+    Optional<Users> findUserById(int id);
+
 }

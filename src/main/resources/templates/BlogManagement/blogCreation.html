@@ -229,7 +229,7 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        // Khởi tạo CKEditor
+        // Initialize CKEditor with image upload configuration
         ClassicEditor
             .create(document.querySelector('#body'), {
                 mediaEmbed: {
@@ -276,6 +276,7 @@
                 console.error('Error initializing CKEditor:', error);
             });
 
+        // Existing image handling logic remains unchanged
         let imageUrl = document.getElementById("imageUrl");
         let imageFile = document.getElementById("fileImage");
 
@@ -310,6 +311,7 @@
         function showThumbnail(fileInput) {
             let file = fileInput.files[0];
             let reader = new FileReader();
+            reader.readAsDataURL(file);
             reader.onload = function (e) {
                 let thumbnail = document.getElementById("imgThumbnail");
                 // Remove any previous cache-busting param
