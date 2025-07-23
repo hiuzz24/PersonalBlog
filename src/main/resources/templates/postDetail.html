@@ -147,6 +147,20 @@
                                 </ul>
                             </div><!-- End meta bottom -->
 
+
+
+                            <!-- Chat with Author Button (only show if not the author) -->
+                            <div th:if="${#authentication.name != postDetail.users.username}" class="mt-4">
+                                <button type="button" class="btn btn-primary" id="chatWithAuthorBtn"
+                                        th:data-author-id="${postDetail.users.userID}"
+                                        th:data-author-name="${postDetail.users.fullName != null ? postDetail.users.fullName : postDetail.users.username}">
+                                    <i class="bi bi-chat-dots"></i> Chat với tác giả
+                                </button>
+                            </div>
+
+
+
+
                         </article>
 
                     </div>
@@ -295,6 +309,205 @@
         </div>
     </div>
 
+
+
+    <!-- Chat Modal -->
+    <div class="modal fade" id="chatModal" tabindex="-1" aria-labelledby="chatModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="chatModalLabel">Chat với <span id="chatPartnerName"></span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="chatMessages" class="chat-messages" style="height: 400px; overflow-y: auto; border: 1px solid #ddd; padding: 15px; margin-bottom: 15px;">
+                        <!-- Messages will be loaded here -->
+                    </div>
+                    <div class="input-group">
+                        <input type="text" id="messageInput" class="form-control" placeholder="Nhập tin nhắn..." maxlength="500">
+                        <button class="btn btn-primary" type="button" id="sendMessageBtn">
+                            <i class="bi bi-send"></i> Gửi
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- WebSocket and Chat JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+
+    <script>
+        let stompClient = null;
+        let currentChatUserId = null;
+        let currentUsername = null;
+
+        // Get current username from authentication
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get username from server-side
+            fetch('/api/user/current')
+                .then(response => response.json())
+                .then(data => {
+                    currentUsername = data.username;
+                })
+                .catch(error => {
+                    console.error('Error getting current user:', error);
+                });
+        });
+
+        function connect() {
+            const socket = new SockJS('/ws');
+            stompClient = Stomp.over(socket);
+
+            stompClient.connect({}, function (frame) {
+                console.log('Connected: ' + frame);
+
+                // Subscribe to private messages
+                stompClient.subscribe('/user/queue/messages', function (message) {
+                    const messageData = JSON.parse(message.body);
+                    displayMessage(messageData);
+                });
+            }, function(error) {
+                console.error('WebSocket connection error:', error);
+            });
+        }
+
+        function disconnect() {
+            if (stompClient !== null) {
+                stompClient.disconnect();
+            }
+            console.log("Disconnected");
+        }
+
+        function sendMessage() {
+            const messageInput = document.getElementById('messageInput');
+            const content = messageInput.value.trim();
+
+            if (content && currentChatUserId && stompClient) {
+                const messageData = {
+                    receiverId: currentChatUserId,
+                    content: content
+                };
+                console.log('=== SENDING MESSAGE ===');
+                console.log('Connected:', stompClient.connected);
+                console.log('Current chat user ID:', currentChatUserId);
+                console.log('Message data:', messageData);
+
+                if (stompClient.connected) {
+                    stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(messageData));
+                    messageInput.value = '';
+                    console.log('Message sent successfully');
+                } else {
+                    console.error('WebSocket not connected!');
+                }
+            } else {
+                console.log('Cannot send message:', {
+                    content: !!content,
+                    currentChatUserId: !!currentChatUserId,
+                    stompClient: !!stompClient
+                });
+            }
+        }
+
+        function displayMessage(message) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message mb-2';
+
+            const isCurrentUser = message.senderName === currentUsername;
+            const alignClass = isCurrentUser ? 'text-end' : 'text-start';
+            const bgClass = isCurrentUser ? 'bg-primary text-white' : 'bg-light';
+
+            messageDiv.innerHTML = `
+        <div class="${alignClass}">
+            <div class="d-inline-block p-2 rounded ${bgClass}" style="max-width: 70%;">
+                <div class="message-content">${escapeHtml(message.content)}</div>
+                <small class="message-time">${formatTime(message.createdAt)}</small>
+            </div>
+        </div>
+    `;
+
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function loadChatHistory(userId) {
+            fetch(`/api/chat/messages/${userId}`)
+                .then(response => response.json())
+                .then(messages => {
+                    const chatMessages = document.getElementById('chatMessages');
+                    chatMessages.innerHTML = '';
+
+                    messages.forEach(message => {
+                        displayMessage(message);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading chat history:', error);
+                });
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function formatTime(dateTime) {
+            const date = new Date(dateTime);
+            return date.toLocaleTimeString('vi-VN', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatBtn = document.getElementById('chatWithAuthorBtn');
+            const chatModal = new bootstrap.Modal(document.getElementById('chatModal'));
+            const sendBtn = document.getElementById('sendMessageBtn');
+            const messageInput = document.getElementById('messageInput');
+
+            if (chatBtn) {
+                chatBtn.addEventListener('click', function() {
+                    const authorId = this.getAttribute('data-author-id');
+                    const authorName = this.getAttribute('data-author-name');
+
+                    currentChatUserId = parseInt(authorId);
+                    document.getElementById('chatPartnerName').textContent = authorName;
+
+                    // Connect to WebSocket if not connected
+                    if (!stompClient || !stompClient.connected) {
+                        connect();
+                    }
+
+                    // Load chat history
+                    loadChatHistory(authorId);
+
+                    // Show modal
+                    chatModal.show();
+                });
+            }
+
+            if (sendBtn) {
+                sendBtn.addEventListener('click', sendMessage);
+            }
+
+            if (messageInput) {
+                messageInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        sendMessage();
+                    }
+                });
+            }
+        });
+
+        // Disconnect when page unloads
+        window.addEventListener('beforeunload', function() {
+            disconnect();
+        });
+    </script>
 </main>
 
 <footer id="footer" class="footer dark-background">
@@ -355,7 +568,7 @@
     </div>
 
     <div class="container copyright text-center mt-4">
-        <p>© <span>Copyright</span> <strong class="px-1 sitename">PersonalBlog</strong> <span>All Rights Reserved</span></p>
+        <p> <span>Copyright</span> <strong class="px-1 sitename">PersonalBlog</strong> <span>All Rights Reserved</span></p>
     </div>
 
 </footer>
