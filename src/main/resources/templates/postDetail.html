@@ -334,8 +334,10 @@
 
 
     <!-- Chat Modal -->
-    <div class="modal fade" id="chatModal" tabindex="-1" aria-labelledby="chatModalLabel" aria-hidden="true" style="position: fixed; bottom: 0; left: 0; z-index: 1055; width: 100%; max-width: 400px; margin: 0; pointer-events: none;">
-        <div class="modal-dialog modal-lg m-0" style="position: absolute; bottom: 0; left: 0; width: 100%; max-width: 400px; pointer-events: auto;">
+    <div class="modal fade" id="chatModal" tabindex="-1" aria-labelledby="chatModalLabel" aria-hidden="true"
+         style="position: fixed; bottom: 0; right: 60px; left: auto; z-index: 1055; width: 100%; max-width: 400px; margin: 0; pointer-events: none;">
+        <div class="modal-dialog modal-lg m-0"
+             style="position: absolute; bottom: 0; right: 0; left: auto; width: 100%; max-width: 400px; margin: 0; pointer-events: auto; transform: none;">
             <div class="modal-content" style="border-radius: 1rem 1rem 0 0; box-shadow: 0 0 20px rgba(0,0,0,0.15);">
                 <div class="modal-header bg-primary text-white rounded-top">
                     <h5 class="modal-title" id="chatModalLabel">
@@ -345,18 +347,24 @@
                 </div>
                 <div class="modal-body p-0">
                     <div id="chatMessages" class="chat-messages bg-light"
-                         style="height: 350px; overflow-y: auto; border-bottom: 1px solid #ddd; padding: 20px 20px; margin-bottom: 0;">
+                         style="height: 350px; overflow-y: auto; border-bottom: 1px solid #ddd; padding: 20px;">
                         <!-- Messages will be loaded here -->
                     </div>
-                    <div class="input-group p-3 bg-white border-top align-items-center" style="border-radius: 0 0 1rem 1rem;">
-                        <input type="text" id="messageInput" class="form-control rounded-pill me-2" placeholder="Type your message..." maxlength="500" style="background: #f8f9fa;">
-                        <button class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center" type="button" id="sendMessageBtn" style="width: 45px; height: 45px;">
+                    <div class="input-group p-3 bg-white border-top align-items-center"
+                         style="border-radius: 0 0 1rem 1rem;">
+                        <input type="text" id="messageInput" class="form-control rounded-pill me-2"
+                               placeholder="Type your message..." maxlength="500" style="background: #f8f9fa;">
+                        <button class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center"
+                                type="button" id="sendMessageBtn" style="width: 45px; height: 45px;">
                             <i class="bi bi-send fs-5"></i>
                         </button>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+
+
     </div>
 
     <!-- WebSocket and Chat JavaScript -->
