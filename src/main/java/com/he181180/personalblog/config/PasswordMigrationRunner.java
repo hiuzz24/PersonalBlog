@@ -22,8 +22,9 @@ public class PasswordMigrationRunner implements CommandLineRunner {
     public void run(String... args) {
         List<Users> allUsers = userRepo.findAll();
         for (Users user : allUsers) {
-            if (!user.getPassword().startsWith("$2a$")) {
-                user.setPassword(passwordEncoder.encode(user.getPassword()));
+            String password = user.getPassword();
+            if (password != null && !password.startsWith("$2a$")) {
+                user.setPassword(passwordEncoder.encode(password));
                 userRepo.save(user);
             }
         }

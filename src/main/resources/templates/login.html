@@ -38,7 +38,7 @@
                     <input type="checkbox" name="remember"> Remember me
                 </label>
 
-                <a style="margin-bottom: 7px; color: white" id="a1" th:href="@{/forgotP}">
+                <a style="margin-bottom: 7px; color: white" id="a1" th:href="@{/forgotPassword}">
                     Forgot password?
                 </a>
             </span>
@@ -47,6 +47,9 @@
 
             <a href="/oauth2/authorization/google" class="btn">
                 <i class="bi bi-google"></i> Login with Google
+                <div th:if="${param.requireUsername}" style="margin-top: 10px; color: #ffc107;">
+                     Please choose a username to complete your registration.
+                </div>
             </a>
         </form>
     </div>

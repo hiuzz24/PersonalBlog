@@ -18,7 +18,7 @@
 }
 
 /* Global Colors - The following color variables are used throughout the website. Updating them here will change the color scheme of the entire website */
-:root { 
+:root {
   --background-color: #ffffff; /* Background color for the entire website, including individual sections */
   --default-color: #212529; /* Default color used for the majority of the text content across the entire website */
   --heading-color: #535353; /* Color for headings, subheadings and title throughout the website */
@@ -60,6 +60,7 @@
 /*--------------------------------------------------------------
 # General Styling & Shared Classes
 --------------------------------------------------------------*/
+
 body {
   color: var(--default-color);
   background-color: var(--background-color);
@@ -149,6 +150,17 @@ h6 {
   padding: 10px 0;
   transition: all 0.5s;
   z-index: 997;
+  background: #f2f2f2;
+  box-shadow: 0 2px 8px rgba(60,60,60,0.07);
+  height: 56px;
+  border-bottom: none;
+}
+
+.header .container-fluid {
+  height: 56px;
+  min-height: 56px;
+  padding-left: 0;
+  padding-right: 0;
 }
 
 .header .logo {
@@ -167,8 +179,68 @@ h6 {
   color: var(--heading-color);
 }
 
+.logo .sitename {
+  color: #535353 !important;
+  font-weight: 600;
+  font-size: 1.5rem;
+  margin-bottom: 0;
+  letter-spacing: 0.5px;
+}
+
+.header .navmenu ul {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  list-style: none;
+  align-items: center;
+  height: 56px;
+}
+
+.header .navmenu ul li {
+  position: relative;
+}
+
+.header .navmenu ul li a,
+.header .navmenu ul li a:focus {
+  color: #444;
+  padding: 0 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  line-height: 56px;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.header .navmenu ul li a:hover {
+  color: #1a73e8;
+}
+
 .header .header-social-links {
-  padding-right: 15px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header .dropdown-toggle {
+  color: #444;
+  font-size: 1.25rem;
+  padding: 0 8px;
+  background: none;
+  border: none;
+}
+
+.header .dropdown-menu {
+  font-size: 1rem;
+}
+
+.header .bi-list {
+  font-size: 28px !important;
+  width: 28px;
+  height: 28px;
 }
 
 .header .header-social-links a {
@@ -446,6 +518,8 @@ h6 {
   background-color: var(--background-color);
   font-size: 14px;
   position: relative;
+  margin-top: auto;
+
 }
 
 .footer .footer-top {
@@ -1405,7 +1479,15 @@ section,
 .blog-details .post-img {
   margin: -30px -30px 20px -30px;
   overflow: hidden;
+  aspect-ratio: 16 / 9;
 }
+
+.blog-details .post-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 
 .blog-details .title {
   color: var(--heading-color);
@@ -2004,6 +2086,8 @@ section,
 
 .recent-posts-widget .post-item img {
   width: 80px;
+  height: 49px;
+  object-fit: cover;
   margin-right: 15px;
 }
 
@@ -2091,4 +2175,141 @@ section,
   font-style: italic;
   color: color-mix(in srgb, var(--default-color), transparent 30%);
   margin: 10px 0 0 0;
+}
+.sidebark {
+  height: 100vh;
+  background: linear-gradient(#4261a3 0%, #764ba2 100%);
+  color: white;
+  width: 260px;
+  padding-top: 20px;
+  overflow-y: auto;
+  border-right: 1px solid #ddd;
+
+}
+
+.sidebark .nav-link {
+  color: rgba(255, 255, 255, 0.8);
+  padding: 12px 25px;
+  border-radius: 0;
+  transition: all 0.3s ease;
+}
+
+.sidebark .nav-link:hover,
+.sidebark .nav-link.active {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  transform: translateX(5px);
+}
+
+.sidebark .toggle-btn {
+  position: absolute;
+  top: 10px;
+  right: -35px;
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  cursor: pointer;
+}
+
+.sidebark.closed {
+  width: 60px;
+  overflow: hidden;
+  transition: width 0.3s ease;
+}
+.sidebark .link-text {
+  display: inline;
+}
+.sidebark.closed .user-profile {
+  display: none;
+}
+
+
+.sidebark.closed .link-text {
+  display: none;
+}
+.sidebark.closed .user-profile h5,
+.sidebark.closed .user-profile small {
+  display: none;
+}
+
+
+.main-content {
+  margin-left: 280px;
+  padding: 20px;
+  min-height: 100vh;
+  background: #f8f9fa;
+}
+
+.user-profile {
+  text-align: center;
+  padding: 40px 40px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 20px;
+}
+
+.user-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+}
+
+.dashboard-card {
+  background: white;
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.profile-avatar {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 5px solid #667eea;
+}
+.avatar-container {
+  position: relative;
+  display: inline-block;
+}
+
+.profile-avatar {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ddd;
+  display: block;
+}
+
+.upload-button {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 123, 255, 0.9);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  display: none; /* Ẩn mặc định */
+  transition: opacity 0.3s ease;
+}
+
+.avatar-container:hover .upload-button {
+  display: block; /* Chỉ hiển thị khi hover avatar */
+}
+
+#avatar {
+  display: none; /* Ẩn input file */
+}
+.avatar-container:hover .upload-button {
+  opacity: 1; /* Hiển thị khi hover */
 }

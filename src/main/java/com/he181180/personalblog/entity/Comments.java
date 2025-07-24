@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -18,7 +20,7 @@ public class Comments {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "comment_id")
-    private int commentID;
+    private int commentId;
 
     @Column(name = "content")
     private String content;
@@ -28,16 +30,19 @@ public class Comments {
 
     @ManyToOne
     @JoinColumn(name = "post_id",nullable = false)
-    private Posts posts;
+    private Posts post;
 
     @ManyToOne
     @JoinColumn(name = "user_id",nullable = false)
-    private Users users;
+    private Users user;
 
     @ManyToOne
     @JoinColumn(name = "parent_comment_id")
     private Comments parentComment;
 
-    @OneToMany(mappedBy = "parentComment",cascade = CascadeType.ALL)
-    private List<Comments> replies;
+    @Transient
+    private List<Comments> children ;
+
+    @Column(name = "created_at")
+    private Timestamp createdAt;
 }
