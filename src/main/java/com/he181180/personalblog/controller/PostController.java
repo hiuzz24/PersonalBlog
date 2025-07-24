@@ -74,7 +74,7 @@ public class PostController {
 
     @GetMapping("/PostDetail/{postID}")
     public String postDetail(@PathVariable("postID") int postID
-                            ,Model model,Authentication authentication){
+            ,Model model){
         Posts posts = postService.findPostByPostID(postID);
         List<Integer> tagIDs = tagService.findTagIDByPostID(postID);
         List<Posts> postsList = tagIDs.stream().flatMap(tagID -> postService.findPostsByTagID(tagID).stream())
@@ -87,16 +87,16 @@ public class PostController {
                 .limit(5).collect(Collectors.toList());
         model.addAttribute("relatedPosts",randomFive);
         model.addAttribute("postDetail",posts);
-        model.addAttribute("post", posts); 
+        model.addAttribute("post", posts);
         int countComment = commentService.countCommentByPostId(postID);
         List<Comments> comments = commentService.getCommentsByPostId(postID);
-        
+
         // Initialize CommentReplyDTO with post information
         CommentReplyDTO commentReplyDTO = CommentReplyDTO.builder()
                 .post(posts)
                 .build();
         model.addAttribute("commentReplyDTO", commentReplyDTO);
-        
+
         model.addAttribute("comments", comments);
         model.addAttribute("countComment", countComment);
         return "postDetail";

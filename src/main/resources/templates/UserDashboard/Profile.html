@@ -12,8 +12,7 @@
     <!-- Fonts -->
     <link th:href="@{https://fonts.googleapis.com}" rel="preconnect">
     <link th:href="@{https://fonts.gstatic.com}" rel="preconnect" crossorigin>
-    <link th:href="@{https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700;1,800&display=swap}"
-          rel="stylesheet">
+    <link th:href="@{https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700;1,800&display=swap}" rel="stylesheet">
 
     <!-- CSS -->
     <link th:href="@{/assets/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
@@ -25,7 +24,7 @@
 
 </head>
 
-<script>
+    <script>
     function toggleSidebar() {
         const sidebar = document.getElementById('sidebark');
         sidebar.classList.toggle('closed');
@@ -52,7 +51,6 @@
     function triggerFileInput() {
         document.getElementById('avatarFile').click();
     }
-
     function previewFile() {
         const input = document.getElementById('avatarFile');
         const preview = document.getElementById('avatarPreview');
@@ -64,7 +62,6 @@
             mainPreview.src = url;
         }
     }
-
     function previewUrl() {
         const url = document.getElementById('avatarUrl').value;
         const preview = document.getElementById('avatarPreview');
@@ -75,11 +72,9 @@
             mainPreview.src = url;
         }
     }
-
     function saveAvatar() {
         document.getElementById('avatarForm').submit();
     }
-
     function handlePreview() {
         const fileInput = document.getElementById('avatarFile');
         const urlInput = document.getElementById('avatarUrl');
@@ -221,7 +216,7 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" th:href="@{/dashboard/analytics}">
+                <a class="nav-link" th:href="@{/chat}">
                     <i class="bi bi-bar-chart"></i>
                     <span class="link-text">Chart</span>
                 </a>

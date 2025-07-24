@@ -150,15 +150,13 @@
 
 
                             <!-- Chat with Author Button (only show if not the author) -->
-                            <div th:if="${#authentication.name != postDetail.users.username}" class="mt-4">
+                            <div class="mt-4">
                                 <button type="button" class="btn btn-primary" id="chatWithAuthorBtn"
                                         th:data-author-id="${postDetail.users.userID}"
                                         th:data-author-name="${postDetail.users.fullName != null ? postDetail.users.fullName : postDetail.users.username}">
                                     <i class="bi bi-chat-dots"></i> Chat với tác giả
                                 </button>
                             </div>
-
-
 
 
                         </article>

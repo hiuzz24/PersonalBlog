@@ -35,8 +35,8 @@ public class GlobalModelAttribute {
         return tagService.getAllTags();
     }
     @ModelAttribute("user")
-    public Users currentUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+    public Users currentUser(Authentication authentication) {
         if (authentication != null && authentication.isAuthenticated() && !authentication.getPrincipal().equals("anonymousUser")) {
             Object principal = authentication.getPrincipal();
             if (principal instanceof OAuth2User oauth2User) {
@@ -49,4 +49,5 @@ public class GlobalModelAttribute {
         }
         return null;
     }
+
 }

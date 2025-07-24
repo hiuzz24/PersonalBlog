@@ -9,7 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -30,7 +33,26 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public List<Users> getConversationPartners(Users user) {
-        return messageRepository.findConversationPartners(user);
+        List<Users> receivers = messageRepository.findReceiversByUser(user);
+        List<Users> senders = messageRepository.findSendersByUser(user);
+
+        // Use Set to avoid duplicates based on userID
+        Set<Integer> userIds = new HashSet<>();
+        List<Users> partners = new ArrayList<>();
+
+        for (Users receiver : receivers) {
+            if (userIds.add(receiver.getUserID())) {
+                partners.add(receiver);
+            }
+        }
+
+        for (Users sender : senders) {
+            if (userIds.add(sender.getUserID())) {
+                partners.add(sender);
+            }
+        }
+
+        return partners;
     }
 
     @Override
