@@ -29,7 +29,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login", "/oauth2/**",
                                          "/register", "/img/**",
-                                         "/css/**", "/forgotPassword", "/resetPassword", "/savePassword").permitAll()
+                                         "/css/**","/js/**","/assets/**", "/favicon.ico", "/forgotPassword", "/resetPassword", "/savePassword").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )

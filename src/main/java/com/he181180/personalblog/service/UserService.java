@@ -27,4 +27,5 @@ public interface UserService {
     List<Users> findUserByFullNameOrUserName(String name);
     void updateRole(int userID,String role);
     void delete(int userID);
+    void recover(int userID);
 }

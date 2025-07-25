@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>User Management - DASHBOARD</title>
+    <title>Blog Management - DASHBOARD</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="" name="keywords">
     <meta content="" name="description">
@@ -29,27 +29,39 @@
 
     <!-- Template Stylesheet -->
     <link th:href="@{/css/style.css}" rel="stylesheet">
-    
-    <!-- Custom Styles for User Management -->
+
+    <!-- Custom Styles for Blog Management -->
     <style>
         :root {
-            --primary-color: #6366f1;
+            --primary-color: #4f46e5;
             --secondary-color: #f8fafc;
-            --accent-color: #8b5cf6;
+            --accent-color: #06b6d4;
             --success-color: #10b981;
             --danger-color: #ef4444;
             --warning-color: #f59e0b;
-            --info-color: #06b6d4;
             --text-primary: #1e293b;
             --text-secondary: #64748b;
             --border-color: #e2e8f0;
             --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
             --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
         }
 
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f8fafc;
+        }
+
+        .modern-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
+            transition: all 0.2s ease;
+        }
+
+        .modern-card:hover {
+            box-shadow: var(--shadow-md);
         }
 
         .page-header {
@@ -104,7 +116,7 @@
 
         .modern-search:focus {
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgb(99 102 241 / 0.1);
+            box-shadow: 0 0 0 3px rgb(79 70 229 / 0.1);
             outline: none;
         }
 
@@ -114,6 +126,10 @@
             overflow: hidden;
             box-shadow: var(--shadow-sm);
             border: 1px solid var(--border-color);
+        }
+
+        .modern-table table {
+            margin-bottom: 0;
         }
 
         .modern-table thead th {
@@ -137,30 +153,10 @@
             background-color: #f8fafc;
         }
 
-        .user-avatar {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
+        .post-image {
+            border-radius: 8px;
             object-fit: cover;
             box-shadow: var(--shadow-sm);
-            border: 2px solid white;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .user-details h6 {
-            margin: 0;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .user-details small {
-            color: var(--text-secondary);
-            font-size: 0.8rem;
         }
 
         .status-badge {
@@ -172,14 +168,14 @@
             letter-spacing: 0.05em;
         }
 
-        .status-active {
+        .status-published {
             background-color: #dcfce7;
             color: #166534;
         }
 
-        .status-deleted {
-            background-color: #fee2e2;
-            color: #991b1b;
+        .status-draft {
+            background-color: #fef3c7;
+            color: #92400e;
         }
 
         .modern-btn {
@@ -224,30 +220,47 @@
         }
 
         .btn-primary-modern:hover {
-            background-color: #4f46e5;
+            background-color: #4338ca;
             transform: translateY(-1px);
             box-shadow: var(--shadow-md);
         }
 
-        .modern-select {
-            border: 2px solid var(--border-color);
-            border-radius: 6px;
-            padding: 0.5rem;
-            font-size: 0.875rem;
-            background: white;
-            transition: all 0.2s ease;
-            min-width: 100px;
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
         }
 
-        .modern-select:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgb(99 102 241 / 0.1);
-            outline: none;
+        .post-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .author-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .author-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .date-text {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
         }
 
         .filter-tabs {
             display: flex;
             gap: 0.5rem;
+            margin-bottom: 1.5rem;
         }
 
         .filter-tab {
@@ -271,20 +284,6 @@
         .filter-tab:hover {
             background: var(--secondary-color);
             color: var(--text-primary);
-        }
-
-        .id-badge {
-            background: var(--secondary-color);
-            color: var(--text-primary);
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .date-text {
-            color: var(--text-secondary);
-            font-size: 0.875rem;
         }
 
         .empty-state {
@@ -413,14 +412,14 @@
             <div class="page-header">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h2 class="mb-2"><i class="fas fa-users me-3"></i>User Management</h2>
-                        <p class="mb-0 opacity-90">Manage user accounts, roles, and permissions across your platform</p>
+                        <h2 class="mb-2"><i class="fas fa-blog me-3"></i>Blog Management</h2>
+                        <p class="mb-0 opacity-90">Manage and moderate blog posts across your platform</p>
                     </div>
                     <div class="text-end">
                         <div class="d-flex align-items-center gap-3">
                             <div class="text-center">
-                                <div class="h4 mb-0" th:text="${#lists.size(users)}">0</div>
-                                <small class="opacity-75">Total Users</small>
+                                <div class="h4 mb-0" th:text="${#lists.size(posts)}">0</div>
+                                <small class="opacity-75">Total Posts</small>
                             </div>
                         </div>
                     </div>
@@ -432,37 +431,37 @@
                 <div class="col-md-3">
                     <div class="stats-card">
                         <div class="stats-icon bg-primary bg-opacity-10 text-primary">
-                            <i class="fas fa-users"></i>
+                            <i class="fas fa-newspaper"></i>
                         </div>
-                        <h5 class="mb-1" th:text="${#lists.size(users)}">0</h5>
-                        <p class="text-muted mb-0 small">Total Users</p>
+                        <h5 class="mb-1" th:text="${#lists.size(posts)}">0</h5>
+                        <p class="text-muted mb-0 small">Total Posts</p>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="stats-card">
                         <div class="stats-icon bg-success bg-opacity-10 text-success">
-                            <i class="fas fa-user-check"></i>
+                            <i class="fas fa-check-circle"></i>
                         </div>
-                        <h5 class="mb-1" th:text="${#lists.size(users.?[deleted == false])}">0</h5>
-                        <p class="text-muted mb-0 small">Active Users</p>
+                        <h5 class="mb-1" th:text="${#lists.size(posts.?[published == true])}">0</h5>
+                        <p class="text-muted mb-0 small">Published</p>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="stats-card">
                         <div class="stats-icon bg-warning bg-opacity-10 text-warning">
-                            <i class="fas fa-user-shield"></i>
+                            <i class="fas fa-clock"></i>
                         </div>
-                        <h5 class="mb-1" th:text="${#lists.size(users.?[role == 'ADMIN'])}">0</h5>
-                        <p class="text-muted mb-0 small">Administrators</p>
+                        <h5 class="mb-1" th:text="${#lists.size(posts.?[published == false])}">0</h5>
+                        <p class="text-muted mb-0 small">Drafts</p>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="stats-card">
                         <div class="stats-icon bg-info bg-opacity-10 text-info">
-                            <i class="fas fa-pen"></i>
+                            <i class="fas fa-users"></i>
                         </div>
-                        <h5 class="mb-1" th:text="${#lists.size(users.?[role == 'WRITER'])}">0</h5>
-                        <p class="text-muted mb-0 small">Writers</p>
+                        <h5 class="mb-1" th:text="${#sets.size(posts.![users.fullName])}">0</h5>
+                        <p class="text-muted mb-0 small">Authors</p>
                     </div>
                 </div>
             </div>
@@ -471,13 +470,13 @@
             <div class="search-container">
                 <div class="row align-items-center">
                     <div class="col-md-8">
-                        <form th:action="@{/admin/user/search}" method="get" class="d-flex">
+                        <form th:action="@{/admin/blog/search}" method="get" class="d-flex">
                             <div class="input-group">
                                 <span class="input-group-text bg-light border-end-0">
                                     <i class="fas fa-search text-muted"></i>
                                 </span>
-                                <input type="text" name="search" class="form-control modern-search border-start-0" 
-                                       placeholder="Search by username, full name, or email..." aria-label="Search">
+                                <input type="text" name="search" class="form-control modern-search border-start-0"
+                                       placeholder="Search by author name or post title..." aria-label="Search">
                                 <button class="btn btn-primary-modern" type="submit">
                                     <i class="fas fa-search me-1"></i>Search
                                 </button>
@@ -486,111 +485,98 @@
                     </div>
                     <div class="col-md-4">
                         <div class="filter-tabs justify-content-end">
-                            <a href="#" class="filter-tab active" onclick="filterUsers('all')">All</a>
-                            <a href="#" class="filter-tab" onclick="filterUsers('active')">Active</a>
-                            <a href="#" class="filter-tab" onclick="filterUsers('deleted')">Deleted</a>
+                            <a href="#" class="filter-tab active" onclick="filterPosts('all')">All</a>
+                            <a href="#" class="filter-tab" onclick="filterPosts('published')">Published</a>
+                            <a href="#" class="filter-tab" onclick="filterPosts('draft')">Drafts</a>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Users Table -->
+            <!-- Posts Table -->
             <div class="modern-table">
                 <div class="table-responsive">
-                    <table class="table mb-0" id="usersTable">
+                    <table class="table mb-0" id="postsTable">
                         <thead>
                             <tr>
                                 <th width="80">ID</th>
-                                <th width="250">User</th>
-                                <th width="200">Email</th>
-                                <th width="120">Role</th>
-                                <th width="120">Status</th>
-                                <th width="150">Joined</th>
+                                <th width="200">Author</th>
+                                <th>Post Title</th>
+                                <th width="150">Status</th>
+                                <th width="150">Published</th>
+                                <th width="150">Updated</th>
                                 <th width="150">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr th:each="user : ${users}" th:attr="data-status=${user.deleted ? 'deleted' : 'active'}">
+                            <tr th:each="post : ${posts}" th:attr="data-status=${post.published ? 'published' : 'draft'}">
                                 <td>
-                                    <span class="id-badge" th:text="${user.userID}"></span>
+                                    <span class="badge bg-light text-dark" th:text="${post.postID}"></span>
                                 </td>
                                 <td>
-                                    <div class="user-info">
-                                        <img th:src="${user.avatarUrl}" alt="Avatar" class="user-avatar">
-                                        <div class="user-details">
-                                            <h6 th:text="${user.fullName}"></h6>
-                                            <small th:text="'@' + ${user.username}"></small>
+                                    <div class="author-info">
+                                        <img th:src="${post.users.avatarUrl}" alt="Avatar" class="author-avatar">
+                                        <div>
+                                            <div class="fw-medium" th:text="${post.users.fullName}"></div>
                                         </div>
                                     </div>
                                 </td>
                                 <td>
-                                    <div class="text-muted" th:text="${user.email}"></div>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <img th:src="${post.imageUrl}" alt="Post Image" class="post-image" width="60" height="40"/>
+                                        <div>
+                                            <div class="post-title" th:text="${post.title}" th:title="${post.title}"></div>
+                                        </div>
+                                    </div>
                                 </td>
                                 <td>
-                                    <form th:action="@{/admin/user/updateRole/{id}(id=${user.userID})}" method="post" class="d-inline">
-                                        <select name="role" class="modern-select" th:value="${user.role}" onchange="this.form.submit()">
-                                            <option value="WRITER" th:selected="${user.role == 'WRITER'}">Writer</option>
-                                            <option value="ADMIN" th:selected="${user.role == 'ADMIN'}">Admin</option>
-                                        </select>
-                                    </form>
-                                </td>
-                                <td>
-                                    <span th:if="${!user.deleted}" class="status-badge status-active">
-                                        <i class="fas fa-check-circle me-1"></i>Active
+                                    <span th:if="${post.published}" class="status-badge status-published">
+                                        <i class="fas fa-check-circle me-1"></i>Published
                                     </span>
-                                    <span th:if="${user.deleted}" class="status-badge status-deleted">
-                                        <i class="fas fa-times-circle me-1"></i>Deleted
+                                    <span th:if="${!post.published}" class="status-badge status-draft">
+                                        <i class="fas fa-clock me-1"></i>Draft
                                     </span>
                                 </td>
                                 <td>
-                                    <div class="date-text" th:text="${#dates.format(user.createdAt, 'MMM dd, yyyy')}"></div>
+                                    <div class="date-text" th:text="${#dates.format(post.publishedAt, 'MMM dd, yyyy')}"></div>
+                                    <small class="text-muted" th:text="${#dates.format(post.publishedAt, 'HH:mm')}"></small>
+                                </td>
+                                <td>
+                                    <div class="date-text" th:text="${#dates.format(post.updatedAt, 'MMM dd, yyyy')}"></div>
+                                    <small class="text-muted" th:text="${#dates.format(post.updatedAt, 'HH:mm')}"></small>
                                 </td>
                                 <td>
                                     <div class="action-buttons">
-                                        <a th:if="${!user.deleted}"
-                                           th:href="@{/admin/user/delete/{id}(id=${user.userID})}"
-                                           class="modern-btn btn-danger-modern"
-                                           onclick="return confirm('Are you sure you want to delete this user?')"
-                                           title="Delete User">
-                                            <i class="fas fa-trash"></i>
-                                        </a>
-                                        <a th:if="${user.deleted}"
-                                           th:href="@{/admin/user/recover/{id}(id=${user.userID})}"
+                                        <a th:if="${!post.published}"
+                                           th:href="@{/admin/blog/recover/{id}(id=${post.postID})}"
                                            class="modern-btn btn-success-modern"
-                                           onclick="return confirm('Are you sure you want to recover this user?')"
-                                           title="Recover User">
-                                            <i class="fas fa-undo"></i>
+                                           onclick="return confirm('Are you sure you want to publish this post?')"
+                                           title="Publish Post">
+                                            <i class="fas fa-check"></i>
+                                        </a>
+                                        <a th:if="${post.published}"
+                                           th:href="@{/admin/blog/delete/{id}(id=${post.postID})}"
+                                           class="modern-btn btn-danger-modern"
+                                           onclick="return confirm('Are you sure you want to unpublish this post?')"
+                                           title="Unpublish Post">
+                                            <i class="fas fa-times"></i>
                                         </a>
                                     </div>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
-                    
+
                     <!-- Empty State -->
-                    <div th:if="${#lists.isEmpty(users)}" class="empty-state">
-                        <i class="fas fa-users"></i>
-                        <h5 class="mt-3">No users found</h5>
-                        <p>There are no users to display at the moment.</p>
+                    <div th:if="${#lists.isEmpty(posts)}" class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <h5 class="mt-3">No posts found</h5>
+                        <p>There are no blog posts to display at the moment.</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Footer Start -->
-        <div class="container-fluid pt-4 px-4">
-            <div class="bg-light rounded-top p-4">
-                <div class="row">
-                    <div class="col-12 col-sm-6 text-center text-sm-start">
-                        &copy; <a href="#">Your Site Name</a>, All Right Reserved.
-                    </div>
-                    <div class="col-12 col-sm-6 text-center text-sm-end">
-                        Designed By hiuhayho</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Footer End -->
     </div>
     <!-- Content End -->
 
@@ -610,13 +596,16 @@
 <script th:src="@{/js/main.js}"></script>
 
 <script>
-    function filterUsers(status) {
-        const rows = document.querySelectorAll('#usersTable tbody tr');
+    // Filter functionality
+    function filterPosts(status) {
+        const rows = document.querySelectorAll('#postsTable tbody tr');
         const tabs = document.querySelectorAll('.filter-tab');
 
+        // Update active tab
         tabs.forEach(tab => tab.classList.remove('active'));
         event.target.classList.add('active');
 
+        // Filter rows
         rows.forEach(row => {
             const rowStatus = row.getAttribute('data-status');
             if (status === 'all' || rowStatus === status) {
@@ -627,19 +616,19 @@
         });
     }
 
+    // Enhanced search functionality
     document.addEventListener('DOMContentLoaded', function() {
         const searchInput = document.querySelector('input[name="search"]');
         if (searchInput) {
             searchInput.addEventListener('input', function() {
                 const searchTerm = this.value.toLowerCase();
-                const rows = document.querySelectorAll('#usersTable tbody tr');
-                
+                const rows = document.querySelectorAll('#postsTable tbody tr');
+
                 rows.forEach(row => {
-                    const fullName = row.querySelector('.user-details h6').textContent.toLowerCase();
-                    const username = row.querySelector('.user-details small').textContent.toLowerCase();
-                    const email = row.querySelector('td:nth-child(3) .text-muted').textContent.toLowerCase();
-                    
-                    if (fullName.includes(searchTerm) || username.includes(searchTerm) || email.includes(searchTerm)) {
+                    const authorName = row.querySelector('.author-info .fw-medium').textContent.toLowerCase();
+                    const postTitle = row.querySelector('.post-title').textContent.toLowerCase();
+
+                    if (authorName.includes(searchTerm) || postTitle.includes(searchTerm)) {
                         row.style.display = '';
                     } else {
                         row.style.display = 'none';
@@ -647,20 +636,6 @@
                 });
             });
         }
-
-        // Role change confirmation
-        const roleSelects = document.querySelectorAll('.modern-select');
-        roleSelects.forEach(select => {
-            select.addEventListener('change', function(e) {
-                const confirmed = confirm('Are you sure you want to change this user\'s role?');
-                if (!confirmed) {
-                    e.preventDefault();
-                    this.selectedIndex = this.getAttribute('data-original-index') || 0;
-                    return false;
-                }
-            });
-            select.setAttribute('data-original-index', select.selectedIndex);
-        });
     });
 </script>
 

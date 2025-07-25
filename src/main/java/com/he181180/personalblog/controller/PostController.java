@@ -6,6 +6,7 @@ import com.he181180.personalblog.entity.Posts;
 import com.he181180.personalblog.entity.Users;
 import com.he181180.personalblog.service.*;
 import com.he181180.personalblog.service.TagService;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.apache.bcel.generic.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Controller
 public class PostController {
 

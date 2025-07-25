@@ -19,5 +19,10 @@ public interface PostService {
     Posts findPostByPostID(int postID);
     List<Posts> getPostByUserID(int userID);
     void deletePost(int postID);
+    void recoverPost(int postID);
+    List<Posts> getAllPosts();
+    List<Posts> findAllPostPending();
     String handleImageUrl(String imageUrl, MultipartFile fileImage) throws IOException;
+    long countApprovedToday();
+    long countRejectedToday();
 }

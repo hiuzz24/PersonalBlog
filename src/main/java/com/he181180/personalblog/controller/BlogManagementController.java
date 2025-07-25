@@ -97,9 +97,11 @@ public class BlogManagementController {
             post.setImageUrl(imageUrl);
             post.setTags(tags);
             post.setBody(body);
-            post.setPublishedAt(new Timestamp(new Date().getTime()));
+            post.setPublishedAt(null);
             post.setUsers(user);
-            post.setPublished(true);
+            post.setPublished(false);
+            post.setStatus("Pending");
+            post.setReasonRejected(null);
             post.setUpdatedAt(new Timestamp(new Date().getTime()));
             try {
                 String finalImage = postService.handleImageUrl(imageUrl, fileImage);

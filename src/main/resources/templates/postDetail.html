@@ -53,6 +53,7 @@
         <div class="header-social-links d-flex align-items-center pe-3" style="margin-left:auto;">
             <div class="dropdown">
                 <a href="#" class="d-flex align-items-center" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding:0; border:none; background:none;">
+                    <h5 class="sitename mb-0 d-flex align-items-center" style="font-size: 1.5rem; margin-right: 10px; display: flex; align-items: center; height: 56px; line-height: 56px; color: #535353;" th:text="${user.fullName != null ? user.fullName : user.username}"></h5>
                     <img th:src="${user?.avatarUrl != null && !#strings.isEmpty(user.avatarUrl) ? user.avatarUrl : '/assets/img/user.png'}" alt="avatar" style="width:36px; height:36px; border-radius:50%; object-fit:cover;">
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
@@ -142,7 +143,7 @@
                                         th:data-post-id="${postDetail.postID}"
                                         th:classappend="${isFavorited} ? 'btn-danger' : 'btn-outline-danger'">
                                     <i class="bi" th:classappend="${isFavorited} ? 'bi-heart-fill' : 'bi-heart'"></i>
-                                    <span th:text="${isFavorited} ? 'Đã lưu' : 'Lưu bài viết'"></span>
+                                    <span th:text="${isFavorited} ? 'Saved' : 'Save post'"></span>
                                 </button>
                             </div>
 
@@ -560,24 +561,24 @@
                                     // Post is now favorited
                                     btn.className = 'btn btn-danger';
                                     icon.className = 'bi bi-heart-fill';
-                                    span.textContent = 'Đã lưu';
+                                    span.textContent = 'Saved';
                                 } else {
                                     // Post is no longer favorited
                                     btn.className = 'btn btn-outline-danger';
                                     icon.className = 'bi bi-heart';
-                                    span.textContent = 'Lưu bài viết';
+                                    span.textContent = 'Save post';
                                 }
 
                                 // Show success message (optional)
                                 showToast(data.message, 'success');
                             } else {
                                 // Show error message
-                                showToast(data.message || 'Có lỗi xảy ra', 'error');
+                                showToast(data.message || 'An error occurred.', 'error');
                             }
                         })
                         .catch(error => {
                             console.error('Error:', error);
-                            showToast('Có lỗi xảy ra khi lưu bài viết', 'error');
+                            showToast('An error occurred while saving the post.', 'error');
                         })
                         .finally(() => {
                             // Re-enable button

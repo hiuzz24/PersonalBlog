@@ -76,11 +76,11 @@ public class MainController {
                            Model model) {
         boolean hasError = false;
 
-        if (userRepository.findByUsername(username).isPresent()) {
+        if (userRepository.findByUsernameAndDeletedFalse(username).isPresent()) {
             model.addAttribute("usernameError", "Username already exists");
             hasError = true;
         }
-        if (userRepository.findByEmail(email).isPresent()) {
+        if (userRepository.findByEmailAndDeletedFalse(email).isPresent()) {
             model.addAttribute("emailError", "Email already exists");
             hasError = true;
         }

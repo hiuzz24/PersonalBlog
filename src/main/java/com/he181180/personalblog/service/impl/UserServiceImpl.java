@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
     }
     @Override
     public List<Users> getAllUsers() {
-        return userRepository.findAllByDeletedFalse();
+        return userRepository.findAll();
     }
     @Override
     public Optional<Users> findUserByEmail(String email) {
@@ -61,13 +61,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updateRole(int userID,String role) {
-        Users user = userRepository.findUsersByUserIDAndDeletedFalse(userID);
+        Users user = userRepository.findUsersByUserID(userID);
         user.setRole(role);
         userRepository.save(user);
     }
     @Override
     public void delete(int userID) {
-        Users users = userRepository.findUsersByUserIDAndDeletedFalse(userID);
+        Users users = userRepository.findUsersByUserID(userID);
         users.setDeleted(true);
         userRepository.save(users);
     }
@@ -95,5 +95,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<Users> findUserById(int id) {
         return userRepository.findById(id);
+    }
+    @Override
+    public void recover(int userID) {
+        Users users = userRepository.findUsersByUserID(userID);
+        users.setDeleted(false);
+        userRepository.save(users);
     }
 }

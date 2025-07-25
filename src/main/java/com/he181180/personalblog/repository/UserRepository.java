@@ -21,6 +21,6 @@ public interface UserRepository extends JpaRepository<Users,Integer> {
             "OR LOWER(u.fullName) LIKE LOWER(CONCAT('%', :name, '%'))) " +
             "AND u.deleted = false")
     List<Users> findUsersByUsernameOrFullName(@Param("name") String name);
-    List<Users> findAllByDeletedFalse();
-    Users findUsersByUserIDAndDeletedFalse(int userID);
+
+    Users findUsersByUserID(int userID);
 }
