@@ -38,36 +38,17 @@
         </a>
 
         <nav id="navmenu" class="navmenu">
-            <ul>
-                <li><a th:href="@{/}">Home</a></li>
-                <li><a href="about.html">About</a></li>
-                <li class="dropdown"><a href="#"><span>Categories</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-                    <ul>
-                        <li><a href="category.html" class="active">Category 1</a></li>
-                        <li class="dropdown"><a href="#"><span>Deep Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-                            <ul>
-                                <li><a href="#">Deep Dropdown 1</a></li>
-                                <li><a href="#">Deep Dropdown 2</a></li>
-                                <li><a href="#">Deep Dropdown 3</a></li>
-                                <li><a href="#">Deep Dropdown 4</a></li>
-                                <li><a href="#">Deep Dropdown 5</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="category.html" class="active">Category 2</a></li>
-                        <li><a href="category.html" class="active">Category 3</a></li>
-                        <li><a href="category.html" class="active">Category 4</a></li>
-                    </ul>
-                </li>
-                <li><a href="contact.html">Contact</a></li>
-            </ul>
+
             <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
         </nav>
 
         <div class="header-social-links">
             <div class="dropdown">
                 <a href="#" class="d-flex align-items-center" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding:0; border:none; background:none;">
+                    <h5 class="sitename mb-0 d-flex align-items-center" style="font-size: 1.5rem; margin-right: 10px; display: flex; align-items: center; height: 56px; line-height: 56px; color: #535353;" th:text="${user.fullName != null ? user.fullName : user.username}"></h5>
                     <img th:src="${user != null && user.avatarUrl != null && !#strings.isEmpty(user.avatarUrl) ? user.avatarUrl : '/assets/img/user.png'}" alt="avatar" style="width:36px; height:36px; border-radius:50%; object-fit:cover;">
                 </a>
+
 
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                     <li>

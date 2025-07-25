@@ -12,6 +12,9 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,10 +47,27 @@ public class ChatController {
     public void sendMessage(@Payload MessageDTO messageDTO, Authentication authentication) {
         System.out.println("=== RECEIVED MESSAGE ===");
         System.out.println("MessageDTO: " + messageDTO);
+        System.out.println("Authentication object: " + authentication);
+        System.out.println("Authentication is null: " + (authentication == null));
+
+        if (authentication != null) {
+            System.out.println("Authentication name: " + authentication.getName());
+            System.out.println("Authentication principal: " + authentication.getPrincipal());
+            System.out.println("Authentication principal type: " + authentication.getPrincipal().getClass().getSimpleName());
+            System.out.println("Authentication authorities: " + authentication.getAuthorities());
+        }
+
         try {
-            // Get sender using CurrentUserService
-            Users sender = currentUserService.getCurrentUser(authentication);
+            // Get sender using senderId from messageDTO instead of authentication
+            Users sender = null;
+            if (messageDTO.getSenderId() != 0) {
+                Optional<Users> senderOpt = userService.findUserById(messageDTO.getSenderId());
+                sender = senderOpt.orElse(null);
+            }
+
             System.out.println("Sender: " + sender);
+            System.out.println("Sender username: " + (sender != null ? sender.getUsername() : "null"));
+            System.out.println("Sender email: " + (sender != null ? sender.getEmail() : "null"));
 
             if (sender == null) {
                 System.out.println("Sender is null, returning");
@@ -63,7 +83,9 @@ public class ChatController {
             
             Users receiver = receiverOpt.get();
             System.out.println("Receiver: " + receiver.getUsername());
-            
+            System.out.println("Receiver username: " + receiver.getUsername());
+            System.out.println("Receiver email: " + receiver.getEmail());
+
             // Convert DTO to entity using MessageMapper
             Messages message = messageMapper.toEntity(messageDTO);
             message.setSender(sender);
@@ -76,6 +98,13 @@ public class ChatController {
 
             // Convert back to DTO for response using MessageMapper
             MessageDTO responseDTO = messageMapper.toDTO(savedMessage);
+
+            // Use username for WebSocket routing (simpler approach)
+            String senderPrincipal = sender.getUsername();
+            String receiverPrincipal = receiver.getUsername();
+
+            System.out.println("Sender principal for WebSocket: " + senderPrincipal);
+            System.out.println("Receiver principal for WebSocket: " + receiverPrincipal);
 
             // Send message to receiver
             messagingTemplate.convertAndSendToUser(
@@ -101,12 +130,9 @@ public class ChatController {
     public List<Map<String, Object>> getConversations(Authentication authentication) {
         try {
             Users currentUser = currentUserService.getCurrentUser(authentication);
-            if (currentUser == null) {
-                return List.of();
-            }
-
+            System.out.println("Current user: " + currentUser);
             List<Users> partners = messageService.getConversationPartners(currentUser);
-
+            System.out.println("Partners: " + partners);
             return partners.stream().map(partner -> {
                 Messages latestMessage = messageService.getLatestMessageBetweenUsers(currentUser, partner);
                 long unreadCount = messageService.countUnreadMessagesFromUser(currentUser, partner);
@@ -243,5 +269,20 @@ public class ChatController {
     @GetMapping("/chat")
     public String chatPage() {
         return "UserDashboard/chat";
+    }
+
+    private String getPrincipalIdentifier(Authentication authentication) {
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof Users) {
+            return ((Users) principal).getUsername();
+        } else if (principal instanceof String) {
+            return (String) principal;
+        } else {
+            return null;
+        }
+    }
+
+    private String getReceiverPrincipalIdentifier(Users receiver) {
+        return receiver.getUsername();
     }
 }

@@ -20,7 +20,8 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
     @Autowired
     private UserRepository userRepository;
-
+    @Autowired
+    private CustomSuccessHandler customSuccessHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -29,12 +30,13 @@ public class SecurityConfig {
                         .requestMatchers("/login", "/oauth2/**",
                                          "/register", "/img/**",
                                          "/css/**", "/forgotPassword", "/resetPassword", "/savePassword").permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(login -> login
                         .loginPage("/login")
-                        .defaultSuccessUrl("/explore", true)
                         .failureUrl("/login?error")
+                        .successHandler(customSuccessHandler)
                         .permitAll()
                 ).oauth2Login(oauth2 -> oauth2
                         .loginPage("/login")
@@ -58,8 +60,8 @@ public class SecurityConfig {
     @Bean
     public UserDetailsService userDetailsService() {
         return username -> {
-            Users u = userRepository.findByUsername(username)
-                    .orElseGet(() -> userRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("user not found")));
+            Users u = userRepository.findByUsernameAndDeletedFalse(username)
+                    .orElseThrow(() -> new UsernameNotFoundException("user not found"));
 
             return User.withUsername(u.getUsername())
                     .password(u.getPassword() == null ? "" : u.getPassword())
