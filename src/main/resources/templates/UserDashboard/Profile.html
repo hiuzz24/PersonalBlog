@@ -12,8 +12,7 @@
     <!-- Fonts -->
     <link th:href="@{https://fonts.googleapis.com}" rel="preconnect">
     <link th:href="@{https://fonts.gstatic.com}" rel="preconnect" crossorigin>
-    <link th:href="@{https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700;1,800&display=swap}"
-          rel="stylesheet">
+    <link th:href="@{https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700;1,800&display=swap}" rel="stylesheet">
 
     <!-- CSS -->
     <link th:href="@{/assets/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
@@ -21,9 +20,11 @@
     <link th:href="@{/assets/vendor/aos/aos.css}" rel="stylesheet">
     <link th:href="@{/assets/vendor/swiper/swiper-bundle.min.css}" rel="stylesheet">
     <link th:href="@{/assets/css/main.css}" rel="stylesheet">
+
+
 </head>
 
-<script>
+    <script>
     function toggleSidebar() {
         const sidebar = document.getElementById('sidebark');
         sidebar.classList.toggle('closed');
@@ -114,6 +115,25 @@
     document.getElementById('avatarUrl').addEventListener('input', function() {
         document.getElementById('avatarFile').value = '';
     });
+    function requestConfirmationCode() {
+        fetch('/profile/send-confirmation-code', {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                if (response.ok) {
+                    alert('Confirmation code sent to your email!');
+                } else {
+                    alert('Failed to send confirmation code.');
+                }
+            })
+            .catch(error => {
+                alert('Error sending confirmation code.');
+            });
+    }
 </script>
 
 
@@ -202,6 +222,13 @@
             </li>
 
             <li class="nav-item">
+                <a class="nav-link" th:href="@{/favorites/dashboard}">
+                    <i class="bi bi-heart-fill"></i>
+                    <span class="link-text">Favorite blogs</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
                 <a class="nav-link" th:href="@{/blog/create}">
                     <i class="bi bi-plus-circle"></i>
                     <span class="link-text">Create new Blog</span>
@@ -248,19 +275,26 @@
             <!-- Profile Info -->
             <div class="row gy-4 align-items-center">
                 <div class="col-md-4 text-center">
-                    <form th:action="@{/profile/updateAvatar}" method="post" enctype="multipart/form-data" id="avatarForm">
+                    <form th:action="@{/profile/updateAvatar}" method="post" enctype="multipart/form-data"
+                          id="avatarForm">
                         <div class="avatar-wrapper position-relative d-flex flex-column align-items-center">
                             <!-- Avatar -->
-                            <img th:src="${user.avatarUrl}" id="previewAvatar" alt="Avatar" class="profile-avatar mb-2" style="cursor:pointer;" onclick="toggleChangeBox()">
+                            <img th:src="${avatarSrc}" id="previewAvatar" alt="Avatar" class="profile-avatar mb-2"
+                                 style="cursor:pointer;" onclick="toggleChangeBox()">
                             <!-- Photo change frame -->
-                            <div id="changeBox" class="change-avatar-box mt-2" style="display:none; width:100%; max-width:220px;">
+                            <div id="changeBox" class="change-avatar-box mt-2"
+                                 style="display:none; width:100%; max-width:220px;">
                                 <label class="btn btn-sm btn-secondary mb-2 w-100 d-block text-center">
-                                        Upload image from computer
-                                    <input type="file" name="avatarFile" id="avatarFile" accept="image/*" style="display:none;">
+                                    Upload image from computer
+                                    <input type="file" name="avatarFile" id="avatarFile" accept="image/*"
+                                           style="display:none;">
                                 </label>
-                                <input type="url" name="avatarUrl" id="avatarUrl" class="form-control mt-2" placeholder="Paste image URL">
+                                <input type="url" name="avatarUrl" id="avatarUrl" class="form-control mt-2"
+                                       placeholder="Paste image URL">
                                 <div class="d-flex justify-content-center gap-2 mt-2">
-                                    <button type="button" class="btn btn-info btn-sm" onclick="handlePreview()">Preview</button>
+                                    <button type="button" class="btn btn-info btn-sm" onclick="handlePreview()">
+                                        Preview
+                                    </button>
                                     <button type="submit" class="btn btn-sm btn-primary">Save image</button>
                                 </div>
                             </div>
@@ -299,6 +333,58 @@
                         </div>
                     </form>
                 </div>
+                <!-- Password Change Section Start -->
+                <div class="col-md-8 mt-4">
+                    <h2 class="d-flex align-items-center" >
+                        <i class="bi bi-person text me-2" ></i>
+                        <span>Change Password</span>
+                    </h2>
+                        <div class="card">
+                            <div class="card-body">
+                                <form id="changePasswordForm" th:action="@{/profile/change-password}" method="post">
+                                    <!-- If user has password -->
+                                    <div id="changePasswordStep1" th:if="${user.hasPassword}">
+                                        <button type="button" class="btn btn-primary mb-3" onclick="showSendCodeSection()">Change Password</button>
+                                    </div>
+                                    <div id="changePasswordStep2" th:if="${user.hasPassword}" style="display:none;">
+                                        <div class="mb-3 d-flex align-items-center gap-2">
+                                            <input type="text" class="form-control" id="confirmationCode" name="confirmationCode" placeholder="6-digit code" maxlength="6" style="max-width: 150px;">
+                                            <button type="button" class="btn btn-outline-primary" onclick="requestConfirmationCode()">Send Code</button>
+                                            <button type="button" class="btn btn-success" onclick="verifyConfirmationCode()">Verify Code</button>
+                                        </div>
+                                    </div>
+                                    <div id="changePasswordStep3" th:if="${user.hasPassword}" style="display:none;">
+                                        <div class="mb-3">
+                                            <label for="currentPassword" class="form-label">Current Password</label>
+                                            <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="newPassword" class="form-label">New Password</label>
+                                            <input type="password" class="form-control" id="newPassword" name="newPassword" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Change Password</button>
+                                    </div>
+                                    <!-- If user does NOT have password -->
+                                    <div th:if="${!user.hasPassword}">
+                                        <div class="mb-3">
+                                            <label for="newPasswordNoCurrent" class="form-label">New Password</label>
+                                            <input type="password" class="form-control" id="newPasswordNoCurrent" name="newPassword" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="confirmPasswordNoCurrent" class="form-label">Confirm New Password</label>
+                                            <input type="password" class="form-control" id="confirmPasswordNoCurrent" name="confirmPassword" required>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Set Password</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                </div>
+                <!-- Password Change Section End -->
             </div>
 
         </div>
@@ -321,6 +407,33 @@
 <script th:src="@{/assets/vendor/aos/aos.js}"></script>
 <script th:src="@{/assets/vendor/swiper/swiper-bundle.min.js}"></script>
 <script th:src="@{/assets/js/main.js}"></script>
+<script>
+function showSendCodeSection() {
+    document.getElementById('changePasswordStep1').style.display = 'none';
+    document.getElementById('changePasswordStep2').style.display = 'block';
+}
+function verifyConfirmationCode() {
+    const code = document.getElementById('confirmationCode').value;
+    fetch('/profile/verify-confirmation-code', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify({ code })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById('changePasswordStep2').style.display = 'none';
+            document.getElementById('changePasswordStep3').style.display = 'block';
+        } else {
+            alert('Invalid or expired code.');
+        }
+    })
+    .catch(() => alert('Error verifying code.'));
+}
+</script>
 
 </body>
 </html>

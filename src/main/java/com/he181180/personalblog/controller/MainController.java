@@ -60,7 +60,7 @@ public class MainController {
     }
 
     @GetMapping("/dashboard")
-    public String dashboard(Authentication authentication, Model model) {
+    public String dashboard(Authentication authentication,Model model) {
         String username = authentication.getName();
         Optional<Users> user = userService.findUserByUsername(username);
         if (user.isPresent()) {

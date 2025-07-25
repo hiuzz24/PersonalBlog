@@ -17,6 +17,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
@@ -33,7 +36,7 @@ public class BlogManagementController {
     private TagService tagService;
 
     @GetMapping
-    public String getPostsByUserId(Authentication authentication, Model model) {
+    public String getPostsByUserId(Authentication authentication,Model model) {
         Users user = null;
         if (authentication != null) {
             Object principal = authentication.getPrincipal();
@@ -57,8 +60,8 @@ public class BlogManagementController {
     // Hiển thị form tạo bài viết mới
     @GetMapping("/create")
     public String createPost(Model model) {
-        model.addAttribute("post", new Posts());
-        model.addAttribute("formAction", "/blog/create");
+        model.addAttribute("post",new Posts());
+        model.addAttribute("formAction","/blog/create");
         return "BlogManagement/blogCreation";
     }
 
@@ -122,21 +125,21 @@ public class BlogManagementController {
                 .map(Tags::getTagID)
                 .collect(Collectors.toList());
 
-        model.addAttribute("selectedTagID", selectedTagID);
-        model.addAttribute("post", post);
-        model.addAttribute("formAction", "/blog/saveUpdate");
+        model.addAttribute("selectedTagID",selectedTagID);
+        model.addAttribute("post",post);
+        model.addAttribute("formAction","/blog/saveUpdate");
         return "BlogManagement/blogCreation";
     }
 
     @RequestMapping("/saveUpdate")
     public String saveUpdate(@RequestParam int postID,
-                             @RequestParam String title,
-                             @RequestParam List<Integer> tagID,
-                             @RequestParam String content,
-                             @RequestParam String body,
-                             @RequestParam(required = false) String imageUrl,
-                             @RequestParam(value = "fileImage", required = false) MultipartFile fileImage,
-                             Authentication authentication) throws IOException {
+                            @RequestParam String title,
+                            @RequestParam List<Integer> tagID,
+                            @RequestParam String content,
+                            @RequestParam String body,
+                            @RequestParam String imageUrl,
+                            @RequestParam(required = false) MultipartFile fileImage,
+                            Authentication authentication) {
         String username = authentication.getName();
         Optional<Users> user = userService.findUserByUsername(username);
         List<Tags> tags = tagService.findTagsByTagID(tagID);

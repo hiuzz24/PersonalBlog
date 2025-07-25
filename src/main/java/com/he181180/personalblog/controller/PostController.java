@@ -21,6 +21,7 @@ import java.security.Principal;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
@@ -37,6 +38,11 @@ public class PostController {
 
     @Autowired
     private TagService tagService;
+
+    @Autowired
+    private CurrentUserService currentUserService;
+    @Autowired
+    private FavoriteService favoriteService;
 
     @GetMapping("/explore")
     public String explore(@RequestParam(defaultValue = "1") int page, Model model){
@@ -74,7 +80,7 @@ public class PostController {
 
     @GetMapping("/PostDetail/{postID}")
     public String postDetail(@PathVariable("postID") int postID
-            ,Model model){
+            , Model model, Authentication authentication) {
         Posts posts = postService.findPostByPostID(postID);
         List<Integer> tagIDs = tagService.findTagIDByPostID(postID);
         List<Posts> postsList = tagIDs.stream().flatMap(tagID -> postService.findPostsByTagID(tagID).stream())
@@ -96,6 +102,14 @@ public class PostController {
                 .post(posts)
                 .build();
         model.addAttribute("commentReplyDTO", commentReplyDTO);
+
+        // Check if post is favorited by current user
+        boolean isFavorited = false;
+        if (authentication != null) {
+            Users user = currentUserService.getCurrentUser(authentication);
+            isFavorited = favoriteService.isPostFavorited(user, posts);
+        }
+        model.addAttribute("isFavorited", isFavorited);
 
         model.addAttribute("comments", comments);
         model.addAttribute("countComment", countComment);
