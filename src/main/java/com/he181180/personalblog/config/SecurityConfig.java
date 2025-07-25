@@ -21,14 +21,14 @@ public class SecurityConfig {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private UserService userService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/oauth2/**", "/register", "/img/**", "/css/**").permitAll()
+                        .requestMatchers("/login", "/oauth2/**",
+                                         "/register", "/img/**",
+                                         "/css/**", "/forgotPassword", "/resetPassword", "/savePassword").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(login -> login

@@ -12,7 +12,7 @@ public class WebConfig implements WebMvcConfigurer {
         String uploadPath = "file:" + System.getProperty("user.dir") + "/src/main/resources/static/img/";
         registry.addResourceHandler("/img/**")
                 .addResourceLocations(uploadPath);
-        
+
         // Also serve other static resources
         registry.addResourceHandler("/assets/**")
                 .addResourceLocations("classpath:/static/assets/");

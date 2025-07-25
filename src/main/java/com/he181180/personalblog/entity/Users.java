@@ -39,14 +39,13 @@ public class Users {
     @Column(name = "avatar_url")
     private String avatarUrl;
 
-    @Column(name = "role")
-    @ColumnDefault("'writer'")  // 👈 Hibernate annotation
+    @Column(name = "role",nullable = false)
     private String role;
 
-    @Column(name = "created_at")
+    @Column(name = "created_at",insertable = false)
     private Timestamp createdAt;
 
-    @Column(name = "is_deleted")
+    @Column(name = "is_deleted",insertable = false)
     private boolean isDeleted;
 
     @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
@@ -55,4 +54,11 @@ public class Users {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Comments> comments;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<PasswordResetToken> tokens;
+
+    public boolean isHasPassword() {
+        return password != null && !password.isEmpty();
+    }
 }
+

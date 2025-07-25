@@ -71,29 +71,43 @@ public class BlogManagementController {
                            @RequestParam String content,
                            @RequestParam List<Integer> tagID,
                            @RequestParam String body,
-                           @RequestParam(required = false) String imageUrl,
-                           @RequestParam(value = "fileImage",required = false)MultipartFile fileImage,
+                           @RequestParam String imageUrl,
+                           @RequestParam(required = false) MultipartFile fileImage,
                            Authentication authentication,
-                           Model model) throws IOException {
+                           Model model) {
 
         List<Tags> tags = tagService.findTagsByTagID(tagID);
 
-        String username = authentication.getName();
-        Optional<Users> user = userService.findUserByUsername(username);
+        Users user = null;
+        if (authentication != null) {
+            Object principal = authentication.getPrincipal();
+            if (principal instanceof org.springframework.security.oauth2.core.user.OAuth2User oauth2User) {
+                String email = oauth2User.getAttribute("email");
+                user = userService.findUserByEmail(email).orElse(null);
+            } else {
+                String username = authentication.getName();
+                user = userService.findUserByUsername(username).orElse(null);
+            }
+        }
 
-        if (user.isPresent()) {
+        if (user != null) {
             Posts post = new Posts();
             post.setTitle(title);
             post.setContent(content);
+            post.setImageUrl(imageUrl);
             post.setTags(tags);
             post.setBody(body);
             post.setPublishedAt(new Timestamp(new Date().getTime()));
-            post.setUsers(user.get());
+            post.setUsers(user);
             post.setPublished(true);
             post.setUpdatedAt(new Timestamp(new Date().getTime()));
-
-            String finalImage = postService.handleImageUrl(imageUrl,fileImage);
-            post.setImageUrl(finalImage);
+            try {
+                String finalImage = postService.handleImageUrl(imageUrl, fileImage);
+                post.setImageUrl(finalImage);
+            } catch (Exception e) {
+                model.addAttribute("error", "Lỗi khi xử lý ảnh: " + e.getMessage());
+                return "redirect:/blog/create";
+            }
             postService.savePost(post);
             return "redirect:/blog";
         }
@@ -120,31 +134,39 @@ public class BlogManagementController {
     @RequestMapping("/saveUpdate")
     public String saveUpdate(@RequestParam int postID,
                             @RequestParam String title,
-                           @RequestParam List<Integer> tagID,
-                           @RequestParam String content,
-                           @RequestParam String body,
-                           @RequestParam(required = false) String imageUrl,
-                             @RequestParam(value = "fileImage",required = false) MultipartFile fileImage,
-                             Authentication authentication) throws IOException {
+                            @RequestParam List<Integer> tagID,
+                            @RequestParam String content,
+                            @RequestParam String body,
+                            @RequestParam String imageUrl,
+                            @RequestParam(required = false) MultipartFile fileImage,
+                            Authentication authentication) {
         String username = authentication.getName();
         Optional<Users> user = userService.findUserByUsername(username);
         List<Tags> tags = tagService.findTagsByTagID(tagID);
 
-        Posts post = postService.findPostByPostID(postID);
-        post.setTitle(title);
-        post.setContent(content);
-        post.setTags(tags);
-        post.setBody(body);
-        post.setPublishedAt(post.getPublishedAt());
-        post.setUsers(user.get());
-        post.setPublished(true);
-        post.setUpdatedAt(new Timestamp(new Date().getTime()));
-
-        String finalImage = postService.handleImageUrl(imageUrl,fileImage);
-        post.setImageUrl(finalImage);
-        postService.savePost(post);
-        return "redirect:/blog";
+        if (user.isPresent()) {
+            Posts post = postService.findPostByPostID(postID);
+            post.setTitle(title);
+            post.setContent(content);
+            post.setImageUrl(imageUrl);
+            post.setTags(tags);
+            post.setBody(body);
+            post.setPublishedAt(post.getPublishedAt());
+            post.setUsers(user.get());
+            post.setPublished(true);
+            post.setUpdatedAt(new Timestamp(new Date().getTime()));
+            try {
+                String finalImage = postService.handleImageUrl(imageUrl, fileImage);
+                post.setImageUrl(finalImage);
+            } catch (Exception e) {
+                // Optionally, you can add a model attribute for error and redirect
+                return "redirect:/blog/edit/" + postID + "?error=img";
+            }
+            postService.savePost(post);
+            return "redirect:/blog";
         }
+        return "redirect:/blog/edit/" + postID + "?error=user";
+    }
 
     // Xóa bài viết
     @RequestMapping("/delete/{postID}")
@@ -153,5 +175,3 @@ public class BlogManagementController {
         return "redirect:/blog";
     }
     }
-
-

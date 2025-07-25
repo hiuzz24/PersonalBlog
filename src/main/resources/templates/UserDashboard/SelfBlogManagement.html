@@ -3,245 +3,230 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản lý bài viết</title>
+    <title>Blog Management</title>
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Favicon -->
+    <link th:href="@{/assets/img/favicon.png}" rel="icon">
+    <link th:href="@{/assets/img/apple-touch-icon.png}" rel="apple-touch-icon">
 
-    <style>
-        .sidebar {
-            height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 280px;
-            padding-top: 20px;
-            overflow-y: auto;
-        }
+    <!-- Fonts -->
+    <link th:href="@{https://fonts.googleapis.com}" rel="preconnect">
+    <link th:href="@{https://fonts.gstatic.com}" rel="preconnect" crossorigin>
+    <link th:href="@{https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700;1,800&display=swap}" rel="stylesheet">
 
-        .sidebar .nav-link {
-            color: rgba(255, 255, 255, 0.8);
-            padding: 12px 25px;
-            border-radius: 0;
-            transition: all 0.3s ease;
-        }
+    <!-- CSS -->
+    <link th:href="@{/assets/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/assets/vendor/bootstrap-icons/bootstrap-icons.css}" rel="stylesheet">
+    <link th:href="@{/assets/vendor/aos/aos.css}" rel="stylesheet">
+    <link th:href="@{/assets/vendor/swiper/swiper-bundle.min.css}" rel="stylesheet">
+    <link th:href="@{/assets/css/main.css}" rel="stylesheet">
 
-        .sidebar .nav-link:hover,
-        .sidebar .nav-link.active {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            transform: translateX(5px);
-        }
-
-        .main-content {
-            margin-left: 280px;
-            padding: 20px;
-            min-height: 100vh;
-            background: #f8f9fa;
-        }
-
-        .user-profile {
-            text-align: center;
-            padding: 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            margin-bottom: 20px;
-        }
-
-        .user-avatar {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .dashboard-card {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-
-        .post-card {
-            border: 1px solid #e9ecef;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-            background: white;
-        }
-
-        .post-image {
-            width: 100px;
-            height: 100px;
-            object-fit: cover;
-            border-radius: 8px;
-        }
-    </style>
 </head>
+
+<script>
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebark');
+        sidebar.classList.toggle('closed');
+    }
+
+    function toggleChangeBox() {
+        const box = document.getElementById('changeBox');
+        if (box.style.display === 'block') {
+            box.style.display = 'none';
+        } else {
+            box.style.display = 'block';
+        }
+    }
+
+</script>
 <body>
-<!-- Sidebar (tương tự dashboard.html) -->
-<nav class="sidebar">
-    <div class="user-profile">
-        <img th:src="${user.avatarUrl ?: '/img/default-avatar.png'}"
-             alt="Avatar" class="user-avatar">
-        <h5 class="mt-2 mb-0" th:text="${user.fullName}">Tên người dùng</h5>
-        <small th:text="'@' + ${user.username}">@username</small>
+<!-- Header -->
+<header id="header" class="header d-flex align-items-center sticky-top">
+    <div class="container-fluid position-relative d-flex align-items-center justify-content-between px-0" style="gap:0;">
+        <div class="d-flex align-items-center ps-3" style="gap: 0; min-width: 0; height: 56px;">
+            <button id="toggle-btn" onclick="toggleSidebar()" style="cursor:pointer; border:none; background:transparent; display: flex; align-items: center; height: 56px; padding: 0;">
+                <i class="bi bi-list" style="font-size:28px; width:28px; height:28px; display: flex; align-items: center; justify-content: center;"></i>
+            </button>
+            <a th:href="@{/}" class="logo d-flex align-items-center ms-2" style="height: 56px; align-items: center;">
+                <h1 class="sitename mb-0 d-flex align-items-center" style="font-size: 1.5rem; display: flex; align-items: center; height: 56px; line-height: 56px; color: #535353; margin-left: 7px;">PersonalBlog</h1>
+            </a>
+        </div>
+        <nav id="navmenu" class="navmenu mx-auto flex-grow-1 d-flex justify-content-center">
+            <ul>
+                <li><a th:href="@{/}">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li class="dropdown"><a href="#"><span>Categories</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                    <ul>
+                        <li><a href="category.html">Category 1</a></li>
+                        <li><a href="category.html">Category 2</a></li>
+                        <li><a href="category.html">Category 3</a></li>
+                        <li><a href="category.html">Category 4</a></li>
+                    </ul>
+                </li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+        </nav>
+        <div class="header-social-links d-flex align-items-center pe-3" style="margin-left:auto;">
+            <div class="dropdown">
+                <a href="#" class="d-flex align-items-center" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding:0; border:none; background:none;">
+                    <img th:src="${user != null && user.avatarUrl != null && !#strings.isEmpty(user.avatarUrl) ? user.avatarUrl : '/assets/img/user.png'}" alt="avatar" style="width:36px; height:36px; border-radius:50%; object-fit:cover;">
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                    <li>
+                        <form th:action="@{/profile}" style="display: inline;">
+                            <button type="submit" class="dropdown-item">Profile</button>
+                        </form>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <form th:action="@{/logout}" method="post" style="display: inline;">
+                            <button type="submit" class="dropdown-item">Logout</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
+</header>
+<!-- Sidebar (tương tự dashboard.html) -->
+<div class="wrapper d-flex">
 
-    <ul class="nav flex-column">
-        <li class="nav-item">
-            <a class="nav-link" th:href="@{/dashboard}">
-                <i class="bi bi-speedometer2 me-2"></i>
-                Dashboard
-            </a>
-        </li>
+    <nav id="sidebark" class="sidebark open">
 
-        <li class="nav-item">
-            <a class="nav-link" th:href="@{/profile}">
-                <i class="bi bi-person me-2"></i>
-                Profile
-            </a>
-        </li>
+        <div class="user-profile text-center mt-3">
+            <img th:src="${user?.avatarUrl} ?: '/img/default-avatar.png'" alt="Avatar" class="profile-avatar mb-3">
+            <h5 class="mt-2 mb-0 text-white" th:text="${user?.fullName} ?: 'User name'">User name</h5>
+            <small th:text="${user != null && user.username != null ? '@' + user.username : '@username'}">@username</small>
+        </div>
 
-        <li class="nav-item">
-            <a class="nav-link active" th:href="@{/blog}">
-                <i class="bi bi-journal-text me-2"></i>
-                Post Management
-            </a>
-        </li>
+        <ul class="nav flex-column mt-4">
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/dashboard}">
+                    <i class="bi bi-speedometer2"></i>
+                    <span class="link-text">Dashboard</span>
+                </a>
+            </li>
 
-        <li class="nav-item">
-            <a class="nav-link" th:href="@{/blog/create}">
-                <i class="bi bi-plus-circle me-2"></i>
-                Create new Post
-            </a>
-        </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/profile}">
+                    <i class="bi bi-person"></i>
+                    <span class="link-text">Profile</span>
+                </a>
+            </li>
 
-        <li class="nav-item">
-            <a class="nav-link" th:href="@{/dashboard/analytics}">
-                <i class="bi bi-bar-chart me-2"></i>
-                Charts
-            </a>
-        </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/blog}">
+                    <i class="bi bi-journal-text"></i>
+                    <span class="link-text">Blog Management</span>
+                </a>
+            </li>
 
-        <li class="nav-item mt-3">
-            <hr style="border-color: rgba(255, 255, 255, 0.1);">
-        </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/favorites/dashboard}">
+                    <i class="bi bi-heart-fill"></i>
+                    <span class="link-text">Bài viết đã lưu</span>
+                </a>
+            </li>
 
-        <li class="nav-item">
-            <a class="nav-link" th:href="@{/explore}">
-                <i class="bi bi-globe me-2"></i>
-                Explore
-            </a>
-        </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/blog/create}">
+                    <i class="bi bi-plus-circle"></i>
+                    <span class="link-text">Create new Blog</span>
+                </a>
+            </li>
 
-        <li class="nav-item">
-            <form th:action="@{/logout}" method="post" style="display: inline;">
-                <button type="submit" class="nav-link btn btn-link text-start w-100"
-                        style="color: rgba(255, 255, 255, 0.8);">
-                    <i class="bi bi-box-arrow-right me-2"></i>
-                    Logout
-                </button>
-            </form>
-        </li>
-    </ul>
-</nav>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/dashboard/analytics}">
+                    <i class="bi bi-bar-chart"></i>
+                    <span class="link-text">Chart</span>
+                </a>
+            </li>
+            <li class="nav-item mt-4">
+                <hr style="border-color: rgba(255, 255, 255, 0.3);">
+            </li>
+            <li class="nav-item">
+                <form th:action="@{/logout}" method="post">
+                    <button type="submit" class="nav-link btn btn-link text-start w-100">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <span class="link-text">Logout</span>
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </nav>
 
 <!-- Main Content -->
-<main class="main-content">
-    <!-- Thông báo -->
-    <div th:if="${param.created}" class="alert alert-success alert-dismissible fade show" role="alert">
-        <i class="bi bi-check-circle me-2"></i>
-        Successfully created!
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
+<main class="main container">
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="d-flex justify-content-between align-items-center mb-4" style="width: 100%;">
+                <h2 class="d-flex align-items-center" >
+                    <i class="bi bi-journal-text me-2" ></i>
+                    Blog Management
+                </h2>
+            </div>
+            <!-- Posts List -->
+            <div class="dashboard-card w-100" style="max-width: 1400px; margin: 0 auto;">
+                <div th:if="${posts}">
+                    <div class="post-card" th:each="post : ${posts}">
+                        <div class="row">
+                            <div class="col-md-2 d-flex align-items-center justify-content-center">
+                                <img th:src="${post.imageUrl ?: '/img/default-post.png'}"
+                                     alt="Post image" class="post-image" style="width:100px; height:100px; object-fit:cover; border-radius:8px;">
+                            </div>
 
-    <div th:if="${param.updated}" class="alert alert-info alert-dismissible fade show" role="alert">
-        <i class="bi bi-info-circle me-2"></i>
-        Successfully updated!
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-
-    <div th:if="${param.deleted}" class="alert alert-warning alert-dismissible fade show" role="alert">
-        <i class="bi bi-exclamation-triangle me-2"></i>
-        Successfully deleted!
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-
-    <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>
-            <i class="bi bi-journal-text me-2"></i>
-            Blog Management
-        </h2>
-        <a th:href="@{/dashboard/posts/create}" class="btn btn-primary">
-            <i class="bi bi-plus-circle me-2"></i>
-            Create new blog
-        </a>
-    </div>
-    <!-- Posts List -->
-    <div class="dashboard-card">
-        <div th:if="${posts}">
-            <div class="post-card" th:each="post : ${posts}">
-                <div class="row">
-                    <div class="col-md-2">
-                        <img th:src="@{${post.imageUrl}}"
-                             alt="Post image" class="post-image">
-                    </div>
-
-                    <div class="col-md-7">
-                        <h5 th:text="${post.title}">Title</h5>
-                        <p class="text-muted mb-2" th:text="${#strings.abbreviate(post.content, 150)}">
-                            Content
-                        </p>
-                        <div class="d-flex gap-3">
-                            <small class="text-muted">
-                                <i class="bi bi-calendar me-1"></i>
-                                <span th:text="${#dates.format(post.updatedAt, 'dd/MMMM/yyyy HH:mm')}">
+                            <div class="col-md-7">
+                                <h5 th:text="${post.title}">Title</h5>
+                                <p class="text-muted mb-2" th:text="${#strings.abbreviate(post.content, 150)}">
+                                    Content
+                                </p>
+                                <div class="d-flex gap-3">
+                                    <small class="text-muted">
+                                        <i class="bi bi-calendar me-1"></i>
+                                        <span th:text="${#dates.format(post.updatedAt, 'dd/MMMM/yyyy HH:mm')}">
                                         Updated date
                                     </span>
-                            </small>
-                            <small class="text-muted">
-                                <i class="bi bi-eye me-1"></i>
-                                <span th:text="${post.isPublished ? 'Public' : 'Waiting'}">
+                                    </small>
+                                    <small class="text-muted">
+                                        <i class="bi bi-eye me-1"></i>
+                                        <span th:text="${post.isPublished ? 'Public' : 'Waiting'}">
                                         Status
                                     </span>
-                            </small>
-                        </div>
-                    </div>
+                                    </small>
+                                </div>
+                            </div>
 
-                    <div class="col-md-3 text-end">
-                        <div class="btn-group" role="group">
-                            <a th:href="@{/PostDetail/{postID}(postID=${post.postID})}"
-                               class="btn btn-sm btn-outline-success" title="Xem">
-                                <i class="bi bi-eye"></i>
-                            </a>
-                            <a th:href="@{/blog/edit/{postID}(postID=${post.postID})}"
-                               class="btn btn-sm btn-outline-primary" title="Sửa">
-                                <i class="bi bi-pencil"></i>
-                            </a>
-                            <a th:href="@{/blog/delete/{postID}(postID=${post.postID})}"
-                               class="btn btn-sm btn-outline-danger" title="Xóa">
-                                <i class="bi bi-trash"></i>
-                            </a>
+                            <div class="col-md-3 text-end">
+                                <div class="btn-group" role="group">
+                                    <a th:href="@{/PostDetail/{postID}(postID=${post.postID})}"
+                                       class="btn btn-sm btn-outline-success" title="View">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a th:href="@{/blog/edit/{postID}(postID=${post.postID})}"
+                                       class="btn btn-sm btn-outline-primary" title="Edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <a th:href="@{/blog/delete/{postID}(postID=${post.postID})}"
+                                       class="btn btn-sm btn-outline-danger" title="Delete">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <div th:if="${posts}" class="text-center py-5">
-            <i class="bi bi-journal-x" style="font-size: 4rem; color: #ccc;"></i>
-            <h4 class="mt-3 text-muted">You have no posts</h4>
-            <p class="text-muted">You can create a new blog post.</p>
-            <a th:href="@{/blog/create}" class="btn btn-primary">
-                <i class="bi bi-plus-circle me-2"></i>
-                Create new blog
-            </a>
+                <div th:if="${posts == null or #lists.isEmpty(posts)}" class="text-center py-5">
+                    <i class="bi bi-journal-x" style="font-size: 4rem; color: #ccc;"></i>
+                    <h4 class="mt-3 text-muted">You have no posts</h4>
+                    <p class="text-muted">You can create a new blog post.</p>
+                    <a th:href="@{/blog/create}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle me-2"></i>
+                        Create new blog
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 </main>
@@ -256,7 +241,7 @@
             </div>
             <div class="modal-body">
                 <p>You are about to delete <strong id="postTitle"></strong>?</p>
-                <p class="text-danger">Hành động này không thể hoàn tác!</p>
+                <p class="text-danger">This action cannot be undone.!</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>

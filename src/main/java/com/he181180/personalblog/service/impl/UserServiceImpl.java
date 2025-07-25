@@ -4,6 +4,9 @@ import com.he181180.personalblog.entity.Users;
 import com.he181180.personalblog.repository.UserRepository;
 import com.he181180.personalblog.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,6 +16,10 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private JavaMailSender mailSender;
 
     @Override
     public Optional<Users> findUserByUsername(String username) {
@@ -47,7 +54,23 @@ public class UserServiceImpl implements UserService {
     public Users saveUser(Users user) {
         return userRepository.save(user);
     }
-
+    @Override
+    public void changeUserPassword(Users user, String password) {
+        user.setPassword(passwordEncoder.encode(password));
+        userRepository.save(user);
+    }
+    @Override
+    public void sendConfirmationCodeEmail(String email, String code) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(email);
+        message.setSubject("Your Confirmation Code");
+        message.setText("Your confirmation code is: " + code);
+        mailSender.send(message);
+    }
+    @Override
+    public boolean checkPassword(Users user, String rawPassword) {
+        return passwordEncoder.matches(rawPassword, user.getPassword());
+    }
     @Override
     public Optional<Users> findUserById(int id) {
         return userRepository.findById(id);

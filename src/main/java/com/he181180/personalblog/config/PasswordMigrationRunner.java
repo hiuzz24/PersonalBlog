@@ -29,6 +29,5 @@ public class PasswordMigrationRunner implements CommandLineRunner {
             }
         }
     }
-
 }
 

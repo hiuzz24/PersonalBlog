@@ -22,8 +22,12 @@ import java.io.File;
 import java.io.IOException;
 import java.security.Principal;
 import java.sql.Timestamp;
+import java.util.Map;
 import java.util.Optional;
 import javax.imageio.ImageIO;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.http.ResponseEntity;
+import java.util.Random;
 
 @Controller
 @RequestMapping("/profile")
@@ -167,6 +171,95 @@ public class ProfileController {
         }
         // Return URL for static/img/
         return "/img/" + filename;
+    }
+
+    @PostMapping("/send-confirmation-code")
+    @ResponseBody
+    public ResponseEntity<?> sendConfirmationCode(Authentication authentication, HttpSession session) {
+        Users user = null;
+        if (authentication != null) {
+            Object principal = authentication.getPrincipal();
+            if (principal instanceof org.springframework.security.oauth2.core.user.OAuth2User oauth2User) {
+                String email = oauth2User.getAttribute("email");
+                user = userService.findUserByEmail(email).orElse(null);
+            } else {
+                String username = authentication.getName();
+                user = userService.findUserByUsername(username).orElse(null);
+            }
+        }
+        if (user == null || user.getEmail() == null) {
+            return ResponseEntity.badRequest().body("User not found or email missing");
+        }
+        // Generate 6-digit code
+        String code = String.format("%06d", new Random().nextInt(1000000));
+        // Store code in session
+        session.setAttribute("confirmationCode", code);
+        // Send code to email (implement sendEmail in your UserService or MailService)
+        try {
+            userService.sendConfirmationCodeEmail(user.getEmail(), code);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Failed to send email");
+        }
+    }
+
+    @PostMapping("/verify-confirmation-code")
+    @ResponseBody
+    public Map<String, Object> verifyConfirmationCode(@RequestBody Map<String, String> payload, HttpSession session) {
+        String inputCode = payload.get("code");
+        String sessionCode = (String) session.getAttribute("confirmationCode");
+        boolean success = sessionCode != null && sessionCode.equals(inputCode);
+        return Map.of("success", success);
+    }
+
+    @PostMapping("/change-password")
+    public String changePassword(@RequestParam(required = false) String currentPassword,
+                                 @RequestParam String newPassword,
+                                 @RequestParam String confirmPassword,
+                                 @RequestParam(required = false) String confirmationCode,
+                                 Authentication authentication,
+                                 HttpSession session,
+                                 Model model) {
+        // Get user
+        Users user = null;
+        if (authentication != null) {
+            Object principal = authentication.getPrincipal();
+            if (principal instanceof org.springframework.security.oauth2.core.user.OAuth2User oauth2User) {
+                String email = oauth2User.getAttribute("email");
+                user = userService.findUserByEmail(email).orElse(null);
+            } else {
+                String username = authentication.getName();
+                user = userService.findUserByUsername(username).orElse(null);
+            }
+        }
+        if (user == null) {
+            model.addAttribute("error", "User not found.");
+            return "UserDashboard/Profile";
+        }
+        // If user has a password, require confirmation code and current password
+        if (user.getPassword() != null && !user.getPassword().isEmpty()) {
+            String sessionCode = (String) session.getAttribute("confirmationCode");
+            if (sessionCode == null || !sessionCode.equals(confirmationCode)) {
+                model.addAttribute("error", "Invalid or expired confirmation code.");
+                return "UserDashboard/Profile";
+            }
+            if (currentPassword == null || !userService.checkPassword(user, currentPassword)) {
+                model.addAttribute("error", "Current password is incorrect.");
+                return "UserDashboard/Profile";
+            }
+        }
+        // For users without a password, skip confirmation code and current password
+        // Check new password match
+        if (!newPassword.equals(confirmPassword)) {
+            model.addAttribute("error", "New passwords do not match.");
+            return "UserDashboard/Profile";
+        }
+        // Change password
+        userService.changeUserPassword(user, newPassword);
+        // Optionally clear confirmation code from session
+        session.removeAttribute("confirmationCode");
+        model.addAttribute("success", "Password changed successfully.");
+        return "/profile";
     }
 
 

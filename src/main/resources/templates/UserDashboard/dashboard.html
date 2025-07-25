@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title></title>
-
+    <title>Blog Management Dashboard</title>
     <!-- Favicon -->
     <link th:href="@{/assets/img/favicon.png}" rel="icon">
     <link th:href="@{/assets/img/apple-touch-icon.png}" rel="apple-touch-icon">
@@ -21,43 +20,53 @@
     <link th:href="@{/assets/vendor/swiper/swiper-bundle.min.css}" rel="stylesheet">
     <link th:href="@{/assets/css/main.css}" rel="stylesheet">
 
-    <style>
-
-        .dashboard-card {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-
-        .stat-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-radius: 15px;
-            padding: 25px;
-            text-align: center;
-        }
-
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 100%;
-                height: auto;
-                position: relative;
-            }
-
-            .main-content {
-                margin-left: 0;
-            }
-        }
-    </style>
 </head>
+<script>
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebark');
+        sidebar.classList.toggle('closed');
+    }
+
+    function toggleChangeBox() {
+        const box = document.getElementById('changeBox');
+        if (box.style.display === 'block') {
+            box.style.display = 'none';
+        } else {
+            box.style.display = 'block';
+        }
+    }
+</script>
+<style>
+    .dashboard-card {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+    }
+
+    .stat-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 15px;
+        padding: 25px;
+        text-align: center;
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .wrapper.d-flex {
+        display: flex;
+        flex-direction: row;
+        align-items: stretch;
+        min-height: 100vh;
+    }
+
+</style>
 <body>
 <!-- Header -->
 <header id="header" class="header d-flex align-items-center sticky-top">
@@ -67,7 +76,7 @@
                 <i class="bi bi-list" style="font-size:28px; width:28px; height:28px; display: flex; align-items: center; justify-content: center;"></i>
             </button>
             <a th:href="@{/}" class="logo d-flex align-items-center ms-2" style="height: 56px; align-items: center;">
-                <h1 class="sitename mb-0 d-flex align-items-center" style="font-size: 1.5rem; display: flex; align-items: center; height: 56px; line-height: 56px; color: #535353;">PersonalBlog</h1>
+                <h1 class="sitename mb-0 d-flex align-items-center" style="font-size: 1.5rem; display: flex; align-items: center; height: 56px; line-height: 56px; color: #535353; margin-left: 7px;">PersonalBlog</h1>
             </a>
         </div>
         <nav id="navmenu" class="navmenu mx-auto flex-grow-1 d-flex justify-content-center">
@@ -142,6 +151,13 @@
             </li>
 
             <li class="nav-item">
+                <a class="nav-link" th:href="@{/favorites/dashboard}">
+                    <i class="bi bi-heart-fill"></i>
+                    <span class="link-text">Favorite blogs</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
                 <a class="nav-link" th:href="@{/blog/create}">
                     <i class="bi bi-plus-circle"></i>
                     <span class="link-text">Create new Blog</span>
@@ -170,10 +186,10 @@
 
 
 <!-- Main Content -->
-<main class="main-content">
-    <!-- Dashboard Overview -->
+<main class="main" style="flex: 1 1 0; min-width: 0;">
+        <!-- Dashboard Overview -->
     <div class="dashboard-card">
-        <h2 class="mb-4">
+         <h2 class="mb-4">
             <i class="bi bi-speedometer2 me-2"></i>
             Dashboard Overview
         </h2>
@@ -182,21 +198,21 @@
             <div class="col-md-4">
                 <div class="stat-card">
                     <div class="stat-number" th:text="${totalPosts}">0</div>
-                    <div>Tổng bài viết</div>
+                    <div>Total posts</div>
                 </div>
             </div>
 
             <div class="col-md-4">
                 <div class="stat-card">
                     <div class="stat-number">0</div>
-                    <div>Lượt xem</div>
+                    <div>Views</div>
                 </div>
             </div>
 
             <div class="col-md-4">
                 <div class="stat-card">
                     <div class="stat-number">0</div>
-                    <div>Bình luận</div>
+                    <div>Comments</div>
                 </div>
             </div>
         </div>
@@ -215,8 +231,8 @@
                     <div class="card-body">
                         <h6 class="card-title" th:text="${post.title}">Tiêu đề</h6>
                         <p class="card-text text-muted small"
-                           th:text="${#temporals.format(post.updatedAt, 'dd/MM/yyyy HH:mm')}">
-                            Ngày cập nhật
+                           th:text="${#dates.format(post.updatedAt, 'dd/MM/yyyy HH:mm')}">
+                            Update date
                         </p>
                         <div class="d-flex gap-2">
                             <a th:href="@{/dashboard/posts/edit/{id}(id=${post.postID})}"
@@ -238,7 +254,7 @@
             <p class="text-muted mt-3">You have no recent posts</p>
             <a th:href="@{/dashboard/posts/create}" class="btn btn-primary">
                 <i class="bi bi-plus-circle me-2"></i>
-                Tạo bài viết đầu tiên
+                Create first post
             </a>
         </div>
     </div>

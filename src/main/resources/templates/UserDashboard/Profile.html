@@ -90,7 +90,6 @@
     function showChangeBox() {
         document.getElementById('changeBox').style.display = 'block';
     }
-
     function hideChangeBox() {
         document.getElementById('changeBox').style.display = 'none';
     }
@@ -98,19 +97,38 @@
     // Show/hide changeBox on avatar-wrapper hover
     const avatarWrapper = document.querySelector('.avatar-wrapper');
     const changeBox = document.getElementById('changeBox');
-    avatarWrapper.addEventListener('mouseenter', function () {
+    avatarWrapper.addEventListener('mouseenter', function() {
         changeBox.style.display = 'block';
     });
-    avatarWrapper.addEventListener('mouseleave', function () {
+    avatarWrapper.addEventListener('mouseleave', function() {
         changeBox.style.display = 'none';
     });
-    document.getElementById('avatarFile').addEventListener('change', function () {
+    document.getElementById('avatarFile').addEventListener('change', function() {
         document.getElementById('avatarUrl').value = '';
         document.getElementById('avatarForm').submit(); // Auto-submit on file select
     });
-    document.getElementById('avatarUrl').addEventListener('input', function () {
+    document.getElementById('avatarUrl').addEventListener('input', function() {
         document.getElementById('avatarFile').value = '';
     });
+    function requestConfirmationCode() {
+        fetch('/profile/send-confirmation-code', {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                if (response.ok) {
+                    alert('Confirmation code sent to your email!');
+                } else {
+                    alert('Failed to send confirmation code.');
+                }
+            })
+            .catch(error => {
+                alert('Error sending confirmation code.');
+            });
+    }
 </script>
 
 
@@ -118,43 +136,22 @@
 
 <!-- Header -->
 <header id="header" class="header d-flex align-items-center sticky-top">
-    <div class="container-fluid position-relative d-flex align-items-center justify-content-between px-0"
-         style="gap:0;">
+    <div class="container-fluid position-relative d-flex align-items-center justify-content-between px-0" style="gap:0;">
         <div class="d-flex align-items-center ps-3" style="gap: 0; min-width: 0; height: 56px;">
-            <button id="toggle-btn" onclick="toggleSidebar()"
-                    style="cursor:pointer; border:none; background:transparent; display: flex; align-items: center; height: 56px; padding: 0;">
-                <i class="bi bi-list"
-                   style="font-size:28px; width:28px; height:28px; display: flex; align-items: center; justify-content: center;"></i>
+            <button id="toggle-btn" onclick="toggleSidebar()" style="cursor:pointer; border:none; background:transparent; display: flex; align-items: center; height: 56px; padding: 0;">
+                <i class="bi bi-list" style="font-size:28px; width:28px; height:28px; display: flex; align-items: center; justify-content: center;"></i>
             </button>
             <a th:href="@{/}" class="logo d-flex align-items-center ms-2" style="height: 56px; align-items: center;">
-                <h1 class="sitename mb-0 d-flex align-items-center"
-                    style="font-size: 1.5rem; display: flex; align-items: center; height: 56px; line-height: 56px; color: #535353;">
-                    PersonalBlog</h1>
+                <h1 class="sitename mb-0 d-flex align-items-center" style="font-size: 1.5rem; display: flex; align-items: center; height: 56px; line-height: 56px; color: #535353;">PersonalBlog</h1>
             </a>
         </div>
         <nav id="navmenu" class="navmenu mx-auto flex-grow-1 d-flex justify-content-center">
-            <ul>
-                <li><a th:href="@{/}">Home</a></li>
-                <li><a href="about.html">About</a></li>
-                <li class="dropdown"><a href="#"><span>Categories</span> <i
-                        class="bi bi-chevron-down toggle-dropdown"></i></a>
-                    <ul>
-                        <li><a href="category.html">Category 1</a></li>
-                        <li><a href="category.html">Category 2</a></li>
-                        <li><a href="category.html">Category 3</a></li>
-                        <li><a href="category.html">Category 4</a></li>
-                    </ul>
-                </li>
-                <li><a href="contact.html">Contact</a></li>
-            </ul>
             <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
         </nav>
         <div class="header-social-links d-flex align-items-center pe-3" style="margin-left:auto;">
             <div class="dropdown">
-                <a href="#" class="d-flex align-items-center" id="userDropdown" data-bs-toggle="dropdown"
-                   aria-expanded="false" style="padding:0; border:none; background:none;">
-                    <img th:src="${user != null && user.avatarUrl != null && !#strings.isEmpty(user.avatarUrl) ? user.avatarUrl : '/assets/img/user.png'}"
-                         alt="avatar" style="width:36px; height:36px; border-radius:50%; object-fit:cover;">
+                <a href="#" class="d-flex align-items-center" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding:0; border:none; background:none;">
+                    <img th:src="${user != null && user.avatarUrl != null && !#strings.isEmpty(user.avatarUrl) ? user.avatarUrl : '/assets/img/user.png'}" alt="avatar" style="width:36px; height:36px; border-radius:50%; object-fit:cover;">
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                     <li>
@@ -162,9 +159,7 @@
                             <button type="submit" class="dropdown-item">Profile</button>
                         </form>
                     </li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
+                    <li><hr class="dropdown-divider"></li>
                     <li>
                         <form th:action="@{/logout}" method="post" style="display: inline;">
                             <button type="submit" class="dropdown-item">Logout</button>
@@ -209,6 +204,13 @@
             </li>
 
             <li class="nav-item">
+                <a class="nav-link" th:href="@{/favorites/dashboard}">
+                    <i class="bi bi-heart-fill"></i>
+                    <span class="link-text">Favorite blogs</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
                 <a class="nav-link" th:href="@{/blog/create}">
                     <i class="bi bi-plus-circle"></i>
                     <span class="link-text">Create new Blog</span>
@@ -216,7 +218,7 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" th:href="@{/chat}">
+                <a class="nav-link" th:href="@{/dashboard/analytics}">
                     <i class="bi bi-bar-chart"></i>
                     <span class="link-text">Chart</span>
                 </a>
@@ -235,19 +237,19 @@
         </ul>
     </nav>
 <!-- Main Content -->
-    <main class="main container ">
-        <div class="container mt-5">
-            <div class="row">
-                <!-- Thông báo -->
-                <div th:if="${param.success}" class="alert alert-success alert-dismissible fade show" role="alert">
-                    <i class="bi bi-check-circle me-2"></i>
-                    Information updated successfully!
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
+<main class="main container ">
+    <div class="container mt-5">
+        <div class="row" >
+        <!-- Thông báo -->
+            <div th:if="${param.success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle me-2"></i>
+                Information updated successfully!
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
 
-                <!-- Title -->
-                <h2 class="d-flex align-items-center">
-                    <i class="bi bi-person text me-2"></i>
+            <!-- Title -->
+                <h2 class="d-flex align-items-center" >
+                    <i class="bi bi-person text me-2" ></i>
                     <span>My profile</span>
                 </h2>
             </div>
@@ -313,50 +315,111 @@
                                 <i class="bi bi-save me-2"></i>
                                 Save changes
                             </button>
-                            <a th:href="@{/dashboard}" class="btn btn-secondary">Hủy</a>
+                            <a th:href="@{/dashboard}" class="btn btn-secondary">Cancel</a>
                         </div>
                     </form>
                 </div>
+                <!-- Password Change Section Start -->
+                <div class="col-md-8 mt-4">
+                    <h2 class="d-flex align-items-center" >
+                        <i class="bi bi-person text me-2" ></i>
+                        <span>Change Password</span>
+                    </h2>
+                        <div class="card">
+                            <div class="card-body">
+                                <form id="changePasswordForm" th:action="@{/profile/change-password}" method="post">
+                                    <!-- If user has password -->
+                                    <div id="changePasswordStep1" th:if="${user.hasPassword}">
+                                        <button type="button" class="btn btn-primary mb-3" onclick="showSendCodeSection()">Change Password</button>
+                                    </div>
+                                    <div id="changePasswordStep2" th:if="${user.hasPassword}" style="display:none;">
+                                        <div class="mb-3 d-flex align-items-center gap-2">
+                                            <input type="text" class="form-control" id="confirmationCode" name="confirmationCode" placeholder="6-digit code" maxlength="6" style="max-width: 150px;">
+                                            <button type="button" class="btn btn-outline-primary" onclick="requestConfirmationCode()">Send Code</button>
+                                            <button type="button" class="btn btn-success" onclick="verifyConfirmationCode()">Verify Code</button>
+                                        </div>
+                                    </div>
+                                    <div id="changePasswordStep3" th:if="${user.hasPassword}" style="display:none;">
+                                        <div class="mb-3">
+                                            <label for="currentPassword" class="form-label">Current Password</label>
+                                            <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="newPassword" class="form-label">New Password</label>
+                                            <input type="password" class="form-control" id="newPassword" name="newPassword" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Change Password</button>
+                                    </div>
+                                    <!-- If user does NOT have password -->
+                                    <div th:if="${!user.hasPassword}">
+                                        <div class="mb-3">
+                                            <label for="newPasswordNoCurrent" class="form-label">New Password</label>
+                                            <input type="password" class="form-control" id="newPasswordNoCurrent" name="newPassword" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="confirmPasswordNoCurrent" class="form-label">Confirm New Password</label>
+                                            <input type="password" class="form-control" id="confirmPasswordNoCurrent" name="confirmPassword" required>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Set Password</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                </div>
+                <!-- Password Change Section End -->
             </div>
 
         </div>
-        <script>
-            function saveAvatar() {
-                document.getElementById('avatarForm').submit();
-            }
 
-            // Force avatar refresh after upload
-            window.addEventListener('DOMContentLoaded', function () {
-                const urlParams = new URLSearchParams(window.location.search);
-                if (urlParams.has('updated')) {
-                    // Force refresh all avatar images
-                    const avatarImages = document.querySelectorAll('img[id="previewAvatar"], .profile-avatar');
-                    avatarImages.forEach(img => {
-                        const currentSrc = img.src;
-                        const separator = currentSrc.includes('?') ? '&' : '?';
-                        img.src = currentSrc + separator + 't=' + new Date().getTime();
-                    });
-                    // Clean up URL
-                    window.history.replaceState({}, document.title, window.location.pathname);
-                }
-            });
-        </script>
-    </main>
-
+    </div>
 </div>
-    <!-- Scroll Top -->
-    <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i
-            class="bi bi-arrow-up-short"></i></a>
+</main>
 
-    <!-- Preloader -->
-    <div id="preloader"></div>
 
-    <!-- JS Files -->
-    <script th:src="@{/assets/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
-    <script th:src="@{/assets/vendor/php-email-form/validate.js}"></script>
-    <script th:src="@{/assets/vendor/aos/aos.js}"></script>
-    <script th:src="@{/assets/vendor/swiper/swiper-bundle.min.js}"></script>
-    <script th:src="@{/assets/js/main.js}"></script>
+
+<!-- Scroll Top -->
+<a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+<!-- Preloader -->
+<div id="preloader"></div>
+
+<!-- JS Files -->
+<script th:src="@{/assets/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/assets/vendor/php-email-form/validate.js}"></script>
+<script th:src="@{/assets/vendor/aos/aos.js}"></script>
+<script th:src="@{/assets/vendor/swiper/swiper-bundle.min.js}"></script>
+<script th:src="@{/assets/js/main.js}"></script>
+<script>
+function showSendCodeSection() {
+    document.getElementById('changePasswordStep1').style.display = 'none';
+    document.getElementById('changePasswordStep2').style.display = 'block';
+}
+function verifyConfirmationCode() {
+    const code = document.getElementById('confirmationCode').value;
+    fetch('/profile/verify-confirmation-code', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify({ code })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById('changePasswordStep2').style.display = 'none';
+            document.getElementById('changePasswordStep3').style.display = 'block';
+        } else {
+            alert('Invalid or expired code.');
+        }
+    })
+    .catch(() => alert('Error verifying code.'));
+}
+</script>
 
 </body>
 </html>

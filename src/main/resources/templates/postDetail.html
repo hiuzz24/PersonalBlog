@@ -15,7 +15,8 @@
     <!-- Fonts -->
     <link th:href="@{https://fonts.googleapis.com}" rel="preconnect">
     <link th:href="@{https://fonts.gstatic.com}" rel="preconnect" crossorigin>
-    <link th:href="@{https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700;1,800&display=swap}" rel="stylesheet">
+    <link th:href="@{https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700;1,800&display=swap}"
+          rel="stylesheet">
 
     <!-- Vendor CSS Files -->
     <link th:href="@{/assets/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
@@ -48,7 +49,8 @@
             <ul>
                 <li><a th:href="@{/}">Home</a></li>
                 <li><a href="about.html">About</a></li>
-                <li class="dropdown"><a href="#"><span>Categories</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                <li class="dropdown"><a href="#"><span>Categories</span> <i
+                        class="bi bi-chevron-down toggle-dropdown"></i></a>
                     <ul>
                         <li><a href="category.html">Category 1</a></li>
                         <li class="dropdown"><a href="#"><span>Deep Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
@@ -72,10 +74,11 @@
 
         <div class="header-social-links">
             <div class="dropdown">
-                <a href="#" class="d-flex align-items-center" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding:0; border:none; background:none;">
-                    <img th:src="${user != null && user.avatarUrl != null && !#strings.isEmpty(user.avatarUrl) ? user.avatarUrl : '/assets/img/user.png'}" alt="avatar" style="width:36px; height:36px; border-radius:50%; object-fit:cover;">
+                <a href="#" class="d-flex align-items-center" id="userDropdown" data-bs-toggle="dropdown"
+                   aria-expanded="false" style="padding:0; border:none; background:none;">
+                    <img th:src="${user != null && user.avatarUrl != null && !#strings.isEmpty(user.avatarUrl) ? user.avatarUrl : '/assets/img/user.png'}"
+                         alt="avatar" style="width:36px; height:36px; border-radius:50%; object-fit:cover;">
                 </a>
-
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                     <li>
                         <form th:action="@{/profile}" method="get" style="display: inline;">
@@ -83,7 +86,9 @@
                         </form>
                     </li>
 
-                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
                     <li>
                         <form th:action="@{/logout}" method="post" style="display: inline;">
                             <button type="submit" class="dropdown-item">Logout</button>
@@ -130,9 +135,16 @@
 
                             <div class="meta-top">
                                 <ul>
-                                    <li class="d-flex align-items-center"><i class="bi bi-person" th:text="${postDetail.users.fullName}"></i></li>
-                                    <li class="d-flex align-items-center"><i class="bi bi-clock"></i> <a href="blog-details.html"><time th:text="${postDetail.publishedAt}"></time></a></li>
-                                    <li class="d-flex align-items-center"><i class="bi bi-chat-dots" th:text="${' ' + postDetail.comments.size() + ' comments'}"></i></a></li>
+                                    <li class="d-flex align-items-center"><i class="bi bi-person"
+                                                                             th:text="${postDetail.users.fullName}"></i>
+                                    </li>
+                                    <li class="d-flex align-items-center"><i class="bi bi-clock"></i> <a
+                                            href="blog-details.html">
+                                        <time th:text="${postDetail.publishedAt}"></time>
+                                    </a></li>
+                                    <li class="d-flex align-items-center"><i class="bi bi-chat-dots"
+                                                                             th:text="${' ' + postDetail.comments.size() + ' comments'}"></i></a>
+                                    </li>
                                 </ul>
                             </div><!-- End meta top -->
 
@@ -143,18 +155,27 @@
                             <div class="meta-bottom">
                                 <i class="bi bi-tags"></i>
                                 <ul class="tags" th:each="tag: ${postDetail.tags}">
-                                    <li><a th:href="@{/tags/{tagID}(tagID = ${tag.tagName})}" th:text="${tag.tagName}"></a></li>
+                                    <li><a th:href="@{/tags/{tagID}(tagID = ${tag.tagName})}"
+                                           th:text="${tag.tagName}"></a></li>
                                 </ul>
                             </div><!-- End meta bottom -->
 
-
+                            <!-- Favorite Button -->
+                            <div class="mt-3 mb-3">
+                                <button type="button" class="btn btn-outline-danger" id="favoriteBtn"
+                                        th:data-post-id="${postDetail.postID}"
+                                        th:classappend="${isFavorited} ? 'btn-danger' : 'btn-outline-danger'">
+                                    <i class="bi" th:classappend="${isFavorited} ? 'bi-heart-fill' : 'bi-heart'"></i>
+                                    <span th:text="${isFavorited} ? 'Đã lưu' : 'Lưu bài viết'"></span>
+                                </button>
+                            </div>
 
                             <!-- Chat with Author Button (only show if not the author) -->
-                            <div class="mt-4">
+                            <div th:if="${#authentication.name != postDetail.users.username}" class="mt-4">
                                 <button type="button" class="btn btn-primary" id="chatWithAuthorBtn"
                                         th:data-author-id="${postDetail.users.userID}"
                                         th:data-author-name="${postDetail.users.fullName != null ? postDetail.users.fullName : postDetail.users.username}">
-                                    <i class="bi bi-chat-dots"></i> Chat với tác giả
+                                    <i class="bi bi-chat-dots"></i> Chat with the author
                                 </button>
                             </div>
 
@@ -284,7 +305,8 @@
                         <div class="post-item" th:each="relatedPost : ${relatedPosts}">
                             <img th:src="@{${relatedPost.imageUrl}}" alt="" class="flex-shrink-0">
                             <div>
-                                <a th:href="@{'/PostDetail/' + ${relatedPost.postID}}" th:text="${relatedPost.title}"></a>
+                                <a th:href="@{'/PostDetail/' + ${relatedPost.postID}}"
+                                   th:text="${relatedPost.title}"></a>
                                 <time th:text="${#dates.format(relatedPost.publishedAt, 'dd MMM yyyy')}"></time>
                             </div>
                         </div><!-- End recent post item-->
@@ -310,26 +332,38 @@
 
 
     <!-- Chat Modal -->
-    <div class="modal fade" id="chatModal" tabindex="-1" aria-labelledby="chatModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="chatModalLabel">Chat với <span id="chatPartnerName"></span></h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="modal fade" id="chatModal" tabindex="-1" aria-labelledby="chatModalLabel" aria-hidden="true"
+         style="position: fixed; bottom: 0; right: 60px; left: auto; z-index: 1055; width: 100%; max-width: 400px; margin: 0; pointer-events: none;">
+        <div class="modal-dialog modal-lg m-0"
+             style="position: absolute; bottom: 0; right: 0; left: auto; width: 100%; max-width: 400px; margin: 0; pointer-events: auto; transform: none;">
+            <div class="modal-content" style="border-radius: 1rem 1rem 0 0; box-shadow: 0 0 20px rgba(0,0,0,0.15);">
+                <div class="modal-header bg-primary text-white rounded-top">
+                    <h5 class="modal-title" id="chatModalLabel">
+                        <i class="bi bi-chat-dots me-2"></i>Chat with <span id="chatPartnerName" class="fw-bold"></span>
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    <div id="chatMessages" class="chat-messages" style="height: 400px; overflow-y: auto; border: 1px solid #ddd; padding: 15px; margin-bottom: 15px;">
+                <div class="modal-body p-0">
+                    <div id="chatMessages" class="chat-messages bg-light"
+                         style="height: 350px; overflow-y: auto; border-bottom: 1px solid #ddd; padding: 20px;">
                         <!-- Messages will be loaded here -->
                     </div>
-                    <div class="input-group">
-                        <input type="text" id="messageInput" class="form-control" placeholder="Nhập tin nhắn..." maxlength="500">
-                        <button class="btn btn-primary" type="button" id="sendMessageBtn">
-                            <i class="bi bi-send"></i> Gửi
+                    <div class="input-group p-3 bg-white border-top align-items-center"
+                         style="border-radius: 0 0 1rem 1rem;">
+                        <input type="text" id="messageInput" class="form-control rounded-pill me-2"
+                               placeholder="Type your message..." maxlength="500" style="background: #f8f9fa;">
+                        <button class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center"
+                                type="button" id="sendMessageBtn" style="width: 45px; height: 45px;">
+                            <i class="bi bi-send fs-5"></i>
                         </button>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+
+
     </div>
 
     <!-- WebSocket and Chat JavaScript -->
@@ -340,14 +374,20 @@
         let stompClient = null;
         let currentChatUserId = null;
         let currentUsername = null;
+        let currentUserId = null;
 
         // Get current username from authentication
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
+            connect();
             // Get username from server-side
             fetch('/api/user/current')
                 .then(response => response.json())
                 .then(data => {
+                    console.log('Current user data11111:', data);
                     currentUsername = data.username;
+                    currentUserId = data.userId;
+                    console.log('Current user ID:', currentUserId);
+                    console.log('Current username:', currentUsername);
                 })
                 .catch(error => {
                     console.error('Error getting current user:', error);
@@ -364,9 +404,10 @@
                 // Subscribe to private messages
                 stompClient.subscribe('/user/queue/messages', function (message) {
                     const messageData = JSON.parse(message.body);
+                    console.log('Received message:', messageData);
                     displayMessage(messageData);
                 });
-            }, function(error) {
+            }, function (error) {
                 console.error('WebSocket connection error:', error);
             });
         }
@@ -382,14 +423,16 @@
             const messageInput = document.getElementById('messageInput');
             const content = messageInput.value.trim();
 
-            if (content && currentChatUserId && stompClient) {
+            if (content && currentChatUserId && currentUserId && stompClient) {
                 const messageData = {
+                    senderId: currentUserId,
                     receiverId: currentChatUserId,
                     content: content
                 };
                 console.log('=== SENDING MESSAGE ===');
                 console.log('Connected:', stompClient.connected);
                 console.log('Current chat user ID:', currentChatUserId);
+                console.log('Current user ID:', currentUserId);
                 console.log('Message data:', messageData);
 
                 if (stompClient.connected) {
@@ -403,6 +446,7 @@
                 console.log('Cannot send message:', {
                     content: !!content,
                     currentChatUserId: !!currentChatUserId,
+                    currentUserId: !!currentUserId,
                     stompClient: !!stompClient
                 });
             }
@@ -413,7 +457,8 @@
             const messageDiv = document.createElement('div');
             messageDiv.className = 'message mb-2';
 
-            const isCurrentUser = message.senderName === currentUsername;
+            // Use senderId for comparison instead of username
+            const isCurrentUser = message.senderId === currentUserId;
             const alignClass = isCurrentUser ? 'text-end' : 'text-start';
             const bgClass = isCurrentUser ? 'bg-primary text-white' : 'bg-light';
 
@@ -461,14 +506,14 @@
         }
 
         // Event listeners
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const chatBtn = document.getElementById('chatWithAuthorBtn');
             const chatModal = new bootstrap.Modal(document.getElementById('chatModal'));
             const sendBtn = document.getElementById('sendMessageBtn');
             const messageInput = document.getElementById('messageInput');
 
             if (chatBtn) {
-                chatBtn.addEventListener('click', function() {
+                chatBtn.addEventListener('click', function () {
                     const authorId = this.getAttribute('data-author-id');
                     const authorName = this.getAttribute('data-author-name');
 
@@ -493,16 +538,107 @@
             }
 
             if (messageInput) {
-                messageInput.addEventListener('keypress', function(e) {
+                messageInput.addEventListener('keypress', function (e) {
                     if (e.key === 'Enter') {
                         sendMessage();
                     }
                 });
             }
+
+            const favoriteBtn = document.getElementById('favoriteBtn');
+            if (favoriteBtn) {
+                favoriteBtn.addEventListener('click', function () {
+                    const postId = this.getAttribute('data-post-id');
+                    const btn = this;
+
+                    // Disable button during request
+                    btn.disabled = true;
+
+                    fetch(`/favorites/toggle/${postId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                // Update button appearance
+                                const icon = btn.querySelector('i');
+                                const span = btn.querySelector('span');
+
+                                if (data.isFavorited) {
+                                    // Post is now favorited
+                                    btn.className = 'btn btn-danger';
+                                    icon.className = 'bi bi-heart-fill';
+                                    span.textContent = 'Đã lưu';
+                                } else {
+                                    // Post is no longer favorited
+                                    btn.className = 'btn btn-outline-danger';
+                                    icon.className = 'bi bi-heart';
+                                    span.textContent = 'Lưu bài viết';
+                                }
+
+                                // Show success message (optional)
+                                showToast(data.message, 'success');
+                            } else {
+                                // Show error message
+                                showToast(data.message || 'Có lỗi xảy ra', 'error');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showToast('Có lỗi xảy ra khi lưu bài viết', 'error');
+                        })
+                        .finally(() => {
+                            // Re-enable button
+                            btn.disabled = false;
+                        });
+                });
+            }
+
         });
 
+        // Toast notification function
+        function showToast(message, type = 'info') {
+            // Create toast element
+            const toast = document.createElement('div');
+            toast.className = `toast align-items-center text-white bg-${type === 'success' ? 'success' : 'danger'} border-0`;
+            toast.setAttribute('role', 'alert');
+            toast.setAttribute('aria-live', 'assertive');
+            toast.setAttribute('aria-atomic', 'true');
+            toast.style.position = 'fixed';
+            toast.style.top = '20px';
+            toast.style.right = '20px';
+            toast.style.zIndex = '9999';
+
+            toast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            `;
+
+            document.body.appendChild(toast);
+
+            // Initialize and show toast
+            const bsToast = new bootstrap.Toast(toast, {
+                autohide: true,
+                delay: 3000
+            });
+            bsToast.show();
+
+            // Remove toast element after it's hidden
+            toast.addEventListener('hidden.bs.toast', function () {
+                document.body.removeChild(toast);
+            });
+        }
+
         // Disconnect when page unloads
-        window.addEventListener('beforeunload', function() {
+        window.addEventListener('beforeunload', function () {
             disconnect();
         });
     </script>
@@ -510,69 +646,18 @@
 
 <footer id="footer" class="footer dark-background">
 
-    <div class="container footer-top">
-        <div class="row gy-4">
-            <div class="col-lg-4 col-md-6 footer-about">
-                <a href="index.html" class="logo d-flex align-items-center">
-                    <span class="sitename">ZenBlog</span>
-                </a>
-                <div class="footer-contact pt-3">
-                    <p>A108 Adam Street</p>
-                    <p>New York, NY 535022</p>
-                    <p class="mt-3"><strong>Phone:</strong> <span>+1 5589 55488 55</span></p>
-                    <p><strong>Email:</strong> <span>info@example.com</span></p>
-                </div>
-                <div class="social-links d-flex mt-4">
-                    <a href=""><i class="bi bi-twitter-x"></i></a>
-                    <a href=""><i class="bi bi-facebook"></i></a>
-                    <a href=""><i class="bi bi-instagram"></i></a>
-                    <a href=""><i class="bi bi-linkedin"></i></a>
-                </div>
-            </div>
-
-            <div class="col-lg-2 col-md-3 footer-links">
-                <h4>Useful Links</h4>
-                <ul>
-                    <li><a href="#">Home</a></li>
-                    <li><a href="#">About us</a></li>
-                    <li><a href="#">Services</a></li>
-                    <li><a href="#">Terms of service</a></li>
-                    <li><a href="#">Privacy policy</a></li>
-                </ul>
-            </div>
-
-            <div class="col-lg-2 col-md-3 footer-links">
-                <h4>Our Services</h4>
-                <ul>
-                    <li><a href="#">Web Design</a></li>
-                    <li><a href="#">Web Development</a></li>
-                    <li><a href="#">Product Management</a></li>
-                    <li><a href="#">Marketing</a></li>
-                    <li><a href="#">Graphic Design</a></li>
-                </ul>
-            </div>
-
-            <div class="col-lg-2 col-md-3 footer-links">
-                <h4>Hic solutasetp</h4>
-                <ul>
-                    <li><a href="#">Molestiae accusamus iure</a></li>
-                    <li><a href="#">Excepturi dignissimos</a></li>
-                    <li><a href="#">Suscipit distinctio</a></li>
-                    <li><a href="#">Dilecta</a></li>
-                    <li><a href="#">Sit quas consectetur</a></li>
-                </ul>
-            </div>
-
-    </div>
 
     <div class="container copyright text-center mt-4">
-        <p> <span>Copyright</span> <strong class="px-1 sitename">PersonalBlog</strong> <span>All Rights Reserved</span></p>
+        <p> 2024 <span>Copyright</span> <strong class="px-1 sitename">PersonalBlog</strong>
+            <span>All Rights Reserved</span>
+        </p>
     </div>
 
 </footer>
 
 <!-- Scroll Top -->
-<a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+<a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i
+        class="bi bi-arrow-up-short"></i></a>
 
 <!-- Preloader -->
 <div id="preloader"></div>
