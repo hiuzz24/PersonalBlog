@@ -204,13 +204,6 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" th:href="@{/favorites/dashboard}">
-                    <i class="bi bi-heart-fill"></i>
-                    <span class="link-text">Favorite blogs</span>
-                </a>
-            </li>
-
-            <li class="nav-item">
                 <a class="nav-link" th:href="@{/blog/create}">
                     <i class="bi bi-plus-circle"></i>
                     <span class="link-text">Create new Blog</span>
@@ -218,7 +211,7 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" th:href="@{/chat}">
+                <a class="nav-link" th:href="@{/dashboard/analytics}">
                     <i class="bi bi-bar-chart"></i>
                     <span class="link-text">Chart</span>
                 </a>
@@ -284,30 +277,26 @@
                     </form>
                 </div>
                 <div class="col-md-8">
-                    <form th:action="@{/profile/update}" th:object="${userUpdateDTO}" method="post">
+                    <form th:action="@{/profile/update}" method="post" enctype="multipart/form-data">
                         <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="fullName" class="form-label">Full Name</label>
-                                    <input type="text" class="form-control" id="fullName"
-                                           name="fullName" th:field="*{fullName}" required>
-                                </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="fullName" class="form-label">FullName</label>
+                                <input type="text" class="form-control" id="fullName"
+                                       name="fullName" th:value="${user.fullName}" required>
                             </div>
 
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="email" class="form-label">Email</label>
-                                    <input type="email" class="form-control" id="email"
-                                           th:field="*{email}" readonly>
-                                    <div class="form-text">Email cannot be changed</div>
-                                </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email"
+                                       th:value="${user.email}" readonly>
+                                <div class="form-text">Email cannot be changed</div>
                             </div>
                         </div>
 
                         <div class="mb-3">
                             <label for="bio" class="form-label">Bio</label>
                             <textarea class="form-control" id="bio" name="bio" rows="3"
-                                      th:field="*{bio}"></textarea>
+                                      th:text="${user.bio}"></textarea>
                         </div>
 
                         <div class="d-flex gap-2">

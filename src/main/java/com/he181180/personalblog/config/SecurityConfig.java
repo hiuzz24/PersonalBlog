@@ -1,13 +1,15 @@
 package com.he181180.personalblog.config;
 
+import com.he181180.personalblog.DTO.UserUpdateDTO;
 import com.he181180.personalblog.entity.Users;
 import com.he181180.personalblog.repository.UserRepository;
-import com.he181180.personalblog.security.CustomOAuth2UserService;
-import com.he181180.personalblog.security.CustomUserPrincipal;
+import com.he181180.personalblog.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -16,12 +18,9 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 public class SecurityConfig {
-    
     @Autowired
     private UserRepository userRepository;
-    
-    @Autowired
-    private CustomOAuth2UserService customOAuth2UserService;
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -29,7 +28,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login", "/oauth2/**",
                                          "/register", "/img/**",
-                                         "/css/**", "/assets/**", "/forgotPassword", "/resetPassword", "/savePassword", "/complete-username").permitAll()
+                                         "/css/**", "/forgotPassword", "/resetPassword", "/savePassword").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(login -> login
@@ -37,20 +36,16 @@ public class SecurityConfig {
                         .defaultSuccessUrl("/explore", true)
                         .failureUrl("/login?error")
                         .permitAll()
-                )
-                .oauth2Login(oauth2 -> oauth2
+                ).oauth2Login(oauth2 -> oauth2
                         .loginPage("/login")
-                        .userInfoEndpoint(userInfo -> userInfo
-                                .userService(customOAuth2UserService)
-                        )
-                        .defaultSuccessUrl("/GoogleLogin", true)
+                        .defaultSuccessUrl("/GoogleLogin", true)  //
                 )
+
                 .logout(logout -> logout
                         .logoutSuccessUrl("/login?logout")
                         .permitAll()
                 );
-        
-        http.csrf(csrf -> csrf.disable());
+           http.csrf(csrf -> csrf.disable());
 
         return http.build();
     }
@@ -64,11 +59,15 @@ public class SecurityConfig {
     public UserDetailsService userDetailsService() {
         return username -> {
             Users u = userRepository.findByUsername(username)
-                    .orElseGet(() -> userRepository.findByEmail(username)
-                            .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username)));
+                    .orElseGet(() -> userRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("user not found")));
 
-            // Return CustomUserPrincipal instead of Spring's User
-            return new CustomUserPrincipal(u);
+            return User.withUsername(u.getUsername())
+                    .password(u.getPassword() == null ? "" : u.getPassword())
+                    .roles(u.getRole())
+                    .build();
         };
+
     }
+
+
 }

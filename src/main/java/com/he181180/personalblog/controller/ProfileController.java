@@ -259,7 +259,7 @@ public class ProfileController {
         // Optionally clear confirmation code from session
         session.removeAttribute("confirmationCode");
         model.addAttribute("success", "Password changed successfully.");
-        return "/profile";
+        return "UserDashboard/Profile";
     }
 
 

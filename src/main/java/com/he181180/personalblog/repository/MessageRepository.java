@@ -10,8 +10,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Repository
 public interface MessageRepository extends JpaRepository<Messages, Long> {
@@ -22,13 +20,13 @@ public interface MessageRepository extends JpaRepository<Messages, Long> {
            "(m.sender = :user2 AND m.receiver = :user1) " +
            "ORDER BY m.createdAt ASC")
     List<Messages> findMessagesBetweenUsers(@Param("user1") Users user1, @Param("user2") Users user2);
-
-    // Trong MessageRepository.java
-    @Query("SELECT DISTINCT m.receiver FROM Messages m WHERE m.sender = :user")
-    List<Users> findReceiversByUser(@Param("user") Users user);
-
-    @Query("SELECT DISTINCT m.sender FROM Messages m WHERE m.receiver = :user")
-    List<Users> findSendersByUser(@Param("user") Users user);
+    
+    // Find all conversations for a user (distinct users they've chatted with)
+    @Query("SELECT DISTINCT CASE " +
+           "WHEN m.sender = :user THEN m.receiver " +
+           "ELSE m.sender END " +
+           "FROM Messages m WHERE m.sender = :user OR m.receiver = :user")
+    List<Users> findConversationPartners(@Param("user") Users user);
     
     // Get latest message between two users
     @Query("SELECT m FROM Messages m WHERE " +
@@ -36,8 +34,7 @@ public interface MessageRepository extends JpaRepository<Messages, Long> {
            "(m.sender = :user2 AND m.receiver = :user1) " +
            "ORDER BY m.createdAt DESC")
     List<Messages> findLatestMessageBetweenUsersQuery(@Param("user1") Users user1, @Param("user2") Users user2);
-
-
+    
     default Messages findLatestMessageBetweenUsers(Users user1, Users user2) {
         List<Messages> messages = findLatestMessageBetweenUsersQuery(user1, user2);
         return messages.isEmpty() ? null : messages.get(0);

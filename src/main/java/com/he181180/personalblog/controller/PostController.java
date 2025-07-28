@@ -4,7 +4,11 @@ import com.he181180.personalblog.DTO.CommentReplyDTO;
 import com.he181180.personalblog.entity.Comments;
 import com.he181180.personalblog.entity.Posts;
 import com.he181180.personalblog.entity.Users;
-import com.he181180.personalblog.service.*;
+import com.he181180.personalblog.service.CommentService;
+import com.he181180.personalblog.service.PostService;
+import com.he181180.personalblog.service.TagService;
+import com.he181180.personalblog.service.TagService;
+import com.he181180.personalblog.service.UserService;
 import org.aspectj.apache.bcel.generic.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -17,7 +21,6 @@ import java.security.Principal;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
@@ -34,11 +37,6 @@ public class PostController {
 
     @Autowired
     private TagService tagService;
-
-    @Autowired
-    private CurrentUserService currentUserService;
-    @Autowired
-    private FavoriteService favoriteService;
 
     @GetMapping("/explore")
     public String explore(@RequestParam(defaultValue = "1") int page, Model model){
@@ -76,7 +74,7 @@ public class PostController {
 
     @GetMapping("/PostDetail/{postID}")
     public String postDetail(@PathVariable("postID") int postID
-            , Model model, Authentication authentication) {
+            ,Model model){
         Posts posts = postService.findPostByPostID(postID);
         List<Integer> tagIDs = tagService.findTagIDByPostID(postID);
         List<Posts> postsList = tagIDs.stream().flatMap(tagID -> postService.findPostsByTagID(tagID).stream())
@@ -98,20 +96,6 @@ public class PostController {
                 .post(posts)
                 .build();
         model.addAttribute("commentReplyDTO", commentReplyDTO);
-
-        // Check if post is favorited by current user using CurrentUserService
-        boolean isFavorited = false;
-        if (authentication != null) {
-            try {
-                Users currentUser = currentUserService.getCurrentUser(authentication);
-                if (currentUser != null) {
-                    isFavorited = favoriteService.isPostFavorited(currentUser, posts);
-                }
-            } catch (Exception e) {
-                // Handle exception silently
-            }
-        }
-        model.addAttribute("isFavorited", isFavorited);
 
         model.addAttribute("comments", comments);
         model.addAttribute("countComment", countComment);
