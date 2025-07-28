@@ -315,53 +315,43 @@
     </style>
 </head>
 
-<body class="index-page">
+<body class="category-page">
 
 <header id="header" class="header d-flex align-items-center sticky-top">
     <div class="container position-relative d-flex align-items-center justify-content-between">
 
-        <a th:href="@{/static}" class="logo d-flex align-items-center me-auto me-xl-0">
+        <a th:href="@{/}" class="logo d-flex align-items-center me-auto me-xl-0">
             <h1 class="sitename">PersonalBlog</h1>
         </a>
 
         <nav id="navmenu" class="navmenu">
-            <ul>
-                <li><a th:href="@{/static}">Home</a></li>
-                <li><a href="about.html">About</a></li>
-                <li><a href="single-post.html">Single Post</a></li>
-                <li class="dropdown"><a href="#"><span>Categories</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-                    <ul>
-                        <li><a href="#">Category 1</a></li>
-                        <li><a href="#">Category 2</a></li>
-                        <li><a href="#">Category 3</a></li>
-                    </ul>
-                </li>
-                <li><a href="contact.html">Contact</a></li>
-                <li><a th:href="@{/chat}" class="active">Chat</a></li>
-            </ul>
+
             <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
         </nav>
 
         <div class="header-social-links">
-            <div sec:authorize="isAuthenticated()">
-                <div class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                        <span sec:authentication="name"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" th:href="@{/profile}">Profile</a></li>
-                        <li><a class="dropdown-item" th:href="@{/dashboard}">Dashboard</a></li>
-                        <li><a class="dropdown-item" th:href="@{/chat}">Chat</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" th:href="@{/logout}">Logout</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div sec:authorize="!isAuthenticated()">
-                <a th:href="@{/login}" class="btn btn-primary">Login</a>
+            <div class="dropdown">
+                <a href="#" class="d-flex align-items-center" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding:0; border:none; background:none;">
+                    <img th:src="${user != null && user.avatarUrl != null && !#strings.isEmpty(user.avatarUrl) ? user.avatarUrl : '/assets/img/user.png'}" alt="avatar" style="width:36px; height:36px; border-radius:50%; object-fit:cover;">
+                </a>
+
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                    <li>
+                        <form th:action="@{/profile}" style="display: inline;">
+                            <button type="submit" class="dropdown-item">Profile</button>
+                        </form>
+                    </li>
+
+                    <li><hr class="dropdown-divider"></li>
+
+                    <li>
+                        <form th:action="@{/logout}" method="post" style="display: inline;">
+                            <button type="submit" class="dropdown-item">Logout</button>
+                        </form>
+                    </li>
+                </ul>
             </div>
         </div>
-
     </div>
 </header>
 
@@ -390,13 +380,13 @@
                         <!-- Conversations Sidebar -->
                         <div class="col-md-4 conversations-sidebar">
                             <div class="conversations-header">
-                                <h5 class="mb-0">Cuộc trò chuyện</h5>
-                                <small class="text-muted">Chọn một cuộc trò chuyện để bắt đầu</small>
+                                <h5 class="mb-0">Conversation</h5>
+                                <small class="text-muted">Select a conversation to start</small>
                             </div>
                             <div class="conversations-list" id="conversationsList">
                                 <div class="loading">
                                     <div class="spinner-border spinner-border-sm me-2" role="status"></div>
-                                    <span>Đang tải...</span>
+                                    <span>Loading...</span>
                                 </div>
                             </div>
                         </div>
@@ -407,8 +397,7 @@
                             <div id="chatHeader" class="chat-header" style="display: none;">
                                 <img id="chatPartnerAvatar" src="/assets/img/user.png" alt="Avatar" class="chat-partner-avatar">
                                 <div class="chat-partner-info">
-                                    <h6 id="chatPartnerName">Chọn cuộc trò chuyện</h6>
-                                    <small id="chatPartnerStatus">Online</small>
+                                    <h6 id="chatPartnerName">Select conversation</h6>
                                 </div>
                             </div>
 
@@ -416,15 +405,15 @@
                             <div id="chatMessages" class="chat-messages">
                                 <div class="empty-state">
                                     <i class="bi bi-chat-text"></i>
-                                    <h5>Chọn một cuộc trò chuyện</h5>
-                                    <p class="text-muted">Chọn một cuộc trò chuyện từ danh sách bên trái để bắt đầu nhắn tin</p>
+                                    <h5>Select conversation</h5>
+                                    <p class="text-muted">Select a conversation from the list on the left to start messaging.</p>
                                 </div>
                             </div>
 
                             <!-- Chat Input -->
                             <div id="chatInputArea" class="chat-input-area" style="display: none;">
                                 <div class="chat-input-group">
-                                    <input type="text" id="messageInput" class="chat-input" placeholder="Nhập tin nhắn..." maxlength="500">
+                                    <input type="text" id="messageInput" class="chat-input" placeholder="Enter message..." maxlength="500">
                                     <button class="chat-send-btn" type="button" id="sendMessageBtn">
                                         <i class="bi bi-send"></i>
                                     </button>
@@ -436,36 +425,9 @@
             </div>
         </div>
     </div>
-
 </main>
 
-<footer id="footer" class="footer dark-background">
-    <div class="container footer-top">
-        <div class="row gy-4">
-            <div class="col-lg-4 col-md-6 footer-about">
-                <a href="index.html" class="logo d-flex align-items-center">
-                    <span class="sitename">PersonalBlog</span>
-                </a>
-                <div class="footer-contact pt-3">
-                    <p>A108 Adam Street</p>
-                    <p>New York, NY 535022</p>
-                    <p class="mt-3"><strong>Phone:</strong> <span>+1 5589 55488 55</span></p>
-                    <p><strong>Email:</strong> <span>info@example.com</span></p>
-                </div>
-                <div class="social-links d-flex mt-4">
-                    <a href=""><i class="bi bi-twitter-x"></i></a>
-                    <a href=""><i class="bi bi-facebook"></i></a>
-                    <a href=""><i class="bi bi-instagram"></i></a>
-                    <a href=""><i class="bi bi-linkedin"></i></a>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <div class="container copyright text-center mt-4">
-        <p><span>Copyright</span> <strong class="px-1 sitename">PersonalBlog</strong> <span>All Rights Reserved</span></p>
-    </div>
-</footer>
 
 <!-- Scroll Top -->
 <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
@@ -483,7 +445,7 @@
     let currentUsername = null;
 
     document.addEventListener('DOMContentLoaded', function() {
-        loadCurrentUser();
+        loadCurrentUserWithRetry();
         loadConversations();
         connect();
 
@@ -496,14 +458,26 @@
         });
     });
 
-    function loadCurrentUser() {
+    function loadCurrentUserWithRetry(retries = 10, delay = 300) {
         fetch('/api/user/current')
             .then(response => response.json())
             .then(data => {
-                currentUsername = data.username;
+                if (data && data.username) {
+                    currentUsername = data.username;
+                    loadConversations();
+                    connect();
+                } else if (retries > 0) {
+                    setTimeout(() => loadCurrentUserWithRetry(retries - 1, delay), delay);
+                } else {
+                    alert('Failed to load user. Please refresh.');
+                }
             })
             .catch(error => {
-                console.error('Error getting current user:', error);
+                if (retries > 0) {
+                    setTimeout(() => loadCurrentUserWithRetry(retries - 1, delay), delay);
+                } else {
+                    alert('Failed to load user. Please refresh.');
+                }
             });
     }
 

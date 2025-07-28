@@ -27,7 +27,7 @@ public class Users {
     @Column(name = "email")
     private String email;
 
-    @Column(name = "password", nullable = false)
+    @Column(name = "password")
     private String password;
 
     @Column(name = "full_name")
@@ -46,7 +46,7 @@ public class Users {
     private Timestamp createdAt;
 
     @Column(name = "is_deleted",insertable = false)
-    private boolean isDeleted;
+    private boolean deleted;
 
     @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
     private List<Posts> posts;
@@ -61,4 +61,3 @@ public class Users {
         return password != null && !password.isEmpty();
     }
 }
-

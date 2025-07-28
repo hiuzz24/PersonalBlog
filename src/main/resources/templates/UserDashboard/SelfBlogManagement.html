@@ -12,7 +12,7 @@
     <!-- Fonts -->
     <link th:href="@{https://fonts.googleapis.com}" rel="preconnect">
     <link th:href="@{https://fonts.gstatic.com}" rel="preconnect" crossorigin>
-    <link th:href="@{https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700;1,800&display=swap}" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
 
     <!-- CSS -->
     <link th:href="@{/assets/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
@@ -39,49 +39,405 @@
     }
 
 </script>
+
+<style>
+    :root {
+        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        --warning-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        --sidebar-gradient: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+        --glass-bg: rgba(255, 255, 255, 0.1);
+        --glass-border: rgba(255, 255, 255, 0.2);
+        --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.1);
+        --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    body {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        font-family: 'Inter', sans-serif;
+        min-height: 100vh;
+    }
+
+    .dashboard-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: var(--shadow-soft);
+        margin-bottom: 25px;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .dashboard-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--primary-gradient);
+        border-radius: 20px 20px 0 0;
+    }
+
+    .dashboard-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-hover);
+    }
+
+    .wrapper.d-flex {
+        display: flex;
+        flex-direction: row;
+        align-items: stretch;
+        min-height: 100vh;
+    }
+
+    /* Enhanced Header */
+    #header {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Enhanced Sidebar */
+    #sidebark {
+        background: var(--sidebar-gradient);
+        box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+        position: relative;
+        overflow: hidden;
+        width: 280px;
+        transition: all 0.3s ease;
+    }
+
+    #sidebark.closed {
+        width: 70px;
+    }
+
+    #sidebark.closed .user-profile {
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+    }
+
+    #sidebark.closed .link-text {
+        opacity: 0;
+        visibility: hidden;
+    }
+
+    #sidebark.closed .nav-link {
+        justify-content: center;
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    #sidebark.closed .nav-link i {
+        margin-right: 0 !important;
+    }
+
+    #sidebark.closed hr {
+        margin: 10px 15px;
+    }
+
+    #sidebark::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="1" fill="rgba(255,255,255,0.05)"/><circle cx="80" cy="80" r="1" fill="rgba(255,255,255,0.05)"/><circle cx="40" cy="60" r="1" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+        pointer-events: none;
+    }
+
+    .nav-link {
+        transition: all 0.3s ease;
+        border-radius: 12px;
+        margin: 2px 0;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        padding: 12px 16px;
+        color: rgba(255,255,255,0.8);
+    }
+
+    .nav-link.active {
+        color: rgba(255,255,255,0.9);
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .nav-link i {
+        transition: all 0.3s ease;
+        font-size: 18px;
+        width: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 12px;
+    }
+
+    .link-text {
+        transition: all 0.3s ease;
+        white-space: nowrap;
+    }
+
+    .user-profile {
+        transition: all 0.3s ease;
+    }
+
+    .nav-link::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: left 0.5s ease;
+    }
+
+    .nav-link:hover::before {
+        left: 100%;
+    }
+
+    /* Enhanced Post Cards */
+    .post-card {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 16px;
+        transition: all 0.3s ease;
+        overflow: hidden;
+        position: relative;
+        padding: 25px;
+        margin-bottom: 20px;
+    }
+
+
+
+    .post-image {
+        border-radius: 12px !important;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .post-card:hover .post-image {
+        transform: scale(1.05);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-title {
+        color: #2c3e50;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+
+    .btn {
+        border-radius: 10px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        transition: all 0.3s ease;
+    }
+
+    .btn:hover::before {
+        width: 300px;
+        height: 300px;
+    }
+
+    .btn-outline-primary {
+        border-color: #667eea;
+        color: #667eea;
+    }
+
+    .btn-outline-primary:hover {
+        background: var(--primary-gradient);
+        border-color: transparent;
+        transform: translateY(-1px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-outline-success {
+        border-color: #4facfe;
+        color: #4facfe;
+    }
+
+    .btn-outline-success:hover {
+        background: var(--success-gradient);
+        border-color: transparent;
+        transform: translateY(-1px);
+        box-shadow: 0 5px 15px rgba(79, 172, 254, 0.4);
+    }
+
+    .btn-outline-danger {
+        border-color: #f5576c;
+        color: #f5576c;
+    }
+
+    .btn-outline-danger:hover {
+        background: var(--secondary-gradient);
+        border-color: transparent;
+        transform: translateY(-1px);
+        box-shadow: 0 5px 15px rgba(245, 87, 108, 0.4);
+    }
+
+    .btn-primary {
+        background: var(--primary-gradient);
+        border: none;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-group .btn {
+        margin: 0 2px;
+    }
+
+    /* Enhanced Icons */
+    .dashboard-card h2 i,
+    .dashboard-card h4 i {
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        background: rgba(255, 255, 255, 0.5);
+        border-radius: 16px;
+        margin: 20px 0;
+    }
+
+    .empty-state i {
+        background: linear-gradient(135deg, #ddd 0%, #bbb 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    /* Status badges */
+    .badge {
+        font-weight: 500;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 0.85rem;
+    }
+
+    .badge.bg-success {
+        background: var(--success-gradient) !important;
+    }
+
+    .badge.bg-warning {
+        background: var(--warning-gradient) !important;
+        color: #2c3e50 !important;
+    }
+
+    .badge.bg-danger {
+        background: var(--secondary-gradient) !important;
+    }
+
+    /* Mobile Responsiveness */
+    @media (max-width: 768px) {
+        .dashboard-card {
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .post-card {
+            padding: 20px;
+        }
+
+        .post-card .row {
+            flex-direction: column;
+        }
+
+        .post-card .col-md-2,
+        .post-card .col-md-7,
+        .post-card .col-md-3 {
+            margin-bottom: 15px;
+        }
+
+        .btn-group {
+            justify-content: center;
+        }
+    }
+
+    /* Scrollbar Styling */
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: var(--primary-gradient);
+        border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: var(--secondary-gradient);
+    }
+</style>
+
 <body>
 <!-- Header -->
 <header id="header" class="header d-flex align-items-center sticky-top">
     <div class="container-fluid position-relative d-flex align-items-center justify-content-between px-0" style="gap:0;">
         <div class="d-flex align-items-center ps-3" style="gap: 0; min-width: 0; height: 56px;">
-            <button id="toggle-btn" onclick="toggleSidebar()" style="cursor:pointer; border:none; background:transparent; display: flex; align-items: center; height: 56px; padding: 0;">
-                <i class="bi bi-list" style="font-size:28px; width:28px; height:28px; display: flex; align-items: center; justify-content: center;"></i>
+            <button id="toggle-btn" onclick="toggleSidebar()" style="cursor:pointer; border:none; background:transparent; display: flex; align-items: center; height: 56px; padding: 0; transition: all 0.3s ease;">
+                <i class="bi bi-list" style="font-size:28px; width:28px; height:28px; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease;"></i>
             </button>
             <a th:href="@{/}" class="logo d-flex align-items-center ms-2" style="height: 56px; align-items: center;">
-                <h1 class="sitename mb-0 d-flex align-items-center" style="font-size: 1.5rem; display: flex; align-items: center; height: 56px; line-height: 56px; color: #535353; margin-left: 7px;">PersonalBlog</h1>
+                <h1 class="sitename mb-0 d-flex align-items-center" style="font-size: 1.5rem; display: flex; align-items: center; height: 56px; line-height: 56px; background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-left: 7px; font-weight: 700;">PersonalBlog</h1>
             </a>
         </div>
         <nav id="navmenu" class="navmenu mx-auto flex-grow-1 d-flex justify-content-center">
-            <ul>
-                <li><a th:href="@{/}">Home</a></li>
-                <li><a href="about.html">About</a></li>
-                <li class="dropdown"><a href="#"><span>Categories</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-                    <ul>
-                        <li><a href="category.html">Category 1</a></li>
-                        <li><a href="category.html">Category 2</a></li>
-                        <li><a href="category.html">Category 3</a></li>
-                        <li><a href="category.html">Category 4</a></li>
-                    </ul>
-                </li>
-                <li><a href="contact.html">Contact</a></li>
-            </ul>
             <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
         </nav>
         <div class="header-social-links d-flex align-items-center pe-3" style="margin-left:auto;">
             <div class="dropdown">
-                <a href="#" class="d-flex align-items-center" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding:0; border:none; background:none;">
-                    <img th:src="${user != null && user.avatarUrl != null && !#strings.isEmpty(user.avatarUrl) ? user.avatarUrl : '/assets/img/user.png'}" alt="avatar" style="width:36px; height:36px; border-radius:50%; object-fit:cover;">
+                <a href="#" class="d-flex align-items-center" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding:0; border:none; background:none; transition: all 0.3s ease;">
+                    <h5 class="sitename mb-0 d-flex align-items-center" style="font-size: 1.2rem; margin-right: 12px; display: flex; align-items: center; height: 56px; line-height: 56px; color: #535353; font-weight: 500;" th:text="${user.fullName != null ? user.fullName : user.username}"></h5>
+                    <img th:src="${user != null && user.avatarUrl != null && !#strings.isEmpty(user.avatarUrl) ? user.avatarUrl : '/assets/img/user.png'}" alt="avatar" style="width:40px; height:40px; border-radius:50%; object-fit:cover; border: 2px solid rgba(102, 126, 234, 0.3); transition: all 0.3s ease;">
                 </a>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                <ul class="dropdown-menu dropdown-menu-end shadow-lg" aria-labelledby="userDropdown" style="border: none; border-radius: 12px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px);">
                     <li>
                         <form th:action="@{/profile}" style="display: inline;">
-                            <button type="submit" class="dropdown-item">Profile</button>
+                            <button type="submit" class="dropdown-item" style="border-radius: 8px; transition: all 0.3s ease;">
+                                <i class="bi bi-person me-2"></i>Profile
+                            </button>
                         </form>
                     </li>
-                    <li><hr class="dropdown-divider"></li>
+                    <li><hr class="dropdown-divider" style="opacity: 0.3;"></li>
                     <li>
                         <form th:action="@{/logout}" method="post" style="display: inline;">
-                            <button type="submit" class="dropdown-item">Logout</button>
+                            <button type="submit" class="dropdown-item text-danger" style="border-radius: 8px; transition: all 0.3s ease;">
+                                <i class="bi bi-box-arrow-right me-2"></i>Logout
+                            </button>
                         </form>
                     </li>
                 </ul>
@@ -89,59 +445,78 @@
         </div>
     </div>
 </header>
-<!-- Sidebar (tương tự dashboard.html) -->
+
+<!-- Sidebar -->
 <div class="wrapper d-flex">
-
     <nav id="sidebark" class="sidebark open">
-
-        <div class="user-profile text-center mt-3">
-            <img th:src="${user?.avatarUrl} ?: '/img/default-avatar.png'" alt="Avatar" class="profile-avatar mb-3">
-            <h5 class="mt-2 mb-0 text-white" th:text="${user?.fullName} ?: 'User name'">User name</h5>
-            <small th:text="${user != null && user.username != null ? '@' + user.username : '@username'}">@username</small>
+        <div class="text-center mb-4 user-profile" style="padding: 20px;">
+            <div style="position: relative; display: inline-block;">
+                <img th:src="${user.avatarUrl != null ? user.avatarUrl : '/assets/img/default-avatar.png'}"
+                     alt="Avatar" class="rounded-circle mb-3" width="90" height="90" style="border: 4px solid rgba(255,255,255,0.3); box-shadow: 0 8px 20px rgba(0,0,0,0.2);">
+                <div style="position: absolute; bottom: 10px; right: 0; width: 20px; height: 20px; background: #4CAF50; border-radius: 50%; border: 3px solid #2c3e50;"></div>
+            </div>
+            <h5 class="mt-2 mb-1 text-white" style="font-weight: 600;" th:text="${user.fullName != null ? user.fullName : user.username}"></h5>
+            <small style="color: rgba(255,255,255,0.7); font-weight: 400;" th:text="${user != null && user.username != null ? '@' + user.username : '@username'}">@username</small>
         </div>
 
-        <ul class="nav flex-column mt-4">
+        <ul class="nav flex-column mt-4" style="padding: 0 15px;">
             <li class="nav-item">
-                <a class="nav-link" th:href="@{/dashboard}">
-                    <i class="bi bi-speedometer2"></i>
+                <a class="nav-link" th:href="@{/dashboard}" style="color: rgba(255,255,255,0.8);">
+                    <i class="bi bi-speedometer2 me-3"></i>
                     <span class="link-text">Dashboard</span>
                 </a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" th:href="@{/profile}">
-                    <i class="bi bi-person"></i>
+                <a class="nav-link" th:href="@{/profile}" style="color: rgba(255,255,255,0.8);">
+                    <i class="bi bi-person me-3"></i>
                     <span class="link-text">Profile</span>
                 </a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" th:href="@{/blog}">
-                    <i class="bi bi-journal-text"></i>
+                <a class="nav-link active" th:href="@{/blog}" style="color: rgba(255,255,255,0.9);">
+                    <i class="bi bi-journal-text me-3"></i>
                     <span class="link-text">Blog Management</span>
                 </a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" th:href="@{/blog/create}">
-                    <i class="bi bi-plus-circle"></i>
+                <a class="nav-link" th:href="@{/blog/create}" style="color: rgba(255,255,255,0.8);">
+                    <i class="bi bi-plus-circle me-3"></i>
                     <span class="link-text">Create new Blog</span>
                 </a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" th:href="@{/dashboard/analytics}">
-                    <i class="bi bi-bar-chart"></i>
-                    <span class="link-text">Chart</span>
+                <a class="nav-link" th:href="@{/favorites/dashboard}" style="color: rgba(255,255,255,0.8);">
+                    <i class="bi bi-heart-fill me-3"></i>
+                    <span class="link-text">Favorite blogs</span>
                 </a>
             </li>
-            <li class="nav-item mt-4">
-                <hr style="border-color: rgba(255, 255, 255, 0.3);">
+
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/chat}" style="color: rgba(255,255,255,0.8);">
+                    <i class="bi bi-chat-dots me-3"></i>
+                    <span class="link-text">Chat</span>
+                </a>
             </li>
+
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/change-password}" style="color: rgba(255,255,255,0.8);">
+                    <i class="bi bi-key me-3"></i>
+                    <span class="link-text">Change Password</span>
+                </a>
+            </li>
+
+            <li class="nav-item mt-4">
+                <hr style="border-color: rgba(255, 255, 255, 0.2); margin: 20px 0;">
+            </li>
+
             <li class="nav-item">
                 <form th:action="@{/logout}" method="post">
-                    <button type="submit" class="nav-link btn btn-link text-start w-100">
-                        <i class="bi bi-box-arrow-right"></i>
+                    <button type="submit" class="nav-link btn btn-link text-start w-100" style="color: rgba(255,255,255,0.8); border: none; background: none;">
+                        <i class="bi bi-box-arrow-right me-3"></i>
                         <span class="link-text">Logout</span>
                     </button>
                 </form>
@@ -149,97 +524,104 @@
         </ul>
     </nav>
 
-<!-- Main Content -->
-<main class="main container">
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="d-flex justify-content-between align-items-center mb-4" style="width: 100%;">
-                <h2 class="d-flex align-items-center" >
-                    <i class="bi bi-journal-text me-2" ></i>
-                    Blog Management
-                </h2>
-            </div>
-            <!-- Posts List -->
-            <div class="dashboard-card w-100" style="max-width: 1400px; margin: 0 auto;">
-                <div th:if="${posts}">
-                    <div class="post-card" th:each="post : ${posts}">
-                        <div class="row">
-                            <div class="col-md-2 d-flex align-items-center justify-content-center">
-                                <img th:src="${post.imageUrl ?: '/img/default-post.png'}"
-                                     alt="Post image" class="post-image" style="width:100px; height:100px; object-fit:cover; border-radius:8px;">
-                            </div>
+    <!-- Main Content -->
+    <main class="main" style="flex: 1 1 0; min-width: 0; padding: 25px;">
+        <!-- Blog Management -->
+        <div class="dashboard-card">
+            <h2 class="mb-4" style="color: #2c3e50; font-weight: 700;">
+                <i class="bi bi-journal-text me-3"></i>
+                Blog Management
+            </h2>
 
-                            <div class="col-md-7">
-                                <h5 th:text="${post.title}">Title</h5>
-                                <p class="text-muted mb-2" th:text="${#strings.abbreviate(post.content, 150)}">
-                                    Content
-                                </p>
-                                <div class="d-flex gap-3">
-                                    <small class="text-muted">
-                                        <i class="bi bi-calendar me-1"></i>
-                                        <span th:text="${#dates.format(post.updatedAt, 'dd/MMMM/yyyy HH:mm')}">
+            <!-- Posts List -->
+            <div th:if="${posts}">
+                <div class="post-card" th:each="post : ${posts}">
+                    <div class="row align-items-center">
+                        <div class="col-md-2 d-flex align-items-center justify-content-center">
+                            <img th:src="${post.imageUrl ?: '/img/default-post.png'}"
+                                 alt="Post image" class="post-image" style="width:100px; height:100px; object-fit:cover;">
+                        </div>
+
+                        <div class="col-md-7">
+                            <h5 class="card-title" th:text="${post.title}">Title</h5>
+                            <p class="text-muted mb-2" th:text="${#strings.abbreviate(post.content, 150)}">
+                                Content
+                            </p>
+                            <div class="d-flex gap-3 align-items-center">
+                                <small class="text-muted">
+                                    <i class="bi bi-calendar me-1"></i>
+                                    <span th:text="${#dates.format(post.updatedAt, 'dd/MMMM/yyyy HH:mm')}">
                                         Updated date
                                     </span>
-                                    </small>
-                                    <small class="text-muted">
-                                        <i class="bi bi-eye me-1"></i>
-                                        <span th:text="${post.isPublished ? 'Public' : 'Waiting'}">
-                                        Status
+                                </small>
+                                <small>
+                                    <span th:if="${post.status == 'Approved'}" class="badge bg-success">
+                                        <i class="bi bi-check-circle me-1"></i>Approved
                                     </span>
-                                    </small>
-                                </div>
+                                    <span th:if="${post.status == 'Pending'}" class="badge bg-warning text-dark">
+                                        <i class="bi bi-clock me-1"></i>Pending
+                                    </span>
+                                    <span th:if="${post.status == 'Rejected'}" class="badge bg-danger">
+                                        <i class="bi bi-x-circle me-1"></i>Rejected
+                                    </span>
+                                    <span th:if="${post.status == null or post.status == ''}"
+                                          class="badge bg-secondary">
+                                        <i class="bi bi-question-circle me-1"></i>Unknown
+                                    </span>
+                                </small>
                             </div>
+                        </div>
 
-                            <div class="col-md-3 text-end">
-                                <div class="btn-group" role="group">
-                                    <a th:href="@{/PostDetail/{postID}(postID=${post.postID})}"
-                                       class="btn btn-sm btn-outline-success" title="View">
-                                        <i class="bi bi-eye"></i>
-                                    </a>
-                                    <a th:href="@{/blog/edit/{postID}(postID=${post.postID})}"
-                                       class="btn btn-sm btn-outline-primary" title="Edit">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-                                    <a th:href="@{/blog/delete/{postID}(postID=${post.postID})}"
-                                       class="btn btn-sm btn-outline-danger" title="Delete">
-                                        <i class="bi bi-trash"></i>
-                                    </a>
-                                </div>
+                        <div class="col-md-3 text-end">
+                            <div class="btn-group" role="group">
+                                <a th:href="@{/PostDetail/{postID}(postID=${post.postID})}"
+                                   class="btn btn-sm btn-outline-success" title="View">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a th:href="@{/blog/edit/{postID}(postID=${post.postID})}"
+                                   class="btn btn-sm btn-outline-primary" title="Edit">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a th:href="@{/blog/delete/{postID}(postID=${post.postID})}"
+                                   class="btn btn-sm btn-outline-danger" title="Delete"
+                                   onclick="return confirmDelete(event, '${post.postID}', '${post.title}')">
+                                    <i class="bi bi-trash"></i>
+                                </a>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <div th:if="${posts == null or #lists.isEmpty(posts)}" class="text-center py-5">
-                    <i class="bi bi-journal-x" style="font-size: 4rem; color: #ccc;"></i>
-                    <h4 class="mt-3 text-muted">You have no posts</h4>
-                    <p class="text-muted">You can create a new blog post.</p>
-                    <a th:href="@{/blog/create}" class="btn btn-primary">
-                        <i class="bi bi-plus-circle me-2"></i>
-                        Create new blog
-                    </a>
-                </div>
+            <div th:if="${posts == null or #lists.isEmpty(posts)}" class="empty-state">
+                <i class="bi bi-journal-x" style="font-size: 4rem;"></i>
+                <h5 class="mt-3 mb-2" style="color: #666; font-weight: 600;">You have no posts</h5>
+                <p class="text-muted mb-4">You can create a new blog post.</p>
+                <a th:href="@{/blog/create}" class="btn btn-primary btn-lg">
+                    <i class="bi bi-plus-circle me-2"></i>
+                    Create new blog
+                </a>
             </div>
         </div>
-    </div>
-</main>
+    </main>
+</div>
 
 <!-- Delete Confirmation Modal -->
 <div class="modal fade" id="deleteModal" tabindex="-1">
     <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Confirm Deletion</h5>
+        <div class="modal-content" style="border: none; border-radius: 16px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px);">
+            <div class="modal-header" style="border-bottom: 1px solid rgba(0, 0, 0, 0.1);">
+                <h5 class="modal-title" style="color: #2c3e50; font-weight: 600;">Confirm Deletion</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <p>You are about to delete <strong id="postTitle"></strong>?</p>
-                <p class="text-danger">This action cannot be undone.!</p>
+                <p class="text-danger">This action cannot be undone!</p>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+            <div class="modal-footer" style="border-top: 1px solid rgba(0, 0, 0, 0.1);">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 <form id="deleteForm" method="post" style="display: inline;">
-                    <button type="submit" class="btn btn-danger">Xóa</button>
+                    <button type="submit" class="btn btn-danger">Delete</button>
                 </form>
             </div>
         </div>
@@ -250,11 +632,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    function confirmDelete(postId, title) {
-        document.getElementById('postTitle').textContent = title;
-        document.getElementById('deleteForm').action = '/dashboard/posts/delete/' + postId;
-        new bootstrap.Modal(document.getElementById('deleteModal')).show();
-    }
-</script>
-</body>
-</html>
+    function confirmDelete(event, postId, title) {
+        event.preventDefault();
+        document.getElementById('postTitle

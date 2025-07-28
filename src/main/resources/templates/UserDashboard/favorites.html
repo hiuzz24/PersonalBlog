@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bài viết đã lưu - PersonalBlog</title>
+    <title>Saved Favorite Posts - Personal Blog</title>
     <!-- Favicon -->
     <link th:href="@{/assets/img/favicon.png}" rel="icon">
     <link th:href="@{/assets/img/apple-touch-icon.png}" rel="apple-touch-icon">
@@ -21,62 +21,227 @@
     <link th:href="@{/assets/css/main.css}" rel="stylesheet">
 
     <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --warning-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --sidebar-gradient: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+        }
+
         .dashboard-card {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--shadow-soft);
+            margin-bottom: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dashboard-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary-gradient);
+            border-radius: 20px 20px 0 0;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
         }
 
         .stat-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--primary-gradient);
             color: white;
-            border-radius: 15px;
-            padding: 20px;
+            border-radius: 20px;
+            padding: 30px 25px;
             text-align: center;
-            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border: none;
+            box-shadow: var(--shadow-soft);
         }
 
-        .sidebar {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 2;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            font-weight: 500;
+            opacity: 0.9;
+            position: relative;
+            z-index: 2;
+        }
+
+        .wrapper.d-flex {
+            display: flex;
+            flex-direction: row;
+            align-items: stretch;
             min-height: 100vh;
-            padding: 20px 0;
-            color: white;
         }
 
-        .sidebar .nav-link {
-            color: rgba(255, 255, 255, 0.8);
-            padding: 12px 20px;
-            margin: 5px 0;
-            border-radius: 10px;
+        /* Enhanced Header */
+        #header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Enhanced Sidebar */
+        #sidebark {
+            background: var(--sidebar-gradient);
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            width: 280px;
             transition: all 0.3s ease;
         }
 
-        .sidebar .nav-link:hover,
-        .sidebar .nav-link.active {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
+        #sidebark.closed {
+            width: 70px;
+        }
+
+        #sidebark.closed .user-profile {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+        }
+
+        #sidebark.closed .user-info {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        #sidebark.closed .user-avatar {
+            width: 45px !important;
+            height: 45px !important;
+            margin-bottom: 0 !important;
+        }
+
+        #sidebark.closed .link-text {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        #sidebark.closed .nav-link {
+            justify-content: center;
+            padding-left: 0;
+            padding-right: 0;
+        }
+
+        #sidebark.closed .nav-link i {
+            margin-right: 0 !important;
+        }
+
+        #sidebark.closed hr {
+            margin: 10px 15px;
+        }
+
+        #sidebark::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="1" fill="rgba(255,255,255,0.05)"/><circle cx="80" cy="80" r="1" fill="rgba(255,255,255,0.05)"/><circle cx="40" cy="60" r="1" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            pointer-events: none;
+        }
+
+        .nav-link {
+            transition: all 0.3s ease;
+            border-radius: 12px;
+            margin: 2px 0;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+        }
+
+        .nav-link i {
+            transition: all 0.3s ease;
+            font-size: 18px;
+            width: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .link-text {
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .user-profile {
+            transition: all 0.3s ease;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .nav-link:hover::before {
+            left: 100%;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
             transform: translateX(5px);
         }
 
+        /* Enhanced Favorite Cards */
         .favorite-post-card {
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            position: relative;
             margin-bottom: 20px;
         }
 
-        .favorite-post-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-        }
 
         .favorite-post-image {
             height: 200px;
             object-fit: cover;
-            border-radius: 15px 15px 0 0;
+            border-radius: 16px 16px 0 0;
         }
 
         .remove-favorite-btn {
@@ -93,6 +258,7 @@
             justify-content: center;
             color: white;
             transition: all 0.3s ease;
+            z-index: 10;
         }
 
         .remove-favorite-btn:hover {
@@ -100,185 +266,344 @@
             transform: scale(1.1);
         }
 
+        .btn {
+            border-radius: 10px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            border: none;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
         .empty-state {
             text-align: center;
             padding: 60px 20px;
-            color: #6c757d;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 16px;
+            margin: 20px 0;
         }
 
         .empty-state i {
+            background: linear-gradient(135deg, #ddd 0%, #bbb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             font-size: 4rem;
             margin-bottom: 20px;
-            color: #dee2e6;
+        }
+
+        /* Dashboard Icons */
+        .dashboard-card h2 i {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .dashboard-card {
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+
+            .stat-card {
+                margin-bottom: 15px;
+            }
+
+            .stat-number {
+                font-size: 2.5rem;
+            }
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-gradient);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary-gradient);
+        }
+
+        /* Loading Animation */
+        @keyframes shimmer {
+            0% {
+                background-position: -468px 0;
+            }
+            100% {
+                background-position: 468px 0;
+            }
+        }
+
+        .loading-shimmer {
+            animation: shimmer 1.5s infinite linear;
+            background: linear-gradient(to right, #f6f7f8 0%, #edeef1 20%, #f6f7f8 40%, #f6f7f8 100%);
+            background-size: 800px 104px;
         }
     </style>
 </head>
 
 <body>
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Sidebar -->
-            <div class="col-md-3 col-lg-2 sidebar">
-                <div class="text-center mb-4">
-                    <img th:src="${user.avatarUrl != null ? user.avatarUrl : '/assets/img/default-avatar.png'}"
-                         alt="Avatar" class="rounded-circle mb-2" width="80" height="80">
-                    <h5 th:text="${user.fullName != null ? user.fullName : user.username}"></h5>
-                    <small th:text="${user.email}"></small>
-                </div>
-
-                <ul class="nav flex-column mt-4">
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/dashboard}">
-                            <i class="bi bi-speedometer2"></i>
-                            <span class="link-text">Dashboard</span>
-                        </a>
+<!-- Header -->
+<header id="header" class="header d-flex align-items-center sticky-top">
+    <div class="container-fluid position-relative d-flex align-items-center justify-content-between px-0" style="gap:0;">
+        <div class="d-flex align-items-center ps-3" style="gap: 0; min-width: 0; height: 56px;">
+            <button id="toggle-btn" onclick="toggleSidebar()" style="cursor:pointer; border:none; background:transparent; display: flex; align-items: center; height: 56px; padding: 0; transition: all 0.3s ease;">
+                <i class="bi bi-list" style="font-size:28px; width:28px; height:28px; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease;"></i>
+            </button>
+            <a th:href="@{/}" class="logo d-flex align-items-center ms-2" style="height: 56px; align-items: center;">
+                <h1 class="sitename mb-0 d-flex align-items-center" style="font-size: 1.5rem; display: flex; align-items: center; height: 56px; line-height: 56px; background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-left: 7px; font-weight: 700;">PersonalBlog</h1>
+            </a>
+        </div>
+        <nav id="navmenu" class="navmenu mx-auto flex-grow-1 d-flex justify-content-center">
+            <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+        </nav>
+        <div class="header-social-links d-flex align-items-center pe-3" style="margin-left:auto;">
+            <div class="dropdown">
+                <a href="#" class="d-flex align-items-center" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding:0; border:none; background:none; transition: all 0.3s ease;">
+                    <h5 class="sitename mb-0 d-flex align-items-center" style="font-size: 1.2rem; margin-right: 12px; display: flex; align-items: center; height: 56px; line-height: 56px; color: #535353; font-weight: 500;" th:text="${user.fullName != null ? user.fullName : user.username}"></h5>
+                    <img th:src="${user != null && user.avatarUrl != null && !#strings.isEmpty(user.avatarUrl) ? user.avatarUrl : '/assets/img/user.png'}" alt="avatar" style="width:40px; height:40px; border-radius:50%; object-fit:cover; border: 2px solid rgba(102, 126, 234, 0.3); transition: all 0.3s ease;">
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end shadow-lg" aria-labelledby="userDropdown" style="border: none; border-radius: 12px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px);">
+                    <li>
+                        <form th:action="@{/profile}" style="display: inline;">
+                            <button type="submit" class="dropdown-item" style="border-radius: 8px; transition: all 0.3s ease;">
+                                <i class="bi bi-person me-2"></i>Profile
+                            </button>
+                        </form>
                     </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/profile}">
-                            <i class="bi bi-person"></i>
-                            <span class="link-text">Profile</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/blog}">
-                            <i class="bi bi-journal-text"></i>
-                            <span class="link-text">Blog Management</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/favorites/dashboard}">
-                            <i class="bi bi-heart-fill"></i>
-                            <span class="link-text">Favorite blogs</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/blog/create}">
-                            <i class="bi bi-plus-circle"></i>
-                            <span class="link-text">Create new Blog</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/dashboard/analytics}">
-                            <i class="bi bi-bar-chart"></i>
-                            <span class="link-text">Chart</span>
-                        </a>
-                    </li>
-                    <li class="nav-item mt-4">
-                        <hr style="border-color: rgba(255, 255, 255, 0.3);">
-                    </li>
-                    <li class="nav-item">
-                        <form th:action="@{/logout}" method="post">
-                            <button type="submit" class="nav-link btn btn-link text-start w-100">
-                                <i class="bi bi-box-arrow-right"></i>
-                                <span class="link-text">Logout</span>
+                    <li><hr class="dropdown-divider" style="opacity: 0.3;"></li>
+                    <li>
+                        <form th:action="@{/logout}" method="post" style="display: inline;">
+                            <button type="submit" class="dropdown-item text-danger" style="border-radius: 8px; transition: all 0.3s ease;">
+                                <i class="bi bi-box-arrow-right me-2"></i>Logout
                             </button>
                         </form>
                     </li>
                 </ul>
             </div>
+        </div>
+    </div>
+</header>
 
-            <!-- Main Content -->
-            <div class="col-md-9 col-lg-10">
-                <div class="container-fluid py-4">
-                    <!-- Header -->
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <div>
-                            <h2><i class="bi bi-heart-fill text-danger me-2"></i>Favorite Blogs</h2>
-                            <p class="text-muted">Manage your favorite blogs</p>
-                        </div>
-                        <a th:href="@{/explore}" class="btn btn-primary">
-                            <i class="bi bi-plus-circle me-2"></i>Explore more
-                        </a>
-                    </div>
+<!-- Sidebar -->
+<div class="wrapper d-flex">
+    <nav id="sidebark" class="sidebark open">
+        <div class="text-center mb-4 user-profile" style="padding: 20px;">
+            <div style="position: relative; display: inline-block;">
+                <img th:src="${user.avatarUrl != null ? user.avatarUrl : '/assets/img/default-avatar.png'}"
+                     alt="Avatar" class="rounded-circle mb-3 user-avatar" width="90" height="90" style="border: 4px solid rgba(255,255,255,0.3); box-shadow: 0 8px 20px rgba(0,0,0,0.2); transition: all 0.3s ease;">
+                <div style="position: absolute; bottom: 10px; right: 0; width: 20px; height: 20px; background: #4CAF50; border-radius: 50%; border: 3px solid #2c3e50;"></div>
+            </div>
+            <div class="user-info" style="transition: all 0.3s ease;">
+                <h5 class="mt-2 mb-1 text-white" style="font-weight: 600;" th:text="${user.fullName != null ? user.fullName : user.username}"></h5>
+                <small style="color: rgba(255,255,255,0.7); font-weight: 400;" th:text="${user != null && user.username != null ? '@' + user.username : '@username'}">@username</small>
+            </div>
+        </div>
 
-                    <!-- Stats Card -->
-                    <div class="row mb-4">
-                        <div class="col-md-3">
-                            <div class="stat-card">
-                                <h3 th:text="${favoriteCount}">0</h3>
-                                <p class="mb-0">Favorite blogs</p>
-                            </div>
-                        </div>
-                    </div>
+        <ul class="nav flex-column mt-4" style="padding: 0 15px;">
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/dashboard}" style="color: rgba(255,255,255,0.8);">
+                    <i class="bi bi-speedometer2 me-3"></i>
+                    <span class="link-text">Dashboard</span>
+                </a>
+            </li>
 
-                    <!-- Favorites List -->
-                    <div class="dashboard-card">
-                        <div th:if="${favorites.size() > 0}">
-                            <div class="row">
-                                <div class="col-md-6 col-lg-4" th:each="favorite : ${favorites}">
-                                    <div class="card favorite-post-card position-relative">
-                                        <button class="remove-favorite-btn"
-                                                th:data-post-id="${favorite.post.postID}"
-                                                onclick="removeFavorite(this)">
-                                            <i class="bi bi-x"></i>
-                                        </button>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/profile}" style="color: rgba(255,255,255,0.8);">
+                    <i class="bi bi-person me-3"></i>
+                    <span class="link-text">Profile</span>
+                </a>
+            </li>
 
-                                        <img th:src="${favorite.post.imageUrl}"
-                                             class="card-img-top favorite-post-image"
-                                             th:alt="${favorite.post.title}">
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/blog}" style="color: rgba(255,255,255,0.8);">
+                    <i class="bi bi-journal-text me-3"></i>
+                    <span class="link-text">Blog Management</span>
+                </a>
+            </li>
 
-                                        <div class="card-body">
-                                            <h6 class="card-title" th:text="${favorite.post.title}"></h6>
-                                            <p class="card-text text-muted small"
-                                               th:text="${#strings.abbreviate(favorite.post.content, 100)}"></p>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/blog/create}" style="color: rgba(255,255,255,0.8);">
+                    <i class="bi bi-plus-circle me-3"></i>
+                    <span class="link-text">Create new Blog</span>
+                </a>
+            </li>
 
-                                            <div class="d-flex justify-content-between align-items-center">
-                                                <small class="text-muted">
-                                                    <i class="bi bi-person me-1"></i>
-                                                    <span th:text="${favorite.post.users.fullName != null ? favorite.post.users.fullName : favorite.post.users.username}"></span>
-                                                </small>
-                                                <small class="text-muted" th:text="${#temporals.format(favorite.createdAt, 'dd/MM/yyyy')}"></small>
-                                            </div>
+            <li class="nav-item">
+                <a class="nav-link active" th:href="@{/favorites/dashboard}" style="color: rgba(255,255,255,0.9);">
+                    <i class="bi bi-heart-fill me-3"></i>
+                    <span class="link-text">Favorite blogs</span>
+                </a>
+            </li>
 
-                                            <div class="mt-3">
-                                                <a th:href="@{/PostDetail/{postID}(postID=${favorite.post.postID})}"
-                                                   class="btn btn-primary btn-sm">
-                                                    <i class="bi bi-eye me-1"></i>Read blog
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/chat}" style="color: rgba(255,255,255,0.8);">
+                    <i class="bi bi-chat-dots me-3"></i>
+                    <span class="link-text">Chat</span>
+                </a>
+            </li>
 
-                        <!-- Empty State -->
-                        <div th:if="${favorites.size() == 0}" class="empty-state">
-                            <i class="bi bi-heart"></i>
-                            <h4>You have no favorite blogs</h4>
-                            <p>You can explore more blogs and add them to your favorites.</p>
-                            <a th:href="@{/explore}" class="btn btn-primary">
-                                <i class="bi bi-search me-2"></i>Explore now
-                            </a>
-                        </div>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/change-password}" style="color: rgba(255,255,255,0.8);">
+                    <i class="bi bi-key me-3"></i>
+                    <span class="link-text">Change Password</span>
+                </a>
+            </li>
+
+            <li class="nav-item mt-4">
+                <hr style="border-color: rgba(255, 255, 255, 0.2); margin: 20px 0;">
+            </li>
+
+            <li class="nav-item">
+                <form th:action="@{/logout}" method="post">
+                    <button type="submit" class="nav-link btn btn-link text-start w-100" style="color: rgba(255,255,255,0.8); border: none; background: none;">
+                        <i class="bi bi-box-arrow-right me-3"></i>
+                        <span class="link-text">Logout</span>
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main" style="flex: 1 1 0; min-width: 0; padding: 25px;">
+        <!-- Page Header -->
+        <div class="dashboard-card">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 style="color: #2c3e50; font-weight: 700;"><i class="bi bi-heart-fill text-danger me-3"></i>Favorite Blogs</h2>
+                    <p class="text-muted mb-0">Manage your favorite blogs</p>
+                </div>
+                <a th:href="@{/explore}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle me-2"></i>Explore more
+                </a>
+            </div>
+
+            <!-- Stats -->
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="stat-card">
+                        <div class="stat-number" th:text="${favoriteCount}">0</div>
+                        <div class="stat-label">Favorite blogs</div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Scripts -->
-    <script th:src="@{/assets/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
-    <script th:src="@{/assets/js/main.js}"></script>
+        <!-- Favorites List -->
+        <div class="dashboard-card">
+            <h4 class="mb-4" style="color: #2c3e50; font-weight: 600;">
+                <i class="bi bi-heart me-3" style="background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;"></i>
+                Your Favorite Posts
+            </h4>
 
-    <script>
-        function removeFavorite(button) {
-            const postId = button.getAttribute('data-post-id');
-            const card = button.closest('.favorite-post-card').parentElement;
+            <div th:if="${favorites.size() > 0}">
+                <div class="row g-4">
+                    <div class="col-md-6 col-lg-4" th:each="favorite : ${favorites}">
+                        <div class="card favorite-post-card position-relative">
+                            <button class="remove-favorite-btn"
+                                    th:data-post-id="${favorite.post.postID}"
+                                    onclick="removeFavorite(this)">
+                                <i class="bi bi-x"></i>
+                            </button>
 
-            if (confirm('Are you sure you want to remove this favorite blog?')) {
-                fetch(`/favorites/toggle/${postId}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
+                            <img th:src="${favorite.post.imageUrl}"
+                                 class="card-img-top favorite-post-image"
+                                 th:alt="${favorite.post.title}">
+
+                            <div class="card-body p-4">
+                                <h6 class="card-title" style="color: #2c3e50; font-weight: 600;" th:text="${favorite.post.title}"></h6>
+                                <p class="card-text text-muted small"
+                                   th:text="${#strings.abbreviate(favorite.post.content, 100)}"></p>
+
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <small class="text-muted">
+                                        <i class="bi bi-person me-1"></i>
+                                        <span th:text="${favorite.post.users.fullName != null ? favorite.post.users.fullName : favorite.post.users.username}"></span>
+                                    </small>
+                                    <small class="text-muted" th:text="${#temporals.format(favorite.createdAt, 'dd/MM/yyyy')}"></small>
+                                </div>
+
+                                <div class="d-grid">
+                                    <a th:href="@{/PostDetail/{postID}(postID=${favorite.post.postID})}"
+                                       class="btn btn-primary btn-sm">
+                                        <i class="bi bi-eye me-1"></i>Read blog
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div th:if="${favorites.size() == 0}" class="empty-state">
+                <i class="bi bi-heart"></i>
+                <h4 class="mt-3 mb-2" style="color: #666; font-weight: 600;">You have no favorite blogs</h4>
+                <p class="text-muted mb-4">You can explore more blogs and add them to your favorites.</p>
+                <a th:href="@{/explore}" class="btn btn-primary btn-lg">
+                    <i class="bi bi-search me-2"></i>Explore now
+                </a>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/assets/js/main.js}"></script>
+
+<script>
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebark');
+        sidebar.classList.toggle('closed');
+    }
+
+    function toggleChangeBox() {
+        const box = document.getElementById('changeBox');
+        if (box.style.display === 'block') {
+            box.style.display = 'none';
+        } else {
+            box.style.display = 'block';
+        }
+    }
+
+
+
+    function removeFavorite(button) {
+        const postId = button.getAttribute('data-post-id');
+        const card = button.closest('.favorite-post-card').parentElement;
+
+        if (confirm('Are you sure you want to remove this favorite blog?')) {
+            fetch(`/favorites/toggle/${postId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
@@ -306,39 +631,39 @@
                     console.error('Error:', error);
                     showToast('Có lỗi xảy ra', 'error');
                 });
-            }
         }
+    }
 
-        function showToast(message, type = 'info') {
-            const toast = document.createElement('div');
-            toast.className = `toast align-items-center text-white bg-${type === 'success' ? 'success' : 'danger'} border-0`;
-            toast.setAttribute('role', 'alert');
-            toast.setAttribute('aria-live', 'assertive');
-            toast.setAttribute('aria-atomic', 'true');
-            toast.style.position = 'fixed';
-            toast.style.top = '20px';
-            toast.style.right = '20px';
-            toast.style.zIndex = '9999';
+    function showToast(message, type = 'info') {
+        const toast = document.createElement('div');
+        toast.className = `toast align-items-center text-white bg-${type === 'success' ? 'success' : 'danger'} border-0`;
+        toast.setAttribute('role', 'alert');
+        toast.setAttribute('aria-live', 'assertive');
+        toast.setAttribute('aria-atomic', 'true');
+        toast.style.position = 'fixed';
+        toast.style.top = '20px';
+        toast.style.right = '20px';
+        toast.style.zIndex = '9999';
 
-            toast.innerHTML = `
+        toast.innerHTML = `
                 <div class="d-flex">
                     <div class="toast-body">${message}</div>
                     <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
                 </div>
             `;
 
-            document.body.appendChild(toast);
+        document.body.appendChild(toast);
 
-            const bsToast = new bootstrap.Toast(toast, {
-                autohide: true,
-                delay: 3000
-            });
-            bsToast.show();
+        const bsToast = new bootstrap.Toast(toast, {
+            autohide: true,
+            delay: 3000
+        });
+        bsToast.show();
 
-            toast.addEventListener('hidden.bs.toast', function() {
-                document.body.removeChild(toast);
-            });
-        }
-    </script>
+        toast.addEventListener('hidden.bs.toast', function() {
+            document.body.removeChild(toast);
+        });
+    }
+</script>
 </body>
 </html>
