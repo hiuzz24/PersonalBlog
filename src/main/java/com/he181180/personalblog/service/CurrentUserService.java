@@ -59,7 +59,6 @@ public class CurrentUserService {
      * @throws RuntimeException if user not found or not authenticated
      */
 
-
     /**
      * Check if user is currently authenticated
      * @return boolean - true if authenticated
