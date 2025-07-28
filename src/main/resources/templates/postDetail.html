@@ -137,9 +137,9 @@
 
                             <!-- Favorite Button -->
                             <div class="mt-3 mb-3">
-                                <button type="button" class="btn btn-outline-danger" id="favoriteBtn"
+                                <button type="button" class="btn" id="favoriteBtn"
                                         th:data-post-id="${postDetail.postID}"
-                                        th:classappend="${isFavorited} ? 'btn-danger' : 'btn-outline-danger'">
+                                            th:classappend="${isFavorited} ? 'btn-danger' : 'btn-outline-danger'">
                                     <i class="bi" th:classappend="${isFavorited} ? 'bi-heart-fill' : 'bi-heart'"></i>
                                     <span th:text="${isFavorited} ? 'Saved' : 'Save post'"></span>
                                 </button>
