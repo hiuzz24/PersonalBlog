@@ -28,6 +28,7 @@ public class AdminModerateController {
         model.addAttribute("approvedToday", postService.countApprovedToday());
         model.addAttribute("rejectedToday", postService.countRejectedToday());
         model.addAttribute("posts",allPostPending);
+        model.addAttribute("rejectedTab", false);
         return "AdminDashboard/moderateNewBlogs";
     }
 
