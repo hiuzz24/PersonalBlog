@@ -3,6 +3,7 @@ package com.he181180.personalblog.controller;
 import com.he181180.personalblog.entity.Posts;
 import com.he181180.personalblog.entity.Tags;
 import com.he181180.personalblog.entity.Users;
+import com.he181180.personalblog.service.CurrentUserService;
 import com.he181180.personalblog.service.PostService;
 import com.he181180.personalblog.service.TagService;
 import com.he181180.personalblog.service.UserService;
@@ -35,19 +36,13 @@ public class BlogManagementController {
     @Autowired
     private TagService tagService;
 
+    @Autowired
+    private CurrentUserService currentUserService;
+
     @GetMapping
-    public String getPostsByUserId(Authentication authentication,Model model) {
-        Users user = null;
-        if (authentication != null) {
-            Object principal = authentication.getPrincipal();
-            if (principal instanceof org.springframework.security.oauth2.core.user.OAuth2User oauth2User) {
-                String email = oauth2User.getAttribute("email");
-                user = userService.findUserByEmail(email).orElse(null);
-            } else {
-                String username = authentication.getName();
-                user = userService.findUserByUsername(username).orElse(null);
-            }
-        }
+    public String getPostsByUserId(Authentication authentication, Model model) {
+        Users user = currentUserService.getCurrentUser(authentication);
+        
         if (user != null) {
             List<Posts> userPosts = postService.getPostByUserID(user.getUserID());
             model.addAttribute("posts", userPosts);
@@ -78,17 +73,7 @@ public class BlogManagementController {
 
         List<Tags> tags = tagService.findTagsByTagID(tagID);
 
-        Users user = null;
-        if (authentication != null) {
-            Object principal = authentication.getPrincipal();
-            if (principal instanceof org.springframework.security.oauth2.core.user.OAuth2User oauth2User) {
-                String email = oauth2User.getAttribute("email");
-                user = userService.findUserByEmail(email).orElse(null);
-            } else {
-                String username = authentication.getName();
-                user = userService.findUserByUsername(username).orElse(null);
-            }
-        }
+        Users user = currentUserService.getCurrentUser(authentication);
 
         if (user != null) {
             Posts post = new Posts();
@@ -140,11 +125,10 @@ public class BlogManagementController {
                             @RequestParam String imageUrl,
                             @RequestParam(required = false) MultipartFile fileImage,
                             Authentication authentication) {
-        String username = authentication.getName();
-        Optional<Users> user = userService.findUserByUsername(username);
+        Users user = currentUserService.getCurrentUser(authentication);
         List<Tags> tags = tagService.findTagsByTagID(tagID);
 
-        if (user.isPresent()) {
+        if (user != null) {
             Posts post = postService.findPostByPostID(postID);
             post.setTitle(title);
             post.setContent(content);
@@ -152,7 +136,7 @@ public class BlogManagementController {
             post.setTags(tags);
             post.setBody(body);
             post.setPublishedAt(post.getPublishedAt());
-            post.setUsers(user.get());
+            post.setUsers(user);
             post.setPublished(true);
             post.setUpdatedAt(new Timestamp(new Date().getTime()));
             try {
@@ -174,4 +158,4 @@ public class BlogManagementController {
         postService.deletePost(postID);
         return "redirect:/blog";
     }
-    }
+}

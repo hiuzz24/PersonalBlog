@@ -99,11 +99,17 @@ public class PostController {
                 .build();
         model.addAttribute("commentReplyDTO", commentReplyDTO);
 
-        // Check if post is favorited by current user
+        // Check if post is favorited by current user using CurrentUserService
         boolean isFavorited = false;
         if (authentication != null) {
-            Users user = currentUserService.getCurrentUser(authentication);
-            isFavorited = favoriteService.isPostFavorited(user, posts);
+            try {
+                Users currentUser = currentUserService.getCurrentUser(authentication);
+                if (currentUser != null) {
+                    isFavorited = favoriteService.isPostFavorited(currentUser, posts);
+                }
+            } catch (Exception e) {
+                // Handle exception silently
+            }
         }
         model.addAttribute("isFavorited", isFavorited);
 

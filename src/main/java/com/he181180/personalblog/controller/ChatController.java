@@ -49,22 +49,18 @@ public class ChatController {
         System.out.println("MessageDTO: " + messageDTO);
         System.out.println("Authentication object: " + authentication);
         System.out.println("Authentication is null: " + (authentication == null));
-        
+
         if (authentication != null) {
             System.out.println("Authentication name: " + authentication.getName());
             System.out.println("Authentication principal: " + authentication.getPrincipal());
             System.out.println("Authentication principal type: " + authentication.getPrincipal().getClass().getSimpleName());
             System.out.println("Authentication authorities: " + authentication.getAuthorities());
         }
-        
+
         try {
-            // Get sender using senderId from messageDTO instead of authentication
-            Users sender = null;
-            if (messageDTO.getSenderId() != 0) {
-                Optional<Users> senderOpt = userService.findUserById(messageDTO.getSenderId());
-                sender = senderOpt.orElse(null);
-            }
-            
+            // Use CurrentUserService to get sender consistently
+            Users sender = currentUserService.getCurrentUser(authentication);
+
             System.out.println("Sender: " + sender);
             System.out.println("Sender username: " + (sender != null ? sender.getUsername() : "null"));
             System.out.println("Sender email: " + (sender != null ? sender.getEmail() : "null"));
@@ -80,26 +76,26 @@ public class ChatController {
                 System.out.println("Receiver not found, returning");
                 return;
             }
-            
+
             Users receiver = receiverOpt.get();
             System.out.println("Receiver: " + receiver.getUsername());
             System.out.println("Receiver username: " + receiver.getUsername());
             System.out.println("Receiver email: " + receiver.getEmail());
-            
+
             // Convert DTO to entity using MessageMapper
             Messages message = messageMapper.toEntity(messageDTO);
             message.setSender(sender);
             message.setReceiver(receiver);
             message.setIsRead(false);
             message.setCreatedAt(LocalDateTime.now());
-            
+
             System.out.println("Message entity: " + message);
             Messages savedMessage = messageService.saveMessage(message);
 
             // Convert back to DTO for response using MessageMapper
             MessageDTO responseDTO = messageMapper.toDTO(savedMessage);
 
-            // Use username for WebSocket routing (simpler approach)
+            // CRITICAL FIX: Use username for WebSocket routing (now consistent)
             String senderPrincipal = sender.getUsername();
             String receiverPrincipal = receiver.getUsername();
 
@@ -108,22 +104,23 @@ public class ChatController {
 
             // Send message to receiver
             messagingTemplate.convertAndSendToUser(
-                receiverPrincipal,
-                "/queue/messages",
-                responseDTO
+                    receiverPrincipal,
+                    "/queue/messages",
+                    responseDTO
             );
 
             // Send confirmation to sender
             messagingTemplate.convertAndSendToUser(
-                senderPrincipal,
-                "/queue/messages",
-                responseDTO
+                    senderPrincipal,
+                    "/queue/messages",
+                    responseDTO
             );
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 
     @GetMapping("/api/chat/conversations")
     @ResponseBody
