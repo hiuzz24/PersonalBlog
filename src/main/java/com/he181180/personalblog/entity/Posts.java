@@ -38,14 +38,20 @@ public class Posts {
     @Column(name = "body",columnDefinition = "text")
     private String body;
 
-    @Column(name = "is_published",insertable = false)
-    private boolean isPublished;
+    @Column(name = "is_published")
+    private boolean published;
 
-    @Column(name = "published_at",insertable = false)
+    @Column(name = "published_at")
     private Timestamp publishedAt;
 
     @Column(name = "updated_at")
     private Timestamp updatedAt;
+
+    @Column(name = "status")
+    private String status;
+
+    @Column(name = "reason_rejected")
+    private String reasonRejected;
 
     @ManyToOne
     @JoinColumn(name = "user_id",nullable = false)

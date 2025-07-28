@@ -20,10 +20,18 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.security.Principal;
 import java.sql.Timestamp;
+import java.util.Map;
 import java.util.Optional;
 import javax.imageio.ImageIO;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.http.ResponseEntity;
+import java.util.Random;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/profile")
@@ -78,8 +86,7 @@ public class ProfileController {
     public String updateProfileAvatar(
             Authentication authentication,
             @RequestParam(value = "avatarFile", required = false) MultipartFile avatarFile,
-            @RequestParam(value = "avatarUrl", required = false) String avatarUrl,
-            @ModelAttribute("user") Users userUpdate) {
+            @RequestParam(value = "avatarUrl", required = false) String avatarUrl) throws IOException {
 
         Users user = null;
         if (authentication != null) {
@@ -96,24 +103,23 @@ public class ProfileController {
             return "redirect:/profile?error=user-not-found";
         }
 
-        // Only update full name if provided
-        if (userUpdate.getFullName() != null && !userUpdate.getFullName().trim().isEmpty()) {
-            user.setFullName(userUpdate.getFullName());
-        }
-        user.setBio(userUpdate.getBio());
-
+        // Handle avatar file upload
         if (avatarFile != null && !avatarFile.isEmpty()) {
-            String savedUrl = saveFileSomewhere(avatarFile);
-            if (savedUrl != null) {
-                user.setAvatarUrl(savedUrl);
-            }
-        } else if (avatarUrl != null && !avatarUrl.trim().isEmpty()) {
-            user.setAvatarUrl(avatarUrl.trim());
+            String uploadDir = "D:/avatar/";
+            String fileName = UUID.randomUUID() + "_" +avatarFile.getOriginalFilename();
+            Files.createDirectories(Path.of(uploadDir));
+            Path path = Path.of(uploadDir + fileName);
+            Files.copy(avatarFile.getInputStream(),path, StandardCopyOption.REPLACE_EXISTING);
+            user.setAvatarUrl("/avatar/" +fileName);
+            System.out.println(user.getAvatarUrl());
+            userService.saveUser(user);
         }
-
-        userService.updateUser(user);
-
-        return "redirect:/profile";
+        if(avatarUrl != null && !avatarUrl.isEmpty()){
+            user.setAvatarUrl(avatarUrl);
+            userService.saveUser(user);
+        }
+        // Add cache-busting parameter to force browser to reload the image
+        return "redirect:/profile?updated=" + System.currentTimeMillis();
     }
 
     @PostMapping("/update")
@@ -121,12 +127,11 @@ public class ProfileController {
                                 @ModelAttribute("userUpdateDTO")  @Valid UserUpdateDTO userUpdate) {
         String useName = authentication.getName();
         Optional<Users> usersOptional = userService.findUserByUsername(useName);
-        Users user = usersOptional.get() ;
+        Users user = usersOptional.get();
         userMapper.updateUser(user,userUpdate);
         userService.saveUser(user);
         model.addAttribute("user", user);
         System.out.println(userUpdate.toString());
-        System.out.println(user.toString());
         return "UserDashboard/Profile";
     }
 
@@ -156,6 +161,44 @@ public class ProfileController {
         return "/img/" + filename;
     }
 
+    @PostMapping("/send-confirmation-code")
+    @ResponseBody
+    public ResponseEntity<?> sendConfirmationCode(Authentication authentication, HttpSession session) {
+        Users user = null;
+        if (authentication != null) {
+            Object principal = authentication.getPrincipal();
+            if (principal instanceof org.springframework.security.oauth2.core.user.OAuth2User oauth2User) {
+                String email = oauth2User.getAttribute("email");
+                user = userService.findUserByEmail(email).orElse(null);
+            } else {
+                String username = authentication.getName();
+                user = userService.findUserByUsername(username).orElse(null);
+            }
+        }
+        if (user == null || user.getEmail() == null) {
+            return ResponseEntity.badRequest().body("User not found or email missing");
+        }
+        // Generate 6-digit code
+        String code = String.format("%06d", new Random().nextInt(1000000));
+        // Store code in session
+        session.setAttribute("confirmationCode", code);
+        // Send code to email (implement sendEmail in your UserService or MailService)
+        try {
+            userService.sendConfirmationCodeEmail(user.getEmail(), code);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Failed to send email");
+        }
+    }
+
+    @PostMapping("/verify-confirmation-code")
+    @ResponseBody
+    public Map<String, Object> verifyConfirmationCode(@RequestBody Map<String, String> payload, HttpSession session) {
+        String inputCode = payload.get("code");
+        String sessionCode = (String) session.getAttribute("confirmationCode");
+        boolean success = sessionCode != null && sessionCode.equals(inputCode);
+        return Map.of("success", success);
+    }
 
 
 }

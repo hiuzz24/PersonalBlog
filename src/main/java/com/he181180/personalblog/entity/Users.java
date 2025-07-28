@@ -1,16 +1,15 @@
 package com.he181180.personalblog.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -40,14 +39,14 @@ public class Users {
     @Column(name = "avatar_url")
     private String avatarUrl;
 
-    @Column(name = "role")
+    @Column(name = "role",nullable = false)
     private String role;
 
     @Column(name = "created_at",insertable = false)
     private Timestamp createdAt;
 
     @Column(name = "is_deleted",insertable = false)
-    private boolean isDeleted;
+    private boolean deleted;
 
     @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
     private List<Posts> posts;
@@ -55,4 +54,10 @@ public class Users {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Comments> comments;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<PasswordResetToken> tokens;
+
+    public boolean isHasPassword() {
+        return password != null && !password.isEmpty();
+    }
 }
