@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Chat - PersonalBlog</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+
+    <!-- Favicons -->
+    <link th:href="@{/assets/img/favicon.png}" rel="icon">
+    <link th:href="@{/assets/img/apple-touch-icon.png}" rel="apple-touch-icon">
+
+    <!-- Fonts -->
+    <link th:href="@{https://fonts.googleapis.com}" rel="preconnect">
+    <link th:href="@{https://fonts.gstatic.com}" rel="preconnect" crossorigin>
+    <link th:href="@{https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700;1,800&display=swap}" rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link th:href="@{/assets/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/assets/vendor/bootstrap-icons/bootstrap-icons.css}" rel="stylesheet">
+    <link th:href="@{/assets/vendor/aos/aos.css}" rel="stylesheet">
+
+    <!-- Main CSS File -->
+    <link th:href="@{/assets/css/main.css}" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .chat-container {
+            height: 85vh;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .conversations-sidebar {
+            border-right: 1px solid #e9ecef;
+            height: 100%;
+            background: #fff;
+        }
+
+        .conversations-header {
+            padding: 20px;
+            border-bottom: 1px solid #e9ecef;
+            background: #f8f9fa;
+        }
+
+        .conversations-list {
+            height: calc(100% - 80px);
+            overflow-y: auto;
+        }
+
+        .conversation-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f1f3f4;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .conversation-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .conversation-item.active {
+            background-color: #e3f2fd;
+            border-left: 4px solid #2196f3;
+        }
+
+        .conversation-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .conversation-info {
+            flex: 1;
+            margin-left: 12px;
+        }
+
+        .conversation-name {
+            font-weight: 600;
+            color: #212529;
+            margin-bottom: 4px;
+        }
+
+        .conversation-preview {
+            color: #6c757d;
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+
+        .conversation-time {
+            color: #adb5bd;
+            font-size: 12px;
+        }
+
+        .unread-badge {
+            background: #dc3545;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 8px;
+            font-size: 12px;
+            font-weight: 600;
+            position: absolute;
+            top: 15px;
+            right: 15px;
+        }
+
+        .chat-area {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            padding: 20px;
+            border-bottom: 1px solid #e9ecef;
+            background: #fff;
+            display: flex;
+            align-items: center;
+        }
+
+        .chat-partner-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 12px;
+        }
+
+        .chat-partner-info h6 {
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .chat-partner-info small {
+            color: #28a745;
+            font-size: 12px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+
+        .message {
+            margin-bottom: 20px;
+            display: flex;
+        }
+
+        .message.sent {
+            justify-content: flex-end;
+        }
+
+        .message.received {
+            justify-content: flex-start;
+        }
+
+        .message-bubble {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            word-wrap: break-word;
+            position: relative;
+        }
+
+        .message.sent .message-bubble {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.received .message-bubble {
+            background: white;
+            color: #212529;
+            border: 1px solid #e9ecef;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-time {
+            font-size: 11px;
+            opacity: 0.7;
+            margin-top: 4px;
+        }
+
+        .message.sent .message-time {
+            text-align: right;
+        }
+
+        .chat-input-area {
+            padding: 20px;
+            border-top: 1px solid #e9ecef;
+            background: white;
+        }
+
+        .chat-input-group {
+            display: flex;
+            align-items: center;
+            background: #f8f9fa;
+            border-radius: 25px;
+            padding: 8px 20px;
+        }
+
+        .chat-input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            outline: none;
+            padding: 8px 0;
+            font-size: 14px;
+        }
+
+        .chat-send-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 10px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .chat-send-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .chat-send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #6c757d;
+            text-align: center;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .spinner-border-sm {
+            width: 1rem;
+            height: 1rem;
+        }
+
+        /* Scrollbar styling */
+        .conversations-list::-webkit-scrollbar,
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .conversations-list::-webkit-scrollbar-track,
+        .chat-messages::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .conversations-list::-webkit-scrollbar-thumb,
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+
+        .conversations-list::-webkit-scrollbar-thumb:hover,
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .chat-container {
+                height: 90vh;
+            }
+
+            .conversations-sidebar {
+                display: none;
+            }
+
+            .conversations-sidebar.show {
+                display: block;
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                z-index: 1000;
+            }
+        }
+    </style>
+</head>
+
+<body class="category-page">
+
+<header id="header" class="header d-flex align-items-center sticky-top">
+    <div class="container position-relative d-flex align-items-center justify-content-between">
+
+        <a th:href="@{/}" class="logo d-flex align-items-center me-auto me-xl-0">
+            <h1 class="sitename">PersonalBlog</h1>
+        </a>
+
+        <nav id="navmenu" class="navmenu">
+
+            <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+        </nav>
+
+        <div class="header-social-links">
+            <div class="dropdown">
+                <a href="#" class="d-flex align-items-center" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding:0; border:none; background:none;">
+                    <img th:src="${user != null && user.avatarUrl != null && !#strings.isEmpty(user.avatarUrl) ? user.avatarUrl : '/assets/img/user.png'}" alt="avatar" style="width:36px; height:36px; border-radius:50%; object-fit:cover;">
+                </a>
+
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                    <li>
+                        <form th:action="@{/profile}" style="display: inline;">
+                            <button type="submit" class="dropdown-item">Profile</button>
+                        </form>
+                    </li>
+
+                    <li><hr class="dropdown-divider"></li>
+
+                    <li>
+                        <form th:action="@{/logout}" method="post" style="display: inline;">
+                            <button type="submit" class="dropdown-item">Logout</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+<main class="main">
+
+    <!-- Page Title -->
+    <div class="page-title">
+        <div class="container d-lg-flex justify-content-between align-items-center">
+            <h1 class="mb-2 mb-lg-0">Chat</h1>
+            <nav class="breadcrumbs">
+                <ol>
+                    <li><a th:href="@{/static}">Home</a></li>
+                    <li class="current">Chat</li>
+                </ol>
+            </nav>
+        </div>
+    </div><!-- End Page Title -->
+
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="chat-container">
+                    <div class="row h-100 g-0">
+                        <!-- Conversations Sidebar -->
+                        <div class="col-md-4 conversations-sidebar">
+                            <div class="conversations-header">
+                                <h5 class="mb-0">Conversation</h5>
+                                <small class="text-muted">Select a conversation to start</small>
+                            </div>
+                            <div class="conversations-list" id="conversationsList">
+                                <div class="loading">
+                                    <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+                                    <span>Loading...</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Chat Area -->
+                        <div class="col-md-8 chat-area">
+                            <!-- Chat Header -->
+                            <div id="chatHeader" class="chat-header" style="display: none;">
+                                <img id="chatPartnerAvatar" src="/assets/img/user.png" alt="Avatar" class="chat-partner-avatar">
+                                <div class="chat-partner-info">
+                                    <h6 id="chatPartnerName">Select conversation</h6>
+                                </div>
+                            </div>
+
+                            <!-- Chat Messages -->
+                            <div id="chatMessages" class="chat-messages">
+                                <div class="empty-state">
+                                    <i class="bi bi-chat-text"></i>
+                                    <h5>Select conversation</h5>
+                                    <p class="text-muted">Select a conversation from the list on the left to start messaging.</p>
+                                </div>
+                            </div>
+
+                            <!-- Chat Input -->
+                            <div id="chatInputArea" class="chat-input-area" style="display: none;">
+                                <div class="chat-input-group">
+                                    <input type="text" id="messageInput" class="chat-input" placeholder="Enter message..." maxlength="500">
+                                    <button class="chat-send-btn" type="button" id="sendMessageBtn">
+                                        <i class="bi bi-send"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+
+
+<!-- Scroll Top -->
+<a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+<!-- Preloader -->
+<div id="preloader"></div>
+
+<!-- WebSocket and Chat JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+
+<script>
+    let stompClient = null;
+    let currentChatUserId = null;
+    let currentUsername = null;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        loadCurrentUserWithRetry();
+        loadConversations();
+        connect();
+
+        // Event listeners
+        document.getElementById('sendMessageBtn').addEventListener('click', sendMessage);
+        document.getElementById('messageInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    });
+
+    function loadCurrentUserWithRetry(retries = 10, delay = 300) {
+        fetch('/api/user/current')
+            .then(response => response.json())
+            .then(data => {
+                if (data && data.username) {
+                    currentUsername = data.username;
+                    loadConversations();
+                    connect();
+                } else if (retries > 0) {
+                    setTimeout(() => loadCurrentUserWithRetry(retries - 1, delay), delay);
+                } else {
+                    alert('Failed to load user. Please refresh.');
+                }
+            })
+            .catch(error => {
+                if (retries > 0) {
+                    setTimeout(() => loadCurrentUserWithRetry(retries - 1, delay), delay);
+                } else {
+                    alert('Failed to load user. Please refresh.');
+                }
+            });
+    }
+
+    function connect() {
+        const socket = new SockJS('/ws');
+        stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, function (frame) {
+            console.log('Connected: ' + frame);
+
+            stompClient.subscribe('/user/queue/messages', function (message) {
+                const messageData = JSON.parse(message.body);
+                if (messageData.senderId === currentChatUserId || messageData.receiverId === currentChatUserId) {
+                    displayMessage(messageData);
+                }
+                // Refresh conversations to update latest message
+                loadConversations();
+            });
+        }, function(error) {
+            console.error('WebSocket connection error:', error);
+        });
+    }
+
+    function loadConversations() {
+        fetch('/api/chat/conversations')
+            .then(response => response.json())
+            .then(conversations => {
+                displayConversations(conversations);
+            })
+            .catch(error => {
+                console.error('Error loading conversations:', error);
+            });
+    }
+
+    function displayConversations(conversations) {
+        const conversationsList = document.getElementById('conversationsList');
+
+        if (conversations.length === 0) {
+            conversationsList.innerHTML = `
+                <div class="empty-state">
+                    <i class="bi bi-chat-dots fs-1 mb-3"></i>
+                    <h5>Chưa có cuộc trò chuyện nào</h5>
+                    <p class="text-muted">Chọn một cuộc trò chuyện từ danh sách bên trái để bắt đầu nhắn tin</p>
+                </div>
+            `;
+            return;
+        }
+
+        conversationsList.innerHTML = '';
+
+        conversations.forEach(conversation => {
+            const partnerName = conversation.partnerName;
+            const partnerId = conversation.partnerId;
+            const partnerAvatar = conversation.partnerAvatar;
+            const lastMessage = conversation.lastMessage;
+            const lastMessageTime = conversation.lastMessageTime;
+            const unreadCount = conversation.unreadCount || 0;
+
+            const conversationItem = document.createElement('div');
+            conversationItem.className = 'conversation-item d-flex align-items-center';
+            conversationItem.setAttribute('data-user-id', partnerId);
+
+            conversationItem.innerHTML = `
+                <img src="${partnerAvatar}" alt="Avatar" class="conversation-avatar">
+                <div class="conversation-info">
+                    <div class="conversation-name">${escapeHtml(partnerName)}</div>
+                    <div class="conversation-preview">${escapeHtml(lastMessage)}</div>
+                    <div class="conversation-time">${formatTime(lastMessageTime)}</div>
+                </div>
+                ${unreadCount > 0 ? `<span class="badge bg-primary rounded-pill">${unreadCount}</span>` : ''}
+            `;
+
+            conversationItem.addEventListener('click', function() {
+                selectConversation(partnerId, partnerName);
+            });
+            conversationsList.appendChild(conversationItem);
+        });
+    }
+
+    function selectConversation(userId, userName) {
+        currentChatUserId = userId;
+
+        // Update active conversation
+        document.querySelectorAll('.conversation-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        document.querySelector(`[data-user-id="${userId}"]`).classList.add('active');
+
+        // Show chat header and input
+        document.getElementById('chatHeader').style.display = 'block';
+        document.getElementById('chatInputArea').style.display = 'block';
+        document.getElementById('chatPartnerName').textContent = userName;
+
+        // Load chat history
+        loadChatHistory(userId);
+    }
+
+    function loadChatHistory(userId) {
+        fetch(`/api/chat/messages/${userId}`)
+            .then(response => response.json())
+            .then(messages => {
+                const chatMessages = document.getElementById('chatMessages');
+                chatMessages.innerHTML = '';
+
+                messages.forEach(message => {
+                    displayMessage(message);
+                });
+            })
+            .catch(error => {
+                console.error('Error loading chat history:', error);
+            });
+    }
+
+    function sendMessage() {
+        const messageInput = document.getElementById('messageInput');
+        const content = messageInput.value.trim();
+
+        if (content && currentChatUserId && stompClient) {
+            const messageData = {
+                receiverId: currentChatUserId,
+                content: content
+            };
+
+            stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(messageData));
+            messageInput.value = '';
+        }
+    }
+
+    function displayMessage(message) {
+        const chatMessages = document.getElementById('chatMessages');
+        const messageDiv = document.createElement('div');
+
+        const isCurrentUser = message.senderName === currentUsername;
+        messageDiv.className = `message ${isCurrentUser ? 'sent' : 'received'}`;
+
+        messageDiv.innerHTML = `
+            <div class="message-bubble">
+                <div class="message-content">${escapeHtml(message.content)}</div>
+            </div>
+            <div class="message-time">${formatTime(message.createdAt)}</div>
+        `;
+
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    function formatTime(dateTime) {
+        if (!dateTime) {
+            return '';
+        }
+
+        try {
+            const date = new Date(dateTime);
+
+            // Check if date is valid
+            if (isNaN(date.getTime())) {
+                return '';
+            }
+
+            const now = new Date();
+            const diffTime = Math.abs(now - date);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            if (diffDays === 1) {
+                return date.toLocaleTimeString('vi-VN', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            } else if (diffDays <= 7) {
+                return date.toLocaleDateString('vi-VN', {
+                    weekday: 'short'
+                });
+            } else {
+                return date.toLocaleDateString('vi-VN', {
+                    day: '2-digit',
+                    month: '2-digit'
+                });
+            }
+        } catch (error) {
+            console.error('Error formatting time:', error);
+            return '';
+        }
+    }
+    // Disconnect when page unloads
+    window.addEventListener('beforeunload', function() {
+        if (stompClient !== null) {
+            stompClient.disconnect();
+        }
+    });
+</script>
+
+<script th:src="@{/assets/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/assets/vendor/aos/aos.js}"></script>
+<script th:src="@{/assets/js/main.js}"></script>
+
+</body>
+</html>

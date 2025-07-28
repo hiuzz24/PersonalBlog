@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Admin Dashboard - Personal Blog</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <!-- Favicon -->
+    <link th:href="@{img/favicon.ico}" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link th:href="@{https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap}" rel="stylesheet">
+
+    <!-- Icon Font Stylesheet -->
+    <link th:href="@{https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css}" rel="stylesheet">
+    <link th:href="@{https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css}" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link th:href="@{/lib/owlcarousel/assets/owl.carousel.min.css}" rel="stylesheet">
+    <link th:href="@{/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css}" rel="stylesheet" />
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --shadow-light: 0 2px 4px rgba(0, 0, 0, 0.1);
+            --shadow-medium: 0 4px 8px rgba(0, 0, 0, 0.15);
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .dashboard-header {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-medium);
+        }
+
+        .dashboard-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .dashboard-header p {
+            font-size: 1rem;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        .dashboard-header .current-date {
+            position: absolute;
+            top: 1.5rem;
+            right: 2rem;
+            background: rgba(255,255,255,0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .stats-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-light);
+            border: 1px solid #e2e8f0;
+            transition: var(--transition);
+            height: 100%;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .stats-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .stats-icon.primary { background: #667eea; }
+        .stats-icon.success { background: #10b981; }
+        .stats-icon.warning { background: #f59e0b; }
+        .stats-icon.info { background: #06b6d4; }
+
+        .stats-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+
+        .stats-label {
+            font-size: 0.9rem;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-light);
+            border: 1px solid #e2e8f0;
+            transition: var(--transition);
+            height: 100%;
+            min-height: 300px;
+        }
+
+        .chart-container:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .chart-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 1rem;
+        }
+
+        .chart-container canvas {
+            max-height: 250px;
+            width: 100% !important;
+        }
+
+        /* Activity Styles */
+        .activity-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0.75rem;
+            color: white;
+            font-size: 0.875rem;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #1e293b;
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-time {
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+
+        /* Quick Actions Button Styles */
+        .btn-outline-primary:hover,
+        .btn-outline-success:hover,
+        .btn-outline-warning:hover,
+        .btn-outline-info:hover {
+            transform: translateX(4px);
+            transition: var(--transition);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .dashboard-header {
+                padding: 1.5rem;
+                text-align: center;
+            }
+
+            .dashboard-header .current-date {
+                position: static;
+                display: inline-block;
+                margin-top: 1rem;
+            }
+
+            .dashboard-header h1 {
+                font-size: 1.75rem;
+            }
+
+            .stats-card {
+                margin-bottom: 1rem;
+            }
+
+            .chart-container {
+                margin-bottom: 1rem;
+                padding: 1rem;
+                min-height: 250px;
+            }
+
+            .chart-container canvas {
+                max-height: 200px;
+            }
+
+            .chart-title {
+                font-size: 1rem;
+                margin-bottom: 0.75rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid position-relative bg-white d-flex p-0">
+        <!-- Spinner Start -->
+        <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+        <!-- Spinner End -->
+
+        <!-- Sidebar Start -->
+        <div class="sidebar pe-4 pb-3">
+            <nav class="navbar bg-light navbar-light">
+                <a th:href="@{/explore}" class="navbar-brand mx-4 mb-3">
+                    <h3 class="text-primary"><i class="fa fa-hashtag me-2"></i>DASHBOARD</h3>
+                </a>
+                <div class="d-flex align-items-center ms-4 mb-4">
+                    <div class="position-relative">
+                        <img class="rounded-circle" th:src="${user.avatarUrl}" alt="avatar" style="width: 40px; height: 40px;">
+                        <div class="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1"></div>
+                    </div>
+                    <div class="ms-3">
+                        <h6 class="mb-0" th:text="${user.fullName}"></h6>
+                        <span>Admin</span>
+                    </div>
+                </div>
+                <div class="navbar-nav w-100">
+                    <a th:href="@{/admin}" class="nav-item nav-link active"><i class="fa fa-tachometer-alt me-2"></i>Dashboard</a>
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-laptop me-2"></i>Management</a>
+                        <div class="dropdown-menu bg-transparent border-0">
+                            <a th:href="@{/admin/user/userManagement}" class="dropdown-item">User Management</a>
+                            <a th:href="@{/admin/blog/blogManagement}" class="dropdown-item">Blog Management</a>
+                            <a th:href="@{/admin/moderate/moderateNewBlogs}" class="dropdown-item">Moderate New Blogs</a>
+                        </div>
+                    </div>
+                    <a th:href="@{/explore}" class="nav-item nav-link"><i class="fa fa-home me-2"></i>Back to Site</a>
+                    <a th:href="@{/logout}" class="nav-item nav-link"><i class="fa fa-sign-out-alt me-2"></i>Logout</a>
+                </div>
+            </nav>
+        </div>
+        <!-- Sidebar End -->
+
+        <!-- Content Start -->
+        <div class="content">
+            <div class="container-fluid px-4 py-4">
+                <!-- Dashboard Header -->
+                <div class="dashboard-header">
+                    <div class="current-date" id="currentDate"></div>
+                    <div class="row align-items-center">
+                        <div class="col-md-12 text-center">
+                            <h1><i class="fas fa-chart-line me-3"></i>Admin Dashboard</h1>
+                            <p class="mb-0">Welcome back! Here's what's happening with your blog platform today.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Statistics Cards -->
+                <div class="row g-4 mb-4">
+                    <div class="col-xl-3 col-md-6">
+                        <div class="stats-card">
+                            <div class="stats-icon primary">
+                                <i class="fas fa-blog"></i>
+                            </div>
+                            <div class="stats-number" th:text="${totalPost}"></div>
+                            <div class="stats-label">Total Posts</div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6">
+                        <div class="stats-card">
+                            <div class="stats-icon success">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stats-number" th:text="${totalUser}"></div>
+                            <div class="stats-label">Total Users</div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6">
+                        <div class="stats-card">
+                            <div class="stats-icon warning">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stats-number" th:text="${pendingPost}"></div>
+                            <div class="stats-label">Pending Posts</div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6">
+                        <div class="stats-card">
+                            <div class="stats-icon info">
+                                <i class="fas fa-eye"></i>
+                            </div>
+                            <div class="stats-number" th:text="${totalViews} ?: '2.4K'">2.4K</div>
+                            <div class="stats-label">Most Popular Tag</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Content Row -->
+                <div class="row g-4 mb-4">
+                    <!-- Charts Section - Centered with equal margins -->
+                    <div class="col-xl-10 offset-xl-1 col-lg-12">
+                        <!-- First Row of Charts -->
+                        <div class="row g-4 mb-4">
+                            <!-- Chart 1 - Posts per Tag -->
+                            <div class="col-md-6">
+                                <div class="chart-container">
+                                    <h3 class="chart-title"><i class="fas fa-tags me-2"></i>Posts per Tag</h3>
+                                    <canvas id="postChart" height="250"></canvas>
+                                </div>
+                            </div>
+
+                            <!-- Chart 2 - Top 5 Authors -->
+                            <div class="col-md-6">
+                                <div class="chart-container">
+                                    <h3 class="chart-title"><i class="fas fa-user-edit me-2"></i>Top 5 Authors</h3>
+                                    <canvas id="horizontalBarchart" height="250"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Second Row of Charts -->
+                        <div class="row g-4">
+                            <!-- Chart 3 - Post Status -->
+                            <div class="col-md-6">
+                                <div class="chart-container">
+                                    <h3 class="chart-title"><i class="fas fa-chart-pie me-2"></i>Post Status</h3>
+                                    <canvas id="doughnutChart" height="250"></canvas>
+                                </div>
+                            </div>
+
+                            <!-- Chart 4 - Popular Categories -->
+                            <div class="col-md-6">
+                                <div class="chart-container">
+                                    <h3 class="chart-title"><i class="fas fa-layer-group me-2"></i>Post per month</h3>
+                                    <select id="selectedYear" onchange="createChart()">
+                                        <option value="2023">2023</option>
+                                        <option value="2024">2024</option>
+                                        <option value="2025" selected>2025</option>
+                                    </select>
+                                    <canvas id="lineChart" height="250"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Content End -->
+
+        <!-- Back to Top -->
+        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/lib/chart/chart.min.js}"></script>
+    <script th:src="@{/lib/easing/easing.min.js}"></script>
+    <script th:src="@{/lib/waypoints/waypoints.min.js}"></script>
+    <script th:src="@{/lib/owlcarousel/owl.carousel.min.js}"></script>
+    <script th:src="@{/lib/tempusdominus/js/moment.min.js}"></script>
+    <script th:src="@{/lib/tempusdominus/js/moment-timezone.min.js}"></script>
+    <script th:src="@{/lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js}"></script>
+    <script th:src="@{/js/main.js}"></script>
+
+    <script>
+        async function createChart(){
+            const selectedYear = document.getElementById('selectedYear').value;
+                  const [response1,response2,response3,response4] = await Promise.all([
+                      fetch('/admin/chart/postPerTag'),
+                      fetch('/admin/chart/top5Author'),
+                      fetch('/admin/chart/postPerStatus'),
+                      fetch('/admin/chart/postPerMonth?year='+selectedYear)
+                  ]);
+                  const [data1, data2,data3,data4] = await Promise.all([
+                      response1.json(),
+                      response2.json(),
+                      response3.json(),
+                      response4.json()
+                  ]);
+
+                  postPerTag("postChart",data1,"Posts per Tag");
+                  top5Author("horizontalBarchart",data2,"Number of Posts");
+                  postPerStatus("doughnutChart",data3,"Post Status Distribution");
+                  postPerMonth("lineChart",data4,`Posts in ${selectedYear}`);
+        }
+
+        function postPerTag(elementID,data,label){
+            try{
+                const labels = Object.keys(data)
+                const values = Object.values(data)
+
+                const config = {
+                    type: 'bar',
+                    data:{
+                        labels:labels,
+                        datasets:[{
+                            label: label,
+                            data: values,
+                            backgroundColor: 'rgba(75, 192, 192, 0.6)'
+                        }]
+                    }
+                }
+                new Chart(document.getElementById("postChart"),config);
+            }catch(error){
+                console.error("error",error);
+            }
+        }
+
+        function top5Author(elementID,data,label){
+            try{
+                const labels = Object.keys(data);
+                const values = Object.values(data);
+
+                const config = {
+                    type: "bar",
+                    data:{
+                        labels: labels,
+                        datasets: [{
+                            label: label,
+                            data: values,
+                            backgroundColor: 'rgba(75, 192, 192, 0.6)'
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            }
+                        }
+                    }
+                };
+                new Chart(document.getElementById(elementID),config);
+            }catch (error){
+                console.error("error",error);
+            }
+        }
+
+        function postPerStatus(elementID,data,label){
+            try{
+                const labels = Object.keys(data);
+                const values = Object.values(data);
+
+                const config = {
+                    type: 'doughnut',
+                    data:{
+                        labels: labels,
+                        datasets:[{
+                            label: label,
+                            data: values,
+                            backgroundColor: ['#4CAF50', '#F44336', '#9E9E9E']
+                        }]
+                    }
+                }
+                new Chart(document.getElementById(elementID),config);
+            }catch (error){
+                console.error("error",error);
+            }
+        }
+        let postPerMonthChart = null;
+        function postPerMonth(elementID,data,label){
+            try{
+                const labels = Object.keys(data);
+                const values = Object.values(data);
+
+                if(postPerMonthChart){
+                    postPerMonthChart.destroy();
+                }
+
+                const config = {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: label,
+                            data: values,
+                            backgroundColor: 'blue',
+                        }]
+                    }
+                }
+                postPerMonthChart = new Chart(document.getElementById(elementID),config);
+            }catch (error){
+                console.error('error',error);
+            }
+        }
+
+                createChart();
+    </script>
+
+</body>
+</html>
