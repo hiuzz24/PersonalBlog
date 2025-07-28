@@ -35,18 +35,18 @@ public class AdminUserController {
     public String updateRole(@PathVariable("id") int userID,
                              @RequestParam("role") String role){
         userService.updateRole(userID,role);
-        return "redirect:/admin/userManagement";
+        return "redirect:/admin/user/userManagement";
     }
 
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable("id") int userID){
         userService.delete(userID);
-        return "redirect:/admin/userManagement";
+        return "redirect:/admin/user/userManagement";
     }
 
     @GetMapping("/recover/{id}")
     public String recover(@PathVariable("id") int userID){
         userService.recover(userID);
-        return "redirect:/admin/userManagement";
+        return "redirect:/admin/user/userManagement";
     }
 }

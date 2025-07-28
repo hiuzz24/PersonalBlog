@@ -445,7 +445,7 @@
     let currentUsername = null;
 
     document.addEventListener('DOMContentLoaded', function() {
-        loadCurrentUser();
+        loadCurrentUserWithRetry();
         loadConversations();
         connect();
 
@@ -458,14 +458,26 @@
         });
     });
 
-    function loadCurrentUser() {
+    function loadCurrentUserWithRetry(retries = 10, delay = 300) {
         fetch('/api/user/current')
             .then(response => response.json())
             .then(data => {
-                currentUsername = data.username;
+                if (data && data.username) {
+                    currentUsername = data.username;
+                    loadConversations();
+                    connect();
+                } else if (retries > 0) {
+                    setTimeout(() => loadCurrentUserWithRetry(retries - 1, delay), delay);
+                } else {
+                    alert('Failed to load user. Please refresh.');
+                }
             })
             .catch(error => {
-                console.error('Error getting current user:', error);
+                if (retries > 0) {
+                    setTimeout(() => loadCurrentUserWithRetry(retries - 1, delay), delay);
+                } else {
+                    alert('Failed to load user. Please refresh.');
+                }
             });
     }
 

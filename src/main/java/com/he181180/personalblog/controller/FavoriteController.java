@@ -3,6 +3,7 @@ package com.he181180.personalblog.controller;
 import com.he181180.personalblog.entity.Favorites;
 import com.he181180.personalblog.entity.Posts;
 import com.he181180.personalblog.entity.Users;
+import com.he181180.personalblog.service.CurrentUserService;
 import com.he181180.personalblog.service.FavoriteService;
 import com.he181180.personalblog.service.PostService;
 import com.he181180.personalblog.service.UserService;
@@ -29,7 +30,7 @@ public class FavoriteController {
     private PostService postService;
 
     @Autowired
-    private UserService userService;
+    private CurrentUserService currentUserService;
 
     // Toggle favorite status via AJAX
     @PostMapping("/toggle/{postId}")
@@ -45,7 +46,7 @@ public class FavoriteController {
             }
 
             // Get current user
-            Users user = getCurrentUser(authentication);
+            Users user = currentUserService.getCurrentUser(authentication);
             if (user == null) {
                 response.put("success", false);
                 response.put("message", "User not found");
@@ -87,7 +88,7 @@ public class FavoriteController {
                 return ResponseEntity.ok(response);
             }
 
-            Users user = getCurrentUser(authentication);
+            Users user = currentUserService.getCurrentUser(authentication);
             if (user == null) {
                 response.put("isFavorited", false);
                 return ResponseEntity.ok(response);
@@ -115,7 +116,7 @@ public class FavoriteController {
         if (authentication == null) {
             return "redirect:/login";
         }
-        Users user = getCurrentUser(authentication);
+        Users user = currentUserService.getCurrentUser(authentication);
         if (user == null) {
             return "redirect:/login";
         }
@@ -130,13 +131,4 @@ public class FavoriteController {
         return "UserDashboard/favorites";
     }
 
-    private Users getCurrentUser(Authentication authentication) {
-        try {
-            String username = authentication.getName();
-            Optional<Users> userOpt = userService.findUserByUsername(username);
-            return userOpt.orElse(null);
-        } catch (Exception e) {
-            return null;
-        }
-    }
 }

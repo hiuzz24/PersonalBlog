@@ -20,6 +20,9 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.security.Principal;
 import java.sql.Timestamp;
 import java.util.Map;
@@ -28,6 +31,7 @@ import javax.imageio.ImageIO;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.ResponseEntity;
 import java.util.Random;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/profile")
@@ -82,8 +86,7 @@ public class ProfileController {
     public String updateProfileAvatar(
             Authentication authentication,
             @RequestParam(value = "avatarFile", required = false) MultipartFile avatarFile,
-            @RequestParam(value = "avatarUrl", required = false) String avatarUrl,
-            @ModelAttribute("user") Users userUpdate) {
+            @RequestParam(value = "avatarUrl", required = false) String avatarUrl) throws IOException {
 
         Users user = null;
         if (authentication != null) {
@@ -100,36 +103,21 @@ public class ProfileController {
             return "redirect:/profile?error=user-not-found";
         }
 
-        // Only update full name if provided
-        if (userUpdate.getFullName() != null && !userUpdate.getFullName().trim().isEmpty()) {
-            user.setFullName(userUpdate.getFullName());
-        }
-        user.setBio(userUpdate.getBio());
-
         // Handle avatar file upload
         if (avatarFile != null && !avatarFile.isEmpty()) {
-            // Save to src/main/resources/static/img/ so it works in both dev and prod
-            String uploadDir = System.getProperty("user.dir") + "/src/main/resources/static/img/";
-            File dir = new File(uploadDir);
-            if (!dir.exists()) dir.mkdirs();
-            String fileName = System.currentTimeMillis() + "_" + avatarFile.getOriginalFilename();
-            File dest = new File(dir, fileName);
-            try {
-                avatarFile.transferTo(dest);
-                user.setAvatarUrl("/img/" + fileName);
-                System.out.println("Avatar uploaded successfully: " + user.getAvatarUrl());
-            } catch (IOException e) {
-                e.printStackTrace();
-                return "redirect:/profile?error=upload-failed";
-            }
-        } else if (avatarUrl != null && !avatarUrl.trim().isEmpty()) {
-            user.setAvatarUrl(avatarUrl.trim());
-        } else if (user.getAvatarUrl() == null || user.getAvatarUrl().isEmpty()) {
-            // Set default avatar if none is set
-            user.setAvatarUrl("/img/default-avatar.png");
+            String uploadDir = "D:/avatar/";
+            String fileName = UUID.randomUUID() + "_" +avatarFile.getOriginalFilename();
+            Files.createDirectories(Path.of(uploadDir));
+            Path path = Path.of(uploadDir + fileName);
+            Files.copy(avatarFile.getInputStream(),path, StandardCopyOption.REPLACE_EXISTING);
+            user.setAvatarUrl("/avatar/" +fileName);
+            System.out.println(user.getAvatarUrl());
+            userService.saveUser(user);
         }
-        userService.saveUser(user);
-
+        if(avatarUrl != null && !avatarUrl.isEmpty()){
+            user.setAvatarUrl(avatarUrl);
+            userService.saveUser(user);
+        }
         // Add cache-busting parameter to force browser to reload the image
         return "redirect:/profile?updated=" + System.currentTimeMillis();
     }

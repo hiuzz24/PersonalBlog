@@ -1,10 +1,10 @@
 package com.he181180.personalblog.repository;
 
 import com.he181180.personalblog.entity.Posts;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
 import java.util.List;
 
 public interface PostRepository extends JpaRepository<Posts, Integer> {
@@ -50,4 +50,36 @@ public interface PostRepository extends JpaRepository<Posts, Integer> {
     @Query("SELECT COUNT(p) FROM Posts p WHERE p.status = 'Rejected' AND DATE(p.updatedAt) = CURRENT_DATE")
     long countRejectedToday();
 
+    @Query("SELECT p FROM Posts p WHERE p.users.userID = :userID AND p.users.deleted = false ORDER BY p.updatedAt DESC")
+    List<Posts> findAllPostsByUserID(@Param("userID") int userID);
+
+    @Query("SELECT COUNT(p) FROM Posts p WHERE p.status = 'Pending'")
+    Long countPendingPosts();
+
+
+    @Query("select t.tagName,count(p) from Posts p " +
+            "join p.tags t where " +
+            "p.status = 'Approved' and p.published = true " +
+            "group by t.tagName")
+    List<Object[]> getPostCountByTag();
+
+    @Query("select p.users.fullName,count(p) from Posts p " +
+            "where p.status = 'Approved' " +
+            "and p.published = true " +
+            "group by p.users.fullName " +
+            "order by count (p) desc")
+    List<Object[]> top5Author(Pageable pageable);
+
+    @Query("select p.status,count(p) from Posts p " +
+            "group by p.status")
+    List<Object[]> postPerStatus();
+
+    @Query("select  month (p.publishedAt),count(p) from Posts p " +
+            "where year(p.publishedAt) = :year and p.published = true and p.status = 'Approved' " +
+            "group by month(p.publishedAt) " +
+            "order by month(p.publishedAt)")
+    List<Object[]> postPerMonth(@Param("year") int year);
+
+    @Query("select p from Posts p join p.users u where u.deleted = false and p.status = 'Rejected'")
+    List<Posts> findAllByUsers_DeletedFalseAndStatusRejected();
 }

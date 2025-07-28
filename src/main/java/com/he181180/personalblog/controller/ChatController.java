@@ -58,12 +58,8 @@ public class ChatController {
         }
 
         try {
-            // Get sender using senderId from messageDTO instead of authentication
-            Users sender = null;
-            if (messageDTO.getSenderId() != 0) {
-                Optional<Users> senderOpt = userService.findUserById(messageDTO.getSenderId());
-                sender = senderOpt.orElse(null);
-            }
+            // Use CurrentUserService to get sender consistently
+            Users sender = currentUserService.getCurrentUser(authentication);
 
             System.out.println("Sender: " + sender);
             System.out.println("Sender username: " + (sender != null ? sender.getUsername() : "null"));
@@ -80,7 +76,7 @@ public class ChatController {
                 System.out.println("Receiver not found, returning");
                 return;
             }
-            
+
             Users receiver = receiverOpt.get();
             System.out.println("Receiver: " + receiver.getUsername());
             System.out.println("Receiver username: " + receiver.getUsername());
@@ -92,14 +88,14 @@ public class ChatController {
             message.setReceiver(receiver);
             message.setIsRead(false);
             message.setCreatedAt(LocalDateTime.now());
-            
+
             System.out.println("Message entity: " + message);
             Messages savedMessage = messageService.saveMessage(message);
 
             // Convert back to DTO for response using MessageMapper
             MessageDTO responseDTO = messageMapper.toDTO(savedMessage);
 
-            // Use username for WebSocket routing (simpler approach)
+            // CRITICAL FIX: Use username for WebSocket routing (now consistent)
             String senderPrincipal = sender.getUsername();
             String receiverPrincipal = receiver.getUsername();
 
@@ -108,16 +104,16 @@ public class ChatController {
 
             // Send message to receiver
             messagingTemplate.convertAndSendToUser(
-                receiver.getUsername(),
-                "/queue/messages",
-                responseDTO
+                    receiverPrincipal,
+                    "/queue/messages",
+                    responseDTO
             );
 
             // Send confirmation to sender
             messagingTemplate.convertAndSendToUser(
-                sender.getUsername(),
-                "/queue/messages",
-                responseDTO
+                    senderPrincipal,
+                    "/queue/messages",
+                    responseDTO
             );
 
         } catch (Exception e) {
@@ -125,14 +121,18 @@ public class ChatController {
         }
     }
 
+
     @GetMapping("/api/chat/conversations")
     @ResponseBody
     public List<Map<String, Object>> getConversations(Authentication authentication) {
         try {
             Users currentUser = currentUserService.getCurrentUser(authentication);
-            System.out.println("Current user: " + currentUser);
+            if (currentUser == null) {
+                return List.of();
+            }
+
             List<Users> partners = messageService.getConversationPartners(currentUser);
-            System.out.println("Partners: " + partners);
+
             return partners.stream().map(partner -> {
                 Messages latestMessage = messageService.getLatestMessageBetweenUsers(currentUser, partner);
                 long unreadCount = messageService.countUnreadMessagesFromUser(currentUser, partner);
