@@ -58,16 +58,14 @@
                         </form>
                         <hr class="dropdown-divider">
                     </li>
-                    <li>
+                    <li th:if="${user != null && user.role.toUpperCase() == 'WRITER'}">
                         <form th:action="@{/profile}" style="display: inline;">
                             <button type="submit" class="dropdown-item" style="border-radius: 8px; transition: all 0.3s ease;">
                                 <i class="bi bi-person me-2"></i>Profile
                             </button>
                         </form>
+                        <hr class="dropdown-divider">
                     </li>
-
-                    <li><hr class="dropdown-divider"></li>
-
                     <li>
                         <form th:action="@{/logout}" method="post" style="display: inline;">
                             <button type="submit" class="dropdown-item text-danger" style="border-radius: 8px; transition: all 0.3s ease;">

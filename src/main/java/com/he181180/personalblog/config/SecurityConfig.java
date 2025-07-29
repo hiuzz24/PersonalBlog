@@ -35,7 +35,7 @@ public class SecurityConfig {
                         .requestMatchers("/login", "/oauth2/**",
                                          "/register", "/img/**",
                                          "/css/**","/js/**","/assets/**", "/favicon.ico", "/forgotPassword", "/resetPassword", "/savePassword").permitAll()
-                        .requestMatchers("/profile/**").hasRole("WRITER")
+                        .requestMatchers("/profile/**", "/dashboard/**","blog/**","favorites/**","changePassword").hasRole("WRITER")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )

@@ -53,7 +53,7 @@
         <div class="header-social-links d-flex align-items-center pe-3" style="margin-left:auto;">
             <div class="dropdown">
                 <a href="#" class="d-flex align-items-center" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding:0; border:none; background:none;">
-                    <h5 class="sitename mb-0 d-flex align-items-center" style="font-size: 1.5rem; margin-right: 10px; display: flex; align-items: center; height: 56px; line-height: 56px; color: #535353;" th:text="${user.fullName != null ? user.fullName : user.username}"></h5>
+                    <h5 class="sitename mb-0 d-flex align-items-center" style="font-size: 1.2rem; margin-right: 12px; display: flex; align-items: center; height: 56px; line-height: 56px; color: #535353; font-weight: 500;" th:text="${user.fullName != null ? user.fullName : user.username}"></h5>
                     <img th:src="${user?.avatarUrl != null && !#strings.isEmpty(user.avatarUrl) ? user.avatarUrl : '/assets/img/user.png'}" alt="avatar" style="width:36px; height:36px; border-radius:50%; object-fit:cover;">
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
@@ -64,13 +64,13 @@
                         </form>
                         <hr class="dropdown-divider">
                     </li>
-                    <li th:if="${user != null && user.role == 'WRITER'}">
+                    <li th:if="${user != null && user.role.toUpperCase() == 'WRITER'}">
                         <form th:action="@{/profile}" style="display: inline;">
                             <button type="submit" class="dropdown-item" style="border-radius: 8px; transition: all 0.3s ease;">
                                 <i class="bi bi-person me-2"></i>Profile
                             </button>
                         </form>
-                        <hr class="dropdown-divider"></li>
+                        <hr class="dropdown-divider">
                     </li>
                     <li>
                         <form th:action="@{/logout}" method="post" style="display: inline;">
