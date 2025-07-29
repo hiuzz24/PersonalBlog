@@ -16,6 +16,7 @@ public interface UserRepository extends JpaRepository<Users,Integer> {
     Optional<Users> findByUsernameAndDeletedFalse(String username);
     Optional<Users> findByEmailAndDeletedFalse(String email);
 
+
     @Query("SELECT u FROM Users u " +
             "WHERE (LOWER(u.username) LIKE LOWER(CONCAT('%', :name, '%')) " +
             "OR LOWER(u.fullName) LIKE LOWER(CONCAT('%', :name, '%'))) " +
@@ -23,4 +24,6 @@ public interface UserRepository extends JpaRepository<Users,Integer> {
     List<Users> findUsersByUsernameOrFullName(@Param("name") String name);
 
     Users findUsersByUserID(int userID);
+
+    List<Users> findAllByDeletedFalse();
 }

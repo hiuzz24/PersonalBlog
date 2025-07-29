@@ -28,6 +28,18 @@ public class AdminModerateController {
         model.addAttribute("approvedToday", postService.countApprovedToday());
         model.addAttribute("rejectedToday", postService.countRejectedToday());
         model.addAttribute("posts",allPostPending);
+        model.addAttribute("rejectedTab", false);
+        return "AdminDashboard/moderateNewBlogs";
+    }
+
+    @GetMapping("/moderateRejectedBlogs")
+    public String moderateRejectedBlogs(Model model){
+        List<Posts> rejectedPosts = postService.findAllByUsers_DeletedFalseAndStatusRejected();
+        model.addAttribute("totalPending", postService.findAllPostPending().size());
+        model.addAttribute("approvedToday", postService.countApprovedToday());
+        model.addAttribute("rejectedToday", postService.countRejectedToday());
+        model.addAttribute("posts", rejectedPosts);
+        model.addAttribute("rejectedTab", true);
         return "AdminDashboard/moderateNewBlogs";
     }
 
@@ -54,6 +66,16 @@ public class AdminModerateController {
         post.setPublished(false);
         postService.savePost(post);
         return "redirect:/admin/moderate/moderateNewBlogs";
+    }
+
+    @RequestMapping("/restore/{id}")
+    public String restore(@PathVariable("id") int postID){
+        Posts post = postService.findPostByPostID(postID);
+        post.setStatus("Pending");
+        post.setPublished(false);
+        post.setReasonRejected(null);
+        postService.savePost(post);
+        return "redirect:/admin/moderate/moderateRejectedBlogs";
     }
 
     @RequestMapping("/search")

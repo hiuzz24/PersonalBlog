@@ -5,6 +5,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface PostService {
@@ -25,4 +26,10 @@ public interface PostService {
     String handleImageUrl(String imageUrl, MultipartFile fileImage) throws IOException;
     long countApprovedToday();
     long countRejectedToday();
+    Long countPendingPost();
+    Map<String,Integer> getPostCountByTag();
+    Map<String,Integer> top5Author();
+    Map<String,Integer> postPerStatus();
+    Map<String,Integer> postPerMonth(int year);
+    List<Posts> findAllByUsers_DeletedFalseAndStatusRejected();
 }

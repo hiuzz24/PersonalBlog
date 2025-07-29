@@ -4,6 +4,8 @@ import com.he181180.personalblog.entity.PasswordResetToken;
 import com.he181180.personalblog.entity.Users;
 import com.he181180.personalblog.repository.PasswordResetTokenRepository;
 import com.he181180.personalblog.repository.UserRepository;
+import com.he181180.personalblog.security.CustomOAuth2User;
+import com.he181180.personalblog.security.CustomUserPrincipal;
 import com.he181180.personalblog.service.PostService;
 import com.he181180.personalblog.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -94,32 +96,20 @@ public class MainController {
         newUser.setUsername(username);
         newUser.setEmail(email);
         newUser.setPassword(passwordEncoder.encode(password));
-        newUser.setRole("writer");
-        newUser.setAvatarUrl("/static/img/default-avatar.png");
+        newUser.setRole("WRITER");
+        newUser.setAvatarUrl("/avatar/user.png");
         userRepository.save(newUser);
         return "redirect:/login";
     }
 
     @GetMapping("/GoogleLogin")
-    public String googleLoginSuccess(@AuthenticationPrincipal OAuth2User oauth2User, Model model) {
-        if (oauth2User != null) {
-            String email = oauth2User.getAttribute("email");
-            String name = oauth2User.getAttribute("name");
-
-            // Find user by email
-            Users user = userRepository.findByEmail(email).orElse(null);
-
-            if (user == null) {
-                user = new Users();
-                user.setEmail(email);
-                user.setFullName(name);
-                user.setRole("writer");
-                userRepository.save(user);
-            }
+    public String googleLoginSuccess(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, Model model) {
+        if (customOAuth2User != null) {
+            Users user = customOAuth2User.getUser();
 
             // If user does not have a username → ask for username
             if (user.getUsername() == null || user.getUsername().isEmpty()) {
-                model.addAttribute("email", email);
+                model.addAttribute("email", user.getEmail());
                 return "complete-username"; // Redirect to a page to complete the username
             }
         }
@@ -145,9 +135,10 @@ public class MainController {
             user.setUsername(username);
             userRepository.save(user);
 
-            // 👉 Recreate Authentication with the updated user
+            // Create new CustomUserPrincipal authentication
+            CustomUserPrincipal customUserPrincipal = new CustomUserPrincipal(user);
             Authentication auth = new UsernamePasswordAuthenticationToken(
-                    user.getUsername(), null, List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole()))
+                    customUserPrincipal, null, customUserPrincipal.getAuthorities()
             );
             SecurityContextHolder.getContext().setAuthentication(auth);
         }

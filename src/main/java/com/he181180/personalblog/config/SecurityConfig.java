@@ -3,7 +3,8 @@ package com.he181180.personalblog.config;
 import com.he181180.personalblog.DTO.UserUpdateDTO;
 import com.he181180.personalblog.entity.Users;
 import com.he181180.personalblog.repository.UserRepository;
-import com.he181180.personalblog.service.UserService;
+import com.he181180.personalblog.security.CustomOAuth2UserService;
+import com.he181180.personalblog.security.CustomUserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,8 +19,12 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 public class SecurityConfig {
+
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private CustomOAuth2UserService customOAuth2UserService;
     @Autowired
     private CustomSuccessHandler customSuccessHandler;
 
@@ -37,17 +42,21 @@ public class SecurityConfig {
                         .loginPage("/login")
                         .failureUrl("/login?error")
                         .successHandler(customSuccessHandler)
+
                         .permitAll()
                 ).oauth2Login(oauth2 -> oauth2
                         .loginPage("/login")
-                        .defaultSuccessUrl("/GoogleLogin", true)  //
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .userService(customOAuth2UserService)
+                        )
+                        .defaultSuccessUrl("/GoogleLogin", true)
                 )
-
                 .logout(logout -> logout
                         .logoutSuccessUrl("/login?logout")
                         .permitAll()
                 );
-           http.csrf(csrf -> csrf.disable());
+
+        http.csrf(csrf -> csrf.disable());
 
         return http.build();
     }
@@ -63,13 +72,8 @@ public class SecurityConfig {
             Users u = userRepository.findByUsernameAndDeletedFalse(username)
                     .orElseThrow(() -> new UsernameNotFoundException("user not found"));
 
-            return User.withUsername(u.getUsername())
-                    .password(u.getPassword() == null ? "" : u.getPassword())
-                    .roles(u.getRole())
-                    .build();
+            // Return CustomUserPrincipal instead of Spring's User
+            return new CustomUserPrincipal(u);
         };
-
     }
-
-
 }

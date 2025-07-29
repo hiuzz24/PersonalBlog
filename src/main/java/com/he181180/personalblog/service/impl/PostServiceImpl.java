@@ -4,6 +4,8 @@ import com.he181180.personalblog.entity.Posts;
 import com.he181180.personalblog.repository.PostRepository;
 import com.he181180.personalblog.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -11,9 +13,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -62,7 +62,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public Posts findPostByPostID(int postID) {
         Posts post = postRepository.findPostByPostID(postID);
-        return (post != null && post.isPublished()) ? post : null;
+        return post;
     }
 
     @Override
@@ -78,9 +78,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<Posts> getPostByUserID(int userID) {
-        return postRepository.findAll().stream()
-                .filter(post -> post.isPublished() && post.getUsers().getUserID() == userID)
-                .collect(Collectors.toList());
+        return postRepository.findAllPostsByUserID(userID);
     }
 
     @Override
@@ -116,17 +114,16 @@ public class PostServiceImpl implements PostService {
         if(imageUrl != null && !imageUrl.isEmpty()){
             return imageUrl;
         }
-        if(!fileImage.isEmpty()){
-            // Use project's static/img directory instead of external path
-            String uploadDir = System.getProperty("user.dir") + "/src/main/resources/static/img/";
-            String fileName = UUID.randomUUID() + "_" + fileImage.getOriginalFilename();
-            Files.createDirectories(Path.of(uploadDir));
-            Path path = Path.of(uploadDir + fileName);
-            Files.copy(fileImage.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-            return "/img/" + fileName;
-        }
-        return null;
+         if(!fileImage.isEmpty()){
+             String uploadDir = "D:/uploads/";
+             String fileName = UUID.randomUUID() + "_" +fileImage.getOriginalFilename();
+             Files.createDirectories(Path.of(uploadDir));
+             Path path = Path.of(uploadDir + fileName);
+             Files.copy(fileImage.getInputStream(),path, StandardCopyOption.REPLACE_EXISTING);
+             return "/uploads/" +fileName;
     }
+         return null;
+}
 
     @Override
     public long countApprovedToday() {
@@ -136,6 +133,71 @@ public class PostServiceImpl implements PostService {
     @Override
     public long countRejectedToday() {
         return postRepository.countRejectedToday();
+    }
+
+    @Override
+    public Long countPendingPost() {
+        return postRepository.countPendingPosts();
+    }
+
+    @Override
+    public Map<String, Integer> getPostCountByTag() {
+        List<Object[]> result = postRepository.getPostCountByTag();
+        Map<String,Integer> map = new HashMap<>();
+        for(Object[] row : result){
+            String name = (String)row[0];
+            Long value = (Long)row[1];
+            map.put(name,value.intValue());
+        }
+        return map;
+    }
+
+    @Override
+    public Map<String, Integer> top5Author() {
+        Pageable top5 = PageRequest.of(0,5);
+        List<Object[]> result = postRepository.top5Author(top5);
+        Map<String,Integer> map = new HashMap<>();
+        for(Object[] row : result){
+            String name = (String)row[0];
+            Long value = (Long)row[1];
+            map.put(name,value.intValue());
+        }
+        return map;
+    }
+
+    @Override
+    public Map<String, Integer> postPerStatus() {
+        List<Object[]> result = postRepository.postPerStatus();
+        Map<String,Integer> map  = new HashMap<>();
+        for(Object[] row : result){
+            String name = (String)row[0];
+            Long value = (Long)row[1];
+            map.put(name,value.intValue());
+        }
+        return map;
+    }
+
+    @Override
+    public Map<String, Integer> postPerMonth(int year) {
+        List<Object[]> result = postRepository.postPerMonth(year);
+        Map<String,Integer> map = new HashMap<>();
+        String[] months = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+        for(String mon : months){
+            map.put(mon,0);
+        }
+
+        for(Object[] row : result){
+            Integer monthIndex = (Integer) row[0];
+            Long value = (Long) row[1];
+            map.put(months[monthIndex-1],value.intValue());
+        }
+        return map;
+    }
+
+    @Override
+    public List<Posts> findAllByUsers_DeletedFalseAndStatusRejected() {
+        return postRepository.findAllByUsers_DeletedFalseAndStatusRejected();
     }
 
 }
