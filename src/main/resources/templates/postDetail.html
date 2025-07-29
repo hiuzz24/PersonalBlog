@@ -57,18 +57,26 @@
                     <img th:src="${user?.avatarUrl != null && !#strings.isEmpty(user.avatarUrl) ? user.avatarUrl : '/assets/img/user.png'}" alt="avatar" style="width:36px; height:36px; border-radius:50%; object-fit:cover;">
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                    <li>
-                        <form th:action="@{/profile}" method="get" style="display: inline;">
-                            <button type="submit" class="dropdown-item">Profile</button>
+                    <li th:if="${user != null && user.role == 'ADMIN'}">
+                        <form th:action="@{/admin}" style="display: inline;">
+                            <button type="submit" class="dropdown-item" style="border-radius: 8px; transition: all 0.3s ease;">
+                                <i class="bi bi-speedometer2 me-2"></i>Dashboard Admin</button>
                         </form>
-                    </li>
-
-                    <li>
                         <hr class="dropdown-divider">
                     </li>
                     <li>
+                        <form th:action="@{/profile}" style="display: inline;">
+                            <button type="submit" class="dropdown-item" style="border-radius: 8px; transition: all 0.3s ease;">
+                                <i class="bi bi-person me-2"></i>Profile
+                            </button>
+                        </form>
+                    </li>
+                    <li><hr class="dropdown-divider" style="opacity: 0.3;"></li>
+                    <li>
                         <form th:action="@{/logout}" method="post" style="display: inline;">
-                            <button type="submit" class="dropdown-item">Logout</button>
+                            <button type="submit" class="dropdown-item text-danger" style="border-radius: 8px; transition: all 0.3s ease;">
+                                <i class="bi bi-box-arrow-right me-2"></i>Logout
+                            </button>
                         </form>
                     </li>
                 </ul>

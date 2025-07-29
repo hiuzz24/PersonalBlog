@@ -53,12 +53,16 @@
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                     <li th:if="${user != null && user.role == 'ADMIN'}">
                         <form th:action="@{/admin}" style="display: inline;">
-                            <button type="submit" class="dropdown-item">Dashboard Admin</button>
+                            <button type="submit" class="dropdown-item" style="border-radius: 8px; transition: all 0.3s ease;">
+                                <i class="bi bi-speedometer2 me-2"></i>Dashboard Admin</button>
                         </form>
                         <hr class="dropdown-divider">
                     </li>
+                    <li>
                         <form th:action="@{/profile}" style="display: inline;">
-                            <button type="submit" class="dropdown-item">Profile</button>
+                            <button type="submit" class="dropdown-item" style="border-radius: 8px; transition: all 0.3s ease;">
+                                <i class="bi bi-person me-2"></i>Profile
+                            </button>
                         </form>
                     </li>
 
@@ -66,7 +70,9 @@
 
                     <li>
                         <form th:action="@{/logout}" method="post" style="display: inline;">
-                            <button type="submit" class="dropdown-item">Logout</button>
+                            <button type="submit" class="dropdown-item text-danger" style="border-radius: 8px; transition: all 0.3s ease;">
+                                <i class="bi bi-box-arrow-right me-2"></i>Logout
+                            </button>
                         </form>
                     </li>
                 </ul>
