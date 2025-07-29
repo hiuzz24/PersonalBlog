@@ -1,13 +1,11 @@
 package com.he181180.personalblog.service;
 
-import com.he181180.personalblog.DTO.UserUpdateDTO;
 import com.he181180.personalblog.entity.Users;
 import com.he181180.personalblog.security.CustomOAuth2User;
 import com.he181180.personalblog.security.CustomUserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -60,7 +58,6 @@ public class CurrentUserService {
      * @return Users - the current user
      * @throws RuntimeException if user not found or not authenticated
      */
-
 
     /**
      * Check if user is currently authenticated

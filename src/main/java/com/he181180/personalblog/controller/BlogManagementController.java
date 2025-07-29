@@ -79,9 +79,10 @@ public class BlogManagementController {
             Posts post = new Posts();
             post.setTitle(title);
             post.setContent(content);
+            post.setImageUrl(imageUrl);
             post.setTags(tags);
             post.setBody(body);
-            post.setPublishedAt(null);
+            post.setPublishedAt(new Timestamp(new Date().getTime()));
             post.setUsers(user);
             post.setPublished(false);
             post.setStatus("Pending");
@@ -126,26 +127,34 @@ public class BlogManagementController {
                            @RequestParam(required = false) String imageUrl,
                              @RequestParam(value = "fileImage",required = false) MultipartFile fileImage,
                              Authentication authentication) throws IOException {
-        String username = authentication.getName();
-        Optional<Users> user = userService.findUserByUsername(username);
+        Users user = currentUserService.getCurrentUser(authentication);
         List<Tags> tags = tagService.findTagsByTagID(tagID);
 
-        Posts post = postService.findPostByPostID(postID);
-        post.setTitle(title);
-        post.setContent(content);
-        post.setTags(tags);
-        post.setBody(body);
-        post.setPublishedAt(post.getPublishedAt());
-        post.setUsers(user.get());
-        post.setPublished(true);
-        post.setUpdatedAt(new Timestamp(new Date().getTime()));
-
-        String finalImage = postService.handleImageUrl(imageUrl,fileImage);
-        post.setImageUrl(finalImage);
-        postService.savePost(post);
-        return "redirect:/blog";
+        if (user != null) {
+            Posts post = postService.findPostByPostID(postID);
+            post.setTitle(title);
+            post.setContent(content);
+            post.setImageUrl(imageUrl);
+            post.setTags(tags);
+            post.setBody(body);
+            post.setPublishedAt(post.getPublishedAt());
+            post.setUsers(user);
+            post.setPublished(true);
+            post.setUpdatedAt(new Timestamp(new Date().getTime()));
+            try {
+                String finalImage = postService.handleImageUrl(imageUrl, fileImage);
+                post.setImageUrl(finalImage);
+            } catch (Exception e) {
+                // Optionally, you can add a model attribute for error and redirect
+                return "redirect:/blog/edit/" + postID + "?error=img";
+            }
+            postService.savePost(post);
+            return "redirect:/blog";
         }
+        return "redirect:/blog/edit/" + postID + "?error=user";
+    }
 
+    // Xóa bài viết
     @RequestMapping("/delete/{postID}")
     public String deletePost(@PathVariable int postID) {
         postService.deletePost(postID);

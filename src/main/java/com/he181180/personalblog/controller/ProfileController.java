@@ -4,6 +4,7 @@ import com.he181180.personalblog.DTO.UserUpdateDTO;
 import com.he181180.personalblog.Mapper.UserMapper;
 import com.he181180.personalblog.entity.Posts;
 import com.he181180.personalblog.entity.Users;
+import com.he181180.personalblog.service.CurrentUserService;
 import com.he181180.personalblog.service.PostService;
 import com.he181180.personalblog.service.UserService;
 import jakarta.validation.Valid;
@@ -45,19 +46,14 @@ public class ProfileController {
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    private CurrentUserService currentUserService;
 
     @GetMapping
     public String profile(Authentication authentication, Model model) {
-        Users user = null;
+        Users user = null ;
         if (authentication != null) {
-            Object principal = authentication.getPrincipal();
-            if (principal instanceof org.springframework.security.oauth2.core.user.OAuth2User oauth2User) {
-                String email = oauth2User.getAttribute("email");
-                user = userService.findUserByEmail(email).orElse(null);
-            } else {
-                String username = authentication.getName();
-                user = userService.findUserByUsername(username).orElse(null);
-            }
+            user = currentUserService.getCurrentUser(authentication);
             UserUpdateDTO userUpdateDTO = UserUpdateDTO.builder()
                     .email(user.getEmail())
                     .fullName(user.getFullName())
@@ -88,36 +84,32 @@ public class ProfileController {
             @RequestParam(value = "avatarFile", required = false) MultipartFile avatarFile,
             @RequestParam(value = "avatarUrl", required = false) String avatarUrl) throws IOException {
 
-        Users user = null;
-        if (authentication != null) {
-            Object principal = authentication.getPrincipal();
-            if (principal instanceof org.springframework.security.oauth2.core.user.OAuth2User oauth2User) {
-                String email = oauth2User.getAttribute("email");
-                user = userService.findUserByEmail(email).orElse(null);
-            } else {
-                String username = authentication.getName();
-                user = userService.findUserByUsername(username).orElse(null);
-            }
-        }
-        if (user == null) {
-            return "redirect:/profile?error=user-not-found";
-        }
+        Users user = currentUserService.getCurrentUser(authentication);
 
         // Handle avatar file upload
         if (avatarFile != null && !avatarFile.isEmpty()) {
-            String uploadDir = "D:/avatar/";
-            String fileName = UUID.randomUUID() + "_" +avatarFile.getOriginalFilename();
-            Files.createDirectories(Path.of(uploadDir));
-            Path path = Path.of(uploadDir + fileName);
-            Files.copy(avatarFile.getInputStream(),path, StandardCopyOption.REPLACE_EXISTING);
-            user.setAvatarUrl("/avatar/" +fileName);
-            System.out.println(user.getAvatarUrl());
-            userService.saveUser(user);
+            // Save to src/main/resources/static/img/ so it works in both dev and prod
+            String uploadDir = System.getProperty("user.dir") + "/src/main/resources/static/img/";
+            File dir = new File(uploadDir);
+            if (!dir.exists()) dir.mkdirs();
+            String fileName = System.currentTimeMillis() + "_" + avatarFile.getOriginalFilename();
+            File dest = new File(dir, fileName);
+            try {
+                avatarFile.transferTo(dest);
+                user.setAvatarUrl("/img/" + fileName);
+                System.out.println("Avatar uploaded successfully: " + user.getAvatarUrl());
+            } catch (IOException e) {
+                e.printStackTrace();
+                return "redirect:/profile?error=upload-failed";
+            }
+        } else if (avatarUrl != null && !avatarUrl.trim().isEmpty()) {
+            user.setAvatarUrl(avatarUrl.trim());
+        } else if (user.getAvatarUrl() == null || user.getAvatarUrl().isEmpty()) {
+            // Set default avatar if none is set
+            user.setAvatarUrl("/img/default-avatar.png");
         }
-        if(avatarUrl != null && !avatarUrl.isEmpty()){
-            user.setAvatarUrl(avatarUrl);
-            userService.saveUser(user);
-        }
+        userService.saveUser(user);
+
         // Add cache-busting parameter to force browser to reload the image
         return "redirect:/profile?updated=" + System.currentTimeMillis();
     }
@@ -125,9 +117,7 @@ public class ProfileController {
     @PostMapping("/update")
     public String updateProfile(Authentication authentication, Model model,
                                 @ModelAttribute("userUpdateDTO")  @Valid UserUpdateDTO userUpdate) {
-        String useName = authentication.getName();
-        Optional<Users> usersOptional = userService.findUserByUsername(useName);
-        Users user = usersOptional.get();
+        Users user = currentUserService.getCurrentUser(authentication) ;
         userMapper.updateUser(user,userUpdate);
         userService.saveUser(user);
         model.addAttribute("user", user);
@@ -199,6 +189,57 @@ public class ProfileController {
         boolean success = sessionCode != null && sessionCode.equals(inputCode);
         return Map.of("success", success);
     }
+
+    @PostMapping("/change-password")
+    public String changePassword(@RequestParam(required = false) String currentPassword,
+                                 @RequestParam String newPassword,
+                                 @RequestParam String confirmPassword,
+                                 @RequestParam(required = false) String confirmationCode,
+                                 Authentication authentication,
+                                 HttpSession session,
+                                 Model model) {
+        // Get user
+        Users user = null;
+        if (authentication != null) {
+            Object principal = authentication.getPrincipal();
+            if (principal instanceof org.springframework.security.oauth2.core.user.OAuth2User oauth2User) {
+                String email = oauth2User.getAttribute("email");
+                user = userService.findUserByEmail(email).orElse(null);
+            } else {
+                String username = authentication.getName();
+                user = userService.findUserByUsername(username).orElse(null);
+            }
+        }
+        if (user == null) {
+            model.addAttribute("error", "User not found.");
+            return "UserDashboard/Profile";
+        }
+        // If user has a password, require confirmation code and current password
+        if (user.getPassword() != null && !user.getPassword().isEmpty()) {
+            String sessionCode = (String) session.getAttribute("confirmationCode");
+            if (sessionCode == null || !sessionCode.equals(confirmationCode)) {
+                model.addAttribute("error", "Invalid or expired confirmation code.");
+                return "UserDashboard/Profile";
+            }
+            if (currentPassword == null || !userService.checkPassword(user, currentPassword)) {
+                model.addAttribute("error", "Current password is incorrect.");
+                return "UserDashboard/Profile";
+            }
+        }
+        // For users without a password, skip confirmation code and current password
+        // Check new password match
+        if (!newPassword.equals(confirmPassword)) {
+            model.addAttribute("error", "New passwords do not match.");
+            return "UserDashboard/Profile";
+        }
+        // Change password
+        userService.changeUserPassword(user, newPassword);
+        // Optionally clear confirmation code from session
+        session.removeAttribute("confirmationCode");
+        model.addAttribute("success", "Password changed successfully.");
+        return "/profile";
+    }
+
 
 
 }

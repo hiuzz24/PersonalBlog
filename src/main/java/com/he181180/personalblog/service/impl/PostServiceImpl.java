@@ -114,16 +114,17 @@ public class PostServiceImpl implements PostService {
         if(imageUrl != null && !imageUrl.isEmpty()){
             return imageUrl;
         }
-         if(!fileImage.isEmpty()){
-             String uploadDir = "D:/uploads/";
-             String fileName = UUID.randomUUID() + "_" +fileImage.getOriginalFilename();
-             Files.createDirectories(Path.of(uploadDir));
-             Path path = Path.of(uploadDir + fileName);
-             Files.copy(fileImage.getInputStream(),path, StandardCopyOption.REPLACE_EXISTING);
-             return "/uploads/" +fileName;
+        if(!fileImage.isEmpty()){
+            // Use project's static/img directory instead of external path
+            String uploadDir = System.getProperty("user.dir") + "/src/main/resources/static/img/";
+            String fileName = UUID.randomUUID() + "_" + fileImage.getOriginalFilename();
+            Files.createDirectories(Path.of(uploadDir));
+            Path path = Path.of(uploadDir + fileName);
+            Files.copy(fileImage.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+            return "/img/" + fileName;
+        }
+        return null;
     }
-         return null;
-}
 
     @Override
     public long countApprovedToday() {
