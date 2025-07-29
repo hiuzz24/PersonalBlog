@@ -95,8 +95,8 @@ public class MainController {
         newUser.setUsername(username);
         newUser.setEmail(email);
         newUser.setPassword(passwordEncoder.encode(password));
-        newUser.setRole("writer");
-        newUser.setAvatarUrl("/static/img/default-avatar.png");
+        newUser.setRole("WRITER");
+        newUser.setAvatarUrl("/avatar/user.png");
         userRepository.save(newUser);
         return "redirect:/login";
     }

@@ -493,7 +493,6 @@
                                 <input type="text"
                                        name="search"
                                        class="form-control modern-search border-start-0"
-                                       th:value="${searchQuery}"
                                        placeholder="Search by post title, author, or content..."
                                        aria-label="Search">
                                 <button class="btn btn-info-modern" type="submit">
@@ -518,7 +517,7 @@
                         <thead>
                         <tr>
                             <th width="80">ID</th>
-                            <th width="350">Post</th>
+                            <th width="350">Post Title</th>
                             <th width="150">Author</th>
                             <th width="100">Status</th>
                             <th width="120">Updated</th>
@@ -573,23 +572,23 @@
                                     <!-- View Post -->
                                     <a th:href="@{/admin/moderate/view/{id}(id=${post.postID})}"
                                        class="modern-btn btn-info-modern"
-                                       title="Xem chi tiết">
+                                       title="See details">
                                         <i class="fas fa-eye"></i>
                                     </a>
 
                                     <a th:if="${post.status == 'Pending'}"
                                        th:href="@{/admin/moderate/approve/{id}(id=${post.postID})}"
                                        class="modern-btn btn-success-modern"
-                                       onclick="return confirm('Bạn có chắc chắn muốn duyệt bài viết này?')"
-                                       title="Duyệt bài viết">
+                                       onclick="return confirm('Are you sure you want to browse this article?')"
+                                       title="Browse articles">
                                         <i class="fas fa-check"></i>
                                     </a>
 
                                     <a th:if="${post.status == 'Pending'}"
                                        th:href="@{/admin/moderate/reject/{id}(id=${post.postID})}"
                                        class="modern-btn btn-danger-modern"
-                                       onclick="return confirm('Bạn có chắc chắn muốn từ chối bài viết này?')"
-                                       title="Từ chối bài viết">
+                                       onclick="return confirm('Are you sure you want to reject this post?')"
+                                       title="Reject article">
                                         <i class="fas fa-times"></i>
                                     </a>
 

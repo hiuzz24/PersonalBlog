@@ -51,7 +51,12 @@
 
 
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                    <li>
+                    <li th:if="${user != null && user.role == 'ADMIN'}">
+                        <form th:action="@{/admin}" style="display: inline;">
+                            <button type="submit" class="dropdown-item">Dashboard Admin</button>
+                        </form>
+                        <hr class="dropdown-divider">
+                    </li>
                         <form th:action="@{/profile}" style="display: inline;">
                             <button type="submit" class="dropdown-item">Profile</button>
                         </form>
