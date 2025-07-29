@@ -64,6 +64,7 @@ public class AdminModerateController {
         post.setStatus("Rejected");
         post.setReasonRejected("dwadawdawdad");
         post.setPublished(false);
+        post.setUpdatedAt(new Timestamp(new Date().getTime()));
         postService.savePost(post);
         return "redirect:/admin/moderate/moderateNewBlogs";
     }

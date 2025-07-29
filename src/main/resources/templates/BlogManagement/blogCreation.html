@@ -602,15 +602,15 @@
                         </div>
                     </div>
 
-                    <!-- URL Input -->
-                    <div class="form-group" id="urlInputGroup">
-                        <label for="imageUrl" class="form-label">
-                            <i class="fas fa-globe"></i>
-                            Featured Image URL
-                        </label>
-                        <input type="url" id="imageUrl" name="imageUrl" th:value="${post.imageUrl}"
-                               class="form-control" placeholder="https://example.com/image.jpg">
-                    </div>
+                        <!-- URL Input -->
+                        <div class="form-group" id="urlInputGroup">
+                            <label for="imageUrl" class="form-label">
+                                <i class="fas fa-globe"></i>
+                                Featured Image URL
+                            </label>
+                            <input type="text" id="imageUrl" name="imageUrl" th:value="${post.imageUrl}"
+                                   class="form-control" placeholder="https://example.com/image.jpg">
+                        </div>
 
                     <!-- File Upload -->
                     <div class="form-group d-none" id="fileInputGroup">
