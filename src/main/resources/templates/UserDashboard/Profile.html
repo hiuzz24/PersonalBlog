@@ -51,7 +51,6 @@
     function triggerFileInput() {
         document.getElementById('avatarFile').click();
     }
-
     function previewFile() {
         const input = document.getElementById('avatarFile');
         const preview = document.getElementById('avatarPreview');
@@ -63,7 +62,6 @@
             mainPreview.src = url;
         }
     }
-
     function previewUrl() {
         const url = document.getElementById('avatarUrl').value;
         const preview = document.getElementById('avatarPreview');
@@ -74,11 +72,9 @@
             mainPreview.src = url;
         }
     }
-
     function saveAvatar() {
         document.getElementById('avatarForm').submit();
     }
-
     function handlePreview() {
         const fileInput = document.getElementById('avatarFile');
         const urlInput = document.getElementById('avatarUrl');
@@ -94,7 +90,6 @@
     function showChangeBox() {
         document.getElementById('changeBox').style.display = 'block';
     }
-
     function hideChangeBox() {
         document.getElementById('changeBox').style.display = 'none';
     }
@@ -151,24 +146,12 @@
             </a>
         </div>
         <nav id="navmenu" class="navmenu mx-auto flex-grow-1 d-flex justify-content-center">
-            <ul>
-                <li><a th:href="@{/}">Home</a></li>
-                <li><a href="about.html">About</a></li>
-                <li class="dropdown"><a href="#"><span>Categories</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-                    <ul>
-                        <li><a href="category.html">Category 1</a></li>
-                        <li><a href="category.html">Category 2</a></li>
-                        <li><a href="category.html">Category 3</a></li>
-                        <li><a href="category.html">Category 4</a></li>
-                    </ul>
-                </li>
-                <li><a href="contact.html">Contact</a></li>
-            </ul>
             <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
         </nav>
         <div class="header-social-links d-flex align-items-center pe-3" style="margin-left:auto;">
             <div class="dropdown">
                 <a href="#" class="d-flex align-items-center" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding:0; border:none; background:none;">
+                    <h5 class="sitename mb-0 d-flex align-items-center" style="font-size: 1.5rem; margin-right: 10px; display: flex; align-items: center; height: 56px; line-height: 56px; color: #535353;" th:text="${user.fullName != null ? user.fullName : user.username}"></h5>
                     <img th:src="${user != null && user.avatarUrl != null && !#strings.isEmpty(user.avatarUrl) ? user.avatarUrl : '/assets/img/user.png'}" alt="avatar" style="width:36px; height:36px; border-radius:50%; object-fit:cover;">
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
@@ -193,11 +176,13 @@
 
     <nav id="sidebark" class="sidebark open">
 
-        <div class="user-profile text-center mt-3">
-            <img th:src="${user?.avatarUrl} ?: '/img/default-avatar.png'" alt="Avatar" class="profile-avatar mb-3">
-            <h5 class="mt-2 mb-0 text-white" th:text="${user?.fullName} ?: 'User name'">User name</h5>
-            <small th:text="'@' + ${user.username}">@username</small>
+        <div class="text-center mb-4">
+            <img th:src="${user.avatarUrl != null ? user.avatarUrl : '/assets/img/default-avatar.png'}"
+                 alt="Avatar" class="rounded-circle mb-2" width="80" height="80">
+            <h5 class="mt-2 mb-0 text-white" th:text="${user.fullName != null ? user.fullName : user.username}"></h5>
+            <small th:text="${user != null && user.username != null ? '@' + user.username : '@username'}">@username</small>
         </div>
+
 
         <ul class="nav flex-column mt-4">
             <li class="nav-item">
@@ -222,23 +207,28 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" th:href="@{/favorites/dashboard}">
-                    <i class="bi bi-heart-fill"></i>
-                    <span class="link-text">Favorite blogs</span>
-                </a>
-            </li>
-
-            <li class="nav-item">
                 <a class="nav-link" th:href="@{/blog/create}">
                     <i class="bi bi-plus-circle"></i>
                     <span class="link-text">Create new Blog</span>
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/favorites/dashboard}">
+                    <i class="bi bi-heart-fill"></i>
+                    <span class="link-text">Favorite blogs</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/chat}">
+                    <i class="bi bi-chat-dots me-2"></i>
+                    <span class="link-text">Chat</span>
+                </a>
+            </li>
 
             <li class="nav-item">
-                <a class="nav-link" th:href="@{/dashboard/analytics}">
-                    <i class="bi bi-bar-chart"></i>
-                    <span class="link-text">Chart</span>
+                <a class="nav-link" th:href="@{/change-password}">
+                    <i class="bi bi-key"></i>
+                    <span class="link-text">Change Password</span>
                 </a>
             </li>
             <li class="nav-item mt-4">
@@ -333,58 +323,6 @@
                         </div>
                     </form>
                 </div>
-                <!-- Password Change Section Start -->
-                <div class="col-md-8 mt-4">
-                    <h2 class="d-flex align-items-center" >
-                        <i class="bi bi-person text me-2" ></i>
-                        <span>Change Password</span>
-                    </h2>
-                        <div class="card">
-                            <div class="card-body">
-                                <form id="changePasswordForm" th:action="@{/profile/change-password}" method="post">
-                                    <!-- If user has password -->
-                                    <div id="changePasswordStep1" th:if="${user.hasPassword}">
-                                        <button type="button" class="btn btn-primary mb-3" onclick="showSendCodeSection()">Change Password</button>
-                                    </div>
-                                    <div id="changePasswordStep2" th:if="${user.hasPassword}" style="display:none;">
-                                        <div class="mb-3 d-flex align-items-center gap-2">
-                                            <input type="text" class="form-control" id="confirmationCode" name="confirmationCode" placeholder="6-digit code" maxlength="6" style="max-width: 150px;">
-                                            <button type="button" class="btn btn-outline-primary" onclick="requestConfirmationCode()">Send Code</button>
-                                            <button type="button" class="btn btn-success" onclick="verifyConfirmationCode()">Verify Code</button>
-                                        </div>
-                                    </div>
-                                    <div id="changePasswordStep3" th:if="${user.hasPassword}" style="display:none;">
-                                        <div class="mb-3">
-                                            <label for="currentPassword" class="form-label">Current Password</label>
-                                            <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="newPassword" class="form-label">New Password</label>
-                                            <input type="password" class="form-control" id="newPassword" name="newPassword" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="confirmPassword" class="form-label">Confirm New Password</label>
-                                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
-                                        </div>
-                                        <button type="submit" class="btn btn-primary">Change Password</button>
-                                    </div>
-                                    <!-- If user does NOT have password -->
-                                    <div th:if="${!user.hasPassword}">
-                                        <div class="mb-3">
-                                            <label for="newPasswordNoCurrent" class="form-label">New Password</label>
-                                            <input type="password" class="form-control" id="newPasswordNoCurrent" name="newPassword" required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="confirmPasswordNoCurrent" class="form-label">Confirm New Password</label>
-                                            <input type="password" class="form-control" id="confirmPasswordNoCurrent" name="confirmPassword" required>
-                                        </div>
-                                        <button type="submit" class="btn btn-primary">Set Password</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                </div>
-                <!-- Password Change Section End -->
             </div>
 
         </div>
@@ -398,8 +336,7 @@
 <!-- Scroll Top -->
 <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
-<!-- Preloader -->
-<div id="preloader"></div>
+
 
 <!-- JS Files -->
 <script th:src="@{/assets/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
@@ -407,33 +344,7 @@
 <script th:src="@{/assets/vendor/aos/aos.js}"></script>
 <script th:src="@{/assets/vendor/swiper/swiper-bundle.min.js}"></script>
 <script th:src="@{/assets/js/main.js}"></script>
-<script>
-function showSendCodeSection() {
-    document.getElementById('changePasswordStep1').style.display = 'none';
-    document.getElementById('changePasswordStep2').style.display = 'block';
-}
-function verifyConfirmationCode() {
-    const code = document.getElementById('confirmationCode').value;
-    fetch('/profile/verify-confirmation-code', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest'
-        },
-        body: JSON.stringify({ code })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            document.getElementById('changePasswordStep2').style.display = 'none';
-            document.getElementById('changePasswordStep3').style.display = 'block';
-        } else {
-            alert('Invalid or expired code.');
-        }
-    })
-    .catch(() => alert('Error verifying code.'));
-}
-</script>
+
 
 </body>
 </html>

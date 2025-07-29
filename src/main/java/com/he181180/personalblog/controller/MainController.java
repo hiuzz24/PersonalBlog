@@ -77,11 +77,11 @@ public class MainController {
                            Model model) {
         boolean hasError = false;
 
-        if (userRepository.findByUsername(username).isPresent()) {
+        if (userRepository.findByUsernameAndDeletedFalse(username).isPresent()) {
             model.addAttribute("usernameError", "Username already exists");
             hasError = true;
         }
-        if (userRepository.findByEmail(email).isPresent()) {
+        if (userRepository.findByEmailAndDeletedFalse(email).isPresent()) {
             model.addAttribute("emailError", "Email already exists");
             hasError = true;
         }
@@ -120,7 +120,7 @@ public class MainController {
             // If user does not have a username → ask for username
             if (user.getUsername() == null || user.getUsername().isEmpty()) {
                 model.addAttribute("email", email);
-                return "complete-username";
+                return "complete-username"; // Redirect to a page to complete the username
             }
         }
 

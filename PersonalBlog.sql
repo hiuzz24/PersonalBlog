@@ -55,10 +55,9 @@ CREATE TABLE comments (
 
 INSERT INTO users (username, email, password, full_name, bio, avatar_url, role, is_deleted)
 VALUES
-    ('admin', 'admin@blog.vn', 'admin123', 'Quản Trị Viên', 'Admin of the blog.', 'https://example.com/avatar_admin.png', 'admin', FALSE),
-    ('linhtran', 'linhtran@blog.vn', 'linh123', 'Trần Thị Linh', 'Loves travel and food blogging.', 'https://example.com/avatar_linh.png', 'writer', FALSE),
-    ('nguyenvananh', 'vananh@blog.vn', 'anh123', 'Nguyễn Văn Anh', 'Passionate about programming and Java.', 'https://example.com/avatar_anh.png', 'writer', FALSE),
-    ('cuongcv1001', 'cuongcv1001@gmail.com', 'cvc123', 'Cà Việt Cường', 'Passionate about programming and Java.', 'https://example.com/avatar_anh.png', 'writer', FALSE);
+    ('admin', 'admin@blog.vn', 'admin123', 'Admin', 'Admin of the blog.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmjC0CZGGDJbJ4hH1_jLKaMzhL96cwCQ8OeQ&s', 'ADMIN', FALSE),
+    ('linhtran', 'linhtran@blog.vn', 'linh123', 'Trần Thị Linh', 'Loves travel and food blogging.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTe7mWcFQ-e97tkOw1TN2252vi4gLuYMTbvXQ&s', 'WRITER', FALSE),
+    ('nguyenvananh', 'vananh@blog.vn', 'anh123', 'Nguyễn Văn Anh', 'Passionate about programming and Java.', 'https://i.pinimg.com/736x/b7/91/44/b79144e03dc4996ce319ff59118caf65.jpg', 'WRITER', FALSE);
 
 
 INSERT INTO posts (post_id, user_id, title, content, body, is_published, published_at, image_url)

@@ -37,7 +37,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<Posts> findTop5RecentPosts() {
-        return postRepository.findTop5ByIsPublishedTrueOrderByPublishedAtDesc();
+        return postRepository.findTop5ByPublishedTrueAndUsers_DeletedFalseOrderByPublishedAtDesc();
     }
 
     @Override
@@ -61,7 +61,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Posts findPostByPostID(int postID) {
-        Posts post = postRepository.findPostsByPostID(postID);
+        Posts post = postRepository.findPostByPostID(postID);
         return (post != null && post.isPublished()) ? post : null;
     }
 
@@ -85,11 +85,30 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void deletePost(int postID) {
-        Posts post = postRepository.findPostsByPostID(postID);
+        Posts post = postRepository.findPostByIDs(postID);
         if (post != null) {
             post.setPublished(false);
             postRepository.save(post);
         }
+    }
+
+    @Override
+    public void recoverPost(int postID) {
+        Posts post = postRepository.findPostByIDs(postID);
+        if (post != null) {
+            post.setPublished(true);
+            postRepository.save(post);
+        }
+    }
+
+    @Override
+    public List<Posts> getAllPosts() {
+        return postRepository.findAllByUsers_DeletedFalseAndStatusApproved();
+    }
+
+    @Override
+    public List<Posts> findAllPostPending() {
+        return postRepository.findAllPostPending();
     }
 
     @Override
@@ -108,4 +127,15 @@ public class PostServiceImpl implements PostService {
         }
         return null;
     }
+
+    @Override
+    public long countApprovedToday() {
+        return postRepository.countApprovedToday();
+    }
+
+    @Override
+    public long countRejectedToday() {
+        return postRepository.countRejectedToday();
+    }
+
 }

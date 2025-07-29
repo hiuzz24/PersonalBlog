@@ -56,24 +56,13 @@
             </a>
         </div>
         <nav id="navmenu" class="navmenu mx-auto flex-grow-1 d-flex justify-content-center">
-            <ul>
-                <li><a th:href="@{/}">Home</a></li>
-                <li><a href="about.html">About</a></li>
-                <li class="dropdown"><a href="#"><span>Categories</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-                    <ul>
-                        <li><a href="category.html">Category 1</a></li>
-                        <li><a href="category.html">Category 2</a></li>
-                        <li><a href="category.html">Category 3</a></li>
-                        <li><a href="category.html">Category 4</a></li>
-                    </ul>
-                </li>
-                <li><a href="contact.html">Contact</a></li>
-            </ul>
+
             <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
         </nav>
         <div class="header-social-links d-flex align-items-center pe-3" style="margin-left:auto;">
             <div class="dropdown">
                 <a href="#" class="d-flex align-items-center" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding:0; border:none; background:none;">
+                    <h5 class="sitename mb-0 d-flex align-items-center" style="font-size: 1.5rem; margin-right: 10px; display: flex; align-items: center; height: 56px; line-height: 56px; color: #535353;" th:text="${user.fullName != null ? user.fullName : user.username}"></h5>
                     <img th:src="${user != null && user.avatarUrl != null && !#strings.isEmpty(user.avatarUrl) ? user.avatarUrl : '/assets/img/user.png'}" alt="avatar" style="width:36px; height:36px; border-radius:50%; object-fit:cover;">
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
@@ -98,11 +87,13 @@
 
     <nav id="sidebark" class="sidebark open">
 
-        <div class="user-profile text-center mt-3">
-            <img th:src="${user?.avatarUrl} ?: '/img/default-avatar.png'" alt="Avatar" class="profile-avatar mb-3">
-            <h5 class="mt-2 mb-0 text-white" th:text="${user?.fullName} ?: 'User name'">User name</h5>
+        <div class="text-center mb-4">
+            <img th:src="${user.avatarUrl != null ? user.avatarUrl : '/assets/img/default-avatar.png'}"
+                 alt="Avatar" class="rounded-circle mb-2" width="80" height="80">
+            <h5 class="mt-2 mb-0 text-white" th:text="${user.fullName != null ? user.fullName : user.username}"></h5>
             <small th:text="${user != null && user.username != null ? '@' + user.username : '@username'}">@username</small>
         </div>
+
 
         <ul class="nav flex-column mt-4">
             <li class="nav-item">
@@ -132,11 +123,22 @@
                     <span class="link-text">Create new Blog</span>
                 </a>
             </li>
-
             <li class="nav-item">
-                <a class="nav-link" th:href="@{/dashboard/analytics}">
-                    <i class="bi bi-bar-chart"></i>
-                    <span class="link-text">Chart</span>
+                <a class="nav-link" th:href="@{/favorites/dashboard}">
+                    <i class="bi bi-heart-fill"></i>
+                    <span class="link-text">Favorite blogs</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/chat}">
+                    <i class="bi bi-chat-dots me-2"></i>
+                    <span class="link-text">Chat</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/change-password}">
+                    <i class="bi bi-key"></i>
+                    <span class="link-text">Change Password</span>
                 </a>
             </li>
             <li class="nav-item mt-4">
@@ -215,7 +217,7 @@
 
         <!-- Nội dung với CKEditor -->
         <div class="form-group">
-            <label for="body">Nội dung:</label>
+            <label for="body">Content:</label>
             <textarea id="body" name="body" th:text="${post.body}"></textarea>
         </div>
 
@@ -276,6 +278,7 @@
                 console.error('Error initializing CKEditor:', error);
             });
 
+        // Existing image handling logic remains unchanged
         let imageUrl = document.getElementById("imageUrl");
         let imageFile = document.getElementById("fileImage");
 
@@ -288,13 +291,13 @@
             if (radioUrl.checked) {
                 urlInputGroup.classList.remove("d-none");
                 fileInputGroup.classList.add("d-none");
-                imageUrl.disabled = false;
-                imageFile.disabled = true;
+                imageUrl.readOnly = false;
+                imageFile.readOnly = true;
             } else {
                 urlInputGroup.classList.add("d-none");
                 fileInputGroup.classList.remove("d-none");
-                imageUrl.disabled = true;
-                imageFile.disabled = false;
+                imageUrl.readOnly = true;
+                imageFile.readOnly = false;
             }
         }
 

@@ -21,7 +21,7 @@ public interface FavoriteRepository extends JpaRepository<Favorites, Long> {
     Optional<Favorites> findByUserAndPost(Users user, Posts post);
 
     // Get all favorite posts by user, ordered by creation date (newest first)
-    @Query("SELECT f FROM Favorites f JOIN FETCH f.post p WHERE f.user = :user AND p.isPublished = true ORDER BY f.createdAt DESC")
+    @Query("SELECT f FROM Favorites f JOIN FETCH f.post p WHERE f.user = :user AND p.published = true ORDER BY f.createdAt DESC")
     List<Favorites> findByUserOrderByCreatedAtDesc(@Param("user") Users user);
 
     // Count favorites for a user

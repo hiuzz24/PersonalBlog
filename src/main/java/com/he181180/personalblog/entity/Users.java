@@ -46,7 +46,7 @@ public class Users {
     private Timestamp createdAt;
 
     @Column(name = "is_deleted",insertable = false)
-    private boolean isDeleted;
+    private boolean deleted;
 
     @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
     private List<Posts> posts;
@@ -57,4 +57,7 @@ public class Users {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<PasswordResetToken> tokens;
 
+    public boolean isHasPassword() {
+        return password != null && !password.isEmpty();
+    }
 }

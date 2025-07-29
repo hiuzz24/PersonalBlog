@@ -108,14 +108,14 @@ public class ChatController {
 
             // Send message to receiver
             messagingTemplate.convertAndSendToUser(
-                receiverPrincipal,
+                receiver.getUsername(),
                 "/queue/messages",
                 responseDTO
             );
 
             // Send confirmation to sender
             messagingTemplate.convertAndSendToUser(
-                senderPrincipal,
+                sender.getUsername(),
                 "/queue/messages",
                 responseDTO
             );
@@ -130,12 +130,9 @@ public class ChatController {
     public List<Map<String, Object>> getConversations(Authentication authentication) {
         try {
             Users currentUser = currentUserService.getCurrentUser(authentication);
-            if (currentUser == null) {
-                return List.of();
-            }
-
+            System.out.println("Current user: " + currentUser);
             List<Users> partners = messageService.getConversationPartners(currentUser);
-
+            System.out.println("Partners: " + partners);
             return partners.stream().map(partner -> {
                 Messages latestMessage = messageService.getLatestMessageBetweenUsers(currentUser, partner);
                 long unreadCount = messageService.countUnreadMessagesFromUser(currentUser, partner);

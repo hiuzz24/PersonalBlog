@@ -46,38 +46,15 @@
         </a>
 
         <nav id="navmenu" class="navmenu">
-            <ul>
-                <li><a th:href="@{/}">Home</a></li>
-                <li><a href="about.html">About</a></li>
-                <li class="dropdown"><a href="#"><span>Categories</span> <i
-                        class="bi bi-chevron-down toggle-dropdown"></i></a>
-                    <ul>
-                        <li><a href="category.html">Category 1</a></li>
-                        <li class="dropdown"><a href="#"><span>Deep Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-                            <ul>
-                                <li><a href="#">Deep Dropdown 1</a></li>
-                                <li><a href="#">Deep Dropdown 2</a></li>
-                                <li><a href="#">Deep Dropdown 3</a></li>
-                                <li><a href="#">Deep Dropdown 4</a></li>
-                                <li><a href="#">Deep Dropdown 5</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="category.html">Category 2</a></li>
-                        <li><a href="category.html">Category 3</a></li>
-                        <li><a href="category.html">Category 4</a></li>
-                    </ul>
-                </li>
-                <li><a href="contact.html">Contact</a></li>
-            </ul>
+
             <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
         </nav>
 
-        <div class="header-social-links">
+        <div class="header-social-links d-flex align-items-center pe-3" style="margin-left:auto;">
             <div class="dropdown">
-                <a href="#" class="d-flex align-items-center" id="userDropdown" data-bs-toggle="dropdown"
-                   aria-expanded="false" style="padding:0; border:none; background:none;">
-                    <img th:src="${user != null && user.avatarUrl != null && !#strings.isEmpty(user.avatarUrl) ? user.avatarUrl : '/assets/img/user.png'}"
-                         alt="avatar" style="width:36px; height:36px; border-radius:50%; object-fit:cover;">
+                <a href="#" class="d-flex align-items-center" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding:0; border:none; background:none;">
+                    <h5 class="sitename mb-0 d-flex align-items-center" style="font-size: 1.5rem; margin-right: 10px; display: flex; align-items: center; height: 56px; line-height: 56px; color: #535353;" th:text="${user.fullName != null ? user.fullName : user.username}"></h5>
+                    <img th:src="${user?.avatarUrl != null && !#strings.isEmpty(user.avatarUrl) ? user.avatarUrl : '/assets/img/user.png'}" alt="avatar" style="width:36px; height:36px; border-radius:50%; object-fit:cover;">
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                     <li>
@@ -166,7 +143,7 @@
                                         th:data-post-id="${postDetail.postID}"
                                         th:classappend="${isFavorited} ? 'btn-danger' : 'btn-outline-danger'">
                                     <i class="bi" th:classappend="${isFavorited} ? 'bi-heart-fill' : 'bi-heart'"></i>
-                                    <span th:text="${isFavorited} ? 'Đã lưu' : 'Lưu bài viết'"></span>
+                                    <span th:text="${isFavorited} ? 'Saved' : 'Save post'"></span>
                                 </button>
                             </div>
 
@@ -189,7 +166,6 @@
                 <section id="blog-comments" class="blog-comments section">
 
                     <div class="container">
-
                         <h4 class="comments-count" th:text="${countComment} +' comments'"></h4>
 
                         <ol class="comment-list" style="list-style: none; padding-left: 0;">
@@ -290,9 +266,7 @@
                             <div class="text-center">
                                 <button type="submit" class="btn btn-primary">Post Comment</button>
                             </div>
-
                         </form>
-
                     </div>
                 </section><!-- /Comment Form Section -->
 
@@ -344,18 +318,19 @@
     </div>
 
 
+
     <!-- Chat Modal -->
     <div class="modal fade" id="chatModal" tabindex="-1" aria-labelledby="chatModalLabel" aria-hidden="true"
+         data-bs-backdrop="false" data-bs-keyboard="true"
          style="position: fixed; bottom: 0; right: 60px; left: auto; z-index: 1055; width: 100%; max-width: 400px; margin: 0; pointer-events: none;">
         <div class="modal-dialog modal-lg m-0"
-             style="position: absolute; bottom: 0; right: 0; left: auto; width: 100%; max-width: 400px; margin: 0; pointer-events: auto; transform: none;">
+             style="position: absolute; bottom: 0; right: 0; left: auto; width: 100%; max-width: 400px; margin: 0; transform: none; pointer-events: auto;">
             <div class="modal-content" style="border-radius: 1rem 1rem 0 0; box-shadow: 0 0 20px rgba(0,0,0,0.15);">
                 <div class="modal-header bg-primary text-white rounded-top">
                     <h5 class="modal-title" id="chatModalLabel">
                         <i class="bi bi-chat-dots me-2"></i>Chat with <span id="chatPartnerName" class="fw-bold"></span>
                     </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                            aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-0">
                     <div id="chatMessages" class="chat-messages bg-light"
@@ -375,6 +350,7 @@
             </div>
         </div>
     </div>
+
 
 
     </div>
@@ -585,24 +561,24 @@
                                     // Post is now favorited
                                     btn.className = 'btn btn-danger';
                                     icon.className = 'bi bi-heart-fill';
-                                    span.textContent = 'Đã lưu';
+                                    span.textContent = 'Saved';
                                 } else {
                                     // Post is no longer favorited
                                     btn.className = 'btn btn-outline-danger';
                                     icon.className = 'bi bi-heart';
-                                    span.textContent = 'Lưu bài viết';
+                                    span.textContent = 'Save post';
                                 }
 
                                 // Show success message (optional)
                                 showToast(data.message, 'success');
                             } else {
                                 // Show error message
-                                showToast(data.message || 'Có lỗi xảy ra', 'error');
+                                showToast(data.message || 'An error occurred.', 'error');
                             }
                         })
                         .catch(error => {
                             console.error('Error:', error);
-                            showToast('Có lỗi xảy ra khi lưu bài viết', 'error');
+                            showToast('An error occurred while saving the post.', 'error');
                         })
                         .finally(() => {
                             // Re-enable button
@@ -660,11 +636,8 @@
 <footer id="footer" class="footer dark-background">
 
 
-    </div>
-
     <div class="container copyright text-center mt-4">
-        <p> 2024 <span>Copyright</span> <strong class="px-1 sitename">PersonalBlog</strong>
-            <span>All Rights Reserved</span>
+        <p>© <span>Copyright</span> <strong class="px-1 sitename">PersonalBlog</strong> <span>All Rights Reserved</span>
         </p>
     </div>
 
