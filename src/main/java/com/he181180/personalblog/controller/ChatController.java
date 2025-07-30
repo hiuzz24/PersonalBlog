@@ -140,7 +140,7 @@ public class ChatController {
                 Map<String, Object> conversation = new HashMap<>();
                 conversation.put("partnerId", partner.getUserID());
                 conversation.put("partnerName", partner.getFullName() != null ? partner.getFullName() : partner.getUsername());
-                conversation.put("partnerAvatar", partner.getAvatarUrl() != null ? partner.getAvatarUrl() : "/assets/img/user.png");
+                conversation.put("partnerAvatar", partner.getAvatarUrl() != null ? partner.getAvatarUrl() : "/assets/img/person-1.jpg");
                 conversation.put("partnerUsername", partner.getUsername());
                 
                 if (latestMessage != null) {

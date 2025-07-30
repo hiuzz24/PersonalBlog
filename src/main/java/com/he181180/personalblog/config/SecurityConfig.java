@@ -36,6 +36,7 @@ public class SecurityConfig {
                                          "/register", "/img/**",
                                          "/css/**","/js/**","/assets/**", "/favicon.ico", "/forgotPassword", "/resetPassword", "/savePassword").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/follows/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(login -> login

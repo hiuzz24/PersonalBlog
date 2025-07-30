@@ -7,6 +7,7 @@ import org.hibernate.annotations.ColumnDefault;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -57,8 +58,18 @@ public class Users {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<PasswordResetToken> tokens;
 
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "follows",
+            joinColumns = @JoinColumn(name = "follower_id"),
+            inverseJoinColumns = @JoinColumn(name = "following_id"))
+    private Set<Users> following;
+
+    @ManyToMany(mappedBy = "following")
+    private Set<Users> followers;
+
     public boolean isHasPassword() {
         return password != null && !password.isEmpty();
     }
 }
+
 

@@ -26,4 +26,7 @@ public interface UserRepository extends JpaRepository<Users,Integer> {
     Users findUsersByUserID(int userID);
 
     List<Users> findAllByDeletedFalse();
+
+    @Query("SELECT u FROM Users u LEFT JOIN FETCH u.following WHERE u.userID = :userId")
+    Optional<Users> findByIdWithFollowing(@Param("userId") int userId);
 }

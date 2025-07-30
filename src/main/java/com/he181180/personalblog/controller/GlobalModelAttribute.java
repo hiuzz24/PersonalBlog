@@ -62,4 +62,6 @@ public class GlobalModelAttribute {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return currentUserService.getCurrentUser(authentication);
     }
+
+
 }

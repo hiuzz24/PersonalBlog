@@ -43,6 +43,10 @@ public class PostController {
     @Autowired
     private FavoriteService favoriteService;
 
+    @Autowired
+    private FollowService followService;
+
+
     @GetMapping("/explore")
     public String explore(@RequestParam(defaultValue = "1") int page, Model model){
         int pageSize = 6;
@@ -104,9 +108,10 @@ public class PostController {
 
         // Check if post is favorited by current user using CurrentUserService
         boolean isFavorited = false;
+        Users currentUser = null ;
         if (authentication != null) {
             try {
-                Users currentUser = currentUserService.getCurrentUser(authentication);
+                currentUser = currentUserService.getCurrentUser(authentication);
                 if (currentUser != null) {
                     isFavorited = favoriteService.isPostFavorited(currentUser, posts);
                 }
@@ -114,8 +119,10 @@ public class PostController {
                 // Handle exception silently
             }
         }
-        model.addAttribute("isFavorited", isFavorited);
 
+        boolean isFollowing = followService.isFollowing(posts.getUsers().getUserID() , authentication);
+        model.addAttribute("isFavorited", isFavorited);
+        model.addAttribute("isFollowing", isFollowing);
         model.addAttribute("comments", comments);
         model.addAttribute("countComment", countComment);
         return "postDetail";
