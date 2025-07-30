@@ -24,12 +24,14 @@ public interface PostService {
     List<Posts> getAllPosts();
     List<Posts> findAllPostPending();
     String handleImageUrl(String imageUrl, MultipartFile fileImage) throws IOException;
-    long countApprovedToday();
-    long countRejectedToday();
+    long countApproved();
+    long countRejected();
     Long countPendingPost();
     Map<String,Integer> getPostCountByTag();
     Map<String,Integer> top5Author();
     Map<String,Integer> postPerStatus();
     Map<String,Integer> postPerMonth(int year);
     List<Posts> findAllByUsers_DeletedFalseAndStatusRejected();
+    public Map<String,String> uploadImageForCkeditor(MultipartFile upload) throws IOException;
+
 }

@@ -4,6 +4,7 @@ import com.he181180.personalblog.DTO.UserUpdateDTO;
 import com.he181180.personalblog.Mapper.UserMapper;
 import com.he181180.personalblog.entity.Posts;
 import com.he181180.personalblog.entity.Users;
+import com.he181180.personalblog.service.CurrentUserService;
 import com.he181180.personalblog.service.PostService;
 import com.he181180.personalblog.service.UserService;
 import jakarta.validation.Valid;
@@ -45,26 +46,20 @@ public class ProfileController {
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    private CurrentUserService currentUserService;
 
     @GetMapping
     public String profile(Authentication authentication, Model model) {
         Users user = null;
         if (authentication != null) {
-            Object principal = authentication.getPrincipal();
-            if (principal instanceof org.springframework.security.oauth2.core.user.OAuth2User oauth2User) {
-                String email = oauth2User.getAttribute("email");
-                user = userService.findUserByEmail(email).orElse(null);
-            } else {
-                String username = authentication.getName();
-                user = userService.findUserByUsername(username).orElse(null);
-            }
-            UserUpdateDTO userUpdateDTO = UserUpdateDTO.builder()
+           user = currentUserService.getCurrentUser(authentication);
+           UserUpdateDTO userUpdateDTO = UserUpdateDTO.builder()
                     .email(user.getEmail())
                     .fullName(user.getFullName())
                     .bio(user.getBio())
                     .build();
             model.addAttribute("userUpdateDTO", userUpdateDTO);
-
         }
         if (user == null) {
             user = new Users();
@@ -81,7 +76,6 @@ public class ProfileController {
     }
 
 
-
     @PostMapping("/updateAvatar")
     public String updateProfileAvatar(
             Authentication authentication,
@@ -90,14 +84,7 @@ public class ProfileController {
 
         Users user = null;
         if (authentication != null) {
-            Object principal = authentication.getPrincipal();
-            if (principal instanceof org.springframework.security.oauth2.core.user.OAuth2User oauth2User) {
-                String email = oauth2User.getAttribute("email");
-                user = userService.findUserByEmail(email).orElse(null);
-            } else {
-                String username = authentication.getName();
-                user = userService.findUserByUsername(username).orElse(null);
-            }
+            user = currentUserService.getCurrentUser(authentication);
         }
         if (user == null) {
             return "redirect:/profile?error=user-not-found";
@@ -105,19 +92,28 @@ public class ProfileController {
 
         // Handle avatar file upload
         if (avatarFile != null && !avatarFile.isEmpty()) {
-            String uploadDir = "D:/avatar/";
-            String fileName = UUID.randomUUID() + "_" +avatarFile.getOriginalFilename();
-            Files.createDirectories(Path.of(uploadDir));
-            Path path = Path.of(uploadDir + fileName);
-            Files.copy(avatarFile.getInputStream(),path, StandardCopyOption.REPLACE_EXISTING);
-            user.setAvatarUrl("/avatar/" +fileName);
-            System.out.println(user.getAvatarUrl());
-            userService.saveUser(user);
+            // Save to src/main/resources/static/img/ so it works in both dev and prod
+            String uploadDir = System.getProperty("user.dir") + "/src/main/resources/static/img/";
+            File dir = new File(uploadDir);
+            if (!dir.exists()) dir.mkdirs();
+            String fileName = System.currentTimeMillis() + "_" + avatarFile.getOriginalFilename();
+            File dest = new File(dir, fileName);
+            try {
+                avatarFile.transferTo(dest);
+                user.setAvatarUrl("/img/" + fileName);
+                System.out.println("Avatar uploaded successfully: " + user.getAvatarUrl());
+            } catch (IOException e) {
+                e.printStackTrace();
+                return "redirect:/profile?error=upload-failed";
+            }
+        } else if (avatarUrl != null && !avatarUrl.trim().isEmpty()) {
+            user.setAvatarUrl(avatarUrl.trim());
+        } else if (user.getAvatarUrl() == null || user.getAvatarUrl().isEmpty()) {
+            // Set default avatar if none is set
+            user.setAvatarUrl("/img/default-avatar.png");
         }
-        if(avatarUrl != null && !avatarUrl.isEmpty()){
-            user.setAvatarUrl(avatarUrl);
-            userService.saveUser(user);
-        }
+        userService.saveUser(user);
+
         // Add cache-busting parameter to force browser to reload the image
         return "redirect:/profile?updated=" + System.currentTimeMillis();
     }
@@ -125,13 +121,16 @@ public class ProfileController {
     @PostMapping("/update")
     public String updateProfile(Authentication authentication, Model model,
                                 @ModelAttribute("userUpdateDTO")  @Valid UserUpdateDTO userUpdate) {
-        String useName = authentication.getName();
-        Optional<Users> usersOptional = userService.findUserByUsername(useName);
-        Users user = usersOptional.get();
+
+        Users user = currentUserService.getCurrentUser(authentication);
         userMapper.updateUser(user,userUpdate);
+        System.out.println(user.getAvatarUrl());
         userService.saveUser(user);
         model.addAttribute("user", user);
-        System.out.println(userUpdate.toString());
+        String avatarSrc = (user.getAvatarUrl() != null && !user.getAvatarUrl().isEmpty())
+                ? user.getAvatarUrl() + "?t=" + System.currentTimeMillis()
+                : "/img/default-avatar.png";
+        model.addAttribute("avatarSrc", avatarSrc);
         return "UserDashboard/Profile";
     }
 

@@ -42,26 +42,35 @@
             <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
         </nav>
 
-        <div class="header-social-links">
+        <div class="header-social-links d-flex align-items-center pe-3" style="margin-left:auto;">
             <div class="dropdown">
-                <a href="#" class="d-flex align-items-center" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding:0; border:none; background:none;">
-                    <h5 class="sitename mb-0 d-flex align-items-center" style="font-size: 1.5rem; margin-right: 10px; display: flex; align-items: center; height: 56px; line-height: 56px; color: #535353;" th:text="${user.fullName != null ? user.fullName : user.username}"></h5>
-                    <img th:src="${user != null && user.avatarUrl != null && !#strings.isEmpty(user.avatarUrl) ? user.avatarUrl : '/assets/img/user.png'}" alt="avatar" style="width:36px; height:36px; border-radius:50%; object-fit:cover;">
+                <a href="#" class="d-flex align-items-center" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding:0; border:none; background:none; transition: all 0.3s ease;">
+                    <h5 class="sitename mb-0 d-flex align-items-center" style="font-size: 1.2rem; margin-right: 12px; display: flex; align-items: center; height: 56px; line-height: 56px; color: #535353; font-weight: 500;" th:text="${user.fullName != null ? user.fullName : user.username}"></h5>
+                    <img th:src="${user.avatarUrl}" alt="avatar" style="width:40px; height:40px; border-radius:50%; object-fit:cover; border: 2px solid rgba(102, 126, 234, 0.3); transition: all 0.3s ease;">
                 </a>
 
 
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                    <li>
-                        <form th:action="@{/profile}" style="display: inline;">
-                            <button type="submit" class="dropdown-item">Profile</button>
+                    <li th:if="${user != null && user.role == 'ADMIN'}">
+                        <form th:action="@{/admin}" style="display: inline;">
+                            <button type="submit" class="dropdown-item" style="border-radius: 8px; transition: all 0.3s ease;">
+                                <i class="bi bi-speedometer2 me-2"></i>Dashboard Admin</button>
                         </form>
+                        <hr class="dropdown-divider">
                     </li>
-
-                    <li><hr class="dropdown-divider"></li>
-
+                    <li th:if="${user != null && user.role.toUpperCase() == 'WRITER'}">
+                        <form th:action="@{/profile}" style="display: inline;">
+                            <button type="submit" class="dropdown-item" style="border-radius: 8px; transition: all 0.3s ease;">
+                                <i class="bi bi-person me-2"></i>Profile
+                            </button>
+                        </form>
+                        <hr class="dropdown-divider">
+                    </li>
                     <li>
                         <form th:action="@{/logout}" method="post" style="display: inline;">
-                            <button type="submit" class="dropdown-item">Logout</button>
+                            <button type="submit" class="dropdown-item text-danger" style="border-radius: 8px; transition: all 0.3s ease;">
+                                <i class="bi bi-box-arrow-right me-2"></i>Logout
+                            </button>
                         </form>
                     </li>
                 </ul>
@@ -235,6 +244,7 @@
 <!-- Main JS File -->
 <script th:src="@{/assets/js/main.js}"></script>
 
+</script>
 </body>
 
 </html>

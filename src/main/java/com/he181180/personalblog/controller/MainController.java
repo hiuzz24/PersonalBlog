@@ -88,6 +88,9 @@ public class MainController {
         }
 
         if (hasError) {
+            model.addAttribute("fullName", fullName);
+            model.addAttribute("username", username);
+            model.addAttribute("email", email);
             return "register";
         }
         Users newUser = new Users();
@@ -95,8 +98,8 @@ public class MainController {
         newUser.setUsername(username);
         newUser.setEmail(email);
         newUser.setPassword(passwordEncoder.encode(password));
-        newUser.setRole("writer");
-        newUser.setAvatarUrl("/static/img/default-avatar.png");
+        newUser.setRole("WRITER");
+        newUser.setAvatarUrl("/avatar/user.png");
         userRepository.save(newUser);
         return "redirect:/login";
     }
@@ -241,4 +244,8 @@ public class MainController {
         return "resetPassword";
     }
 
+    @GetMapping("/author")
+    public String author(){
+        return "author-profile";
+    }
 }
