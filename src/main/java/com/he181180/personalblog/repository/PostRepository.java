@@ -50,7 +50,10 @@ public interface PostRepository extends JpaRepository<Posts, Integer> {
     @Query("SELECT COUNT(p) FROM Posts p WHERE p.status = 'Rejected' AND DATE(p.updatedAt) = CURRENT_DATE")
     long countRejectedToday();
 
-    @Query("SELECT p FROM Posts p WHERE p.users.userID = :userID AND p.users.deleted = false ORDER BY p.updatedAt DESC")
+    @Query("SELECT p FROM Posts p WHERE p.users.userID = :userID " +
+            "AND p.users.deleted = false " +
+            "and p.published = true " +
+            "order by p.published desc")
     List<Posts> findAllPostsByUserID(@Param("userID") int userID);
 
     @Query("SELECT COUNT(p) FROM Posts p WHERE p.status = 'Pending'")

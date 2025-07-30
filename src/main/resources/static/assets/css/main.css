@@ -2279,7 +2279,7 @@ body {
   width: 280px;
   transition: all 0.3s ease;
   color: white;
-  height: 100vh;
+  height: auto;
   padding-top: 20px;
   border-right: 1px solid #ddd;
 }

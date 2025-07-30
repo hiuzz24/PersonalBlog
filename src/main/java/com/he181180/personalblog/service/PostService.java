@@ -32,4 +32,6 @@ public interface PostService {
     Map<String,Integer> postPerStatus();
     Map<String,Integer> postPerMonth(int year);
     List<Posts> findAllByUsers_DeletedFalseAndStatusRejected();
+    public Map<String,String> uploadImageForCkeditor(MultipartFile upload) throws IOException;
+
 }
