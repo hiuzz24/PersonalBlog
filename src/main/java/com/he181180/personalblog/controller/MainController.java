@@ -89,6 +89,9 @@ public class MainController {
         }
 
         if (hasError) {
+            model.addAttribute("fullName", fullName);
+            model.addAttribute("username", username);
+            model.addAttribute("email", email);
             return "register";
         }
         Users newUser = new Users();
@@ -106,14 +109,13 @@ public class MainController {
     public String googleLoginSuccess(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, Model model) {
         if (customOAuth2User != null) {
             Users user = customOAuth2User.getUser();
-
+            
             // If user does not have a username → ask for username
             if (user.getUsername() == null || user.getUsername().isEmpty()) {
                 model.addAttribute("email", user.getEmail());
                 return "complete-username"; // Redirect to a page to complete the username
             }
         }
-
         return "redirect:/explore";
     }
 
