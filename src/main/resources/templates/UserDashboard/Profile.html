@@ -134,7 +134,6 @@
             transition: all 0.3s ease;
         }
 
-
         .nav-link:hover::before {
             left: 100%;
         }
@@ -230,6 +229,13 @@
             padding: 3rem;
         }
 
+        /* Enhanced equal height system */
+        .equal-height-row {
+            display: flex;
+            align-items: stretch;
+            gap: 2rem;
+        }
+
         .avatar-section {
             background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(10px);
@@ -237,14 +243,50 @@
             padding: 2rem;
             box-shadow: var(--shadow-soft);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            margin-bottom: 2rem;
             text-align: center;
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-height: 400px; /* Base minimum height */
         }
 
+        .info-section {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            flex: 2;
+            min-height: 400px; /* Base minimum height */
+        }
 
+        /* When change box is open, both sections grow to match */
+        .change-box-open .avatar-section,
+        .change-box-open .info-section {
+            min-height: 600px; /* Increased height when change box is open */
+        }
+
+        .avatar-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .info-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
 
         .profile-avatar {
             width: 150px;
@@ -270,24 +312,15 @@
             padding: 1.5rem;
             border: 2px dashed #dee2e6;
             transition: all 0.3s ease;
+            width: 100%;
+            margin-top: auto; /* Push to bottom of avatar section */
         }
 
-        .change-avatar-box:hover {
-            border-color: #667eea;
-            background: rgba(102, 126, 234, 0.05);
+        .change-avatar-box.show {
+            opacity: 1;
+            transform: translateY(0);
         }
 
-        .info-section {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 2rem;
-            box-shadow: var(--shadow-soft);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
         .section-title {
             font-size: 1.5rem;
             font-weight: 600;
@@ -323,10 +356,11 @@
             left: -9999px;
         }
 
-
         .btn-primary {
             background: var(--primary-gradient);
             box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            border: none;
+            transition: all 0.3s ease;
         }
 
         .btn-primary:hover {
@@ -337,6 +371,8 @@
         .btn-secondary {
             background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
             box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
+            border: none;
+            transition: all 0.3s ease;
         }
 
         .btn-secondary:hover {
@@ -347,6 +383,8 @@
         .btn-info {
             background: var(--success-gradient);
             box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
+            border: none;
+            transition: all 0.3s ease;
         }
 
         .btn-info:hover {
@@ -381,6 +419,21 @@
 
         /* Mobile Responsiveness */
         @media (max-width: 768px) {
+            .equal-height-row {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .avatar-section,
+            .info-section {
+                min-height: auto;
+            }
+
+            .change-box-open .avatar-section,
+            .change-box-open .info-section {
+                min-height: auto;
+            }
+
             .profile-content {
                 padding: 20px;
             }
@@ -419,12 +472,12 @@
         const sidebar = document.getElementById('sidebark');
         sidebar.classList.toggle('closed');
 
-        // Lưu trạng thái sidebar vào session
+        // Save sidebar state to session
         const isClosed = sidebar.classList.contains('closed');
         sessionStorage.setItem('sidebarClosed', isClosed);
     }
 
-    // Khôi phục trạng thái sidebar khi tải trang
+    // Restore sidebar state when page loads
     function restoreSidebarState() {
         const sidebar = document.getElementById('sidebark');
         const isClosed = sessionStorage.getItem('sidebarClosed') === 'true';
@@ -438,10 +491,14 @@
 
     function toggleChangeBox() {
         const box = document.getElementById('changeBox');
+        const profileContent = document.querySelector('.profile-content');
+
         if (box.style.display === 'block') {
             box.style.display = 'none';
+            profileContent.classList.remove('change-box-open');
         } else {
             box.style.display = 'block';
+            profileContent.classList.add('change-box-open');
         }
     }
 
@@ -450,7 +507,7 @@
         const preview = document.getElementById('previewAvatar');
         if (input.files && input.files[0]) {
             preview.src = URL.createObjectURL(input.files[0]);
-            document.getElementById('profileForm').submit(); // Tự động submit
+            document.getElementById('profileForm').submit(); // Auto submit
         }
     }
 
@@ -498,11 +555,17 @@
     }
 
     function showChangeBox() {
-        document.getElementById('changeBox').style.display = 'block';
+        const box = document.getElementById('changeBox');
+        const profileContent = document.querySelector('.profile-content');
+        box.style.display = 'block';
+        profileContent.classList.add('change-box-open');
     }
 
     function hideChangeBox() {
-        document.getElementById('changeBox').style.display = 'none';
+        const box = document.getElementById('changeBox');
+        const profileContent = document.querySelector('.profile-content');
+        box.style.display = 'none';
+        profileContent.classList.remove('change-box-open');
     }
 
     function requestConfirmationCode() {
@@ -525,7 +588,7 @@
             });
     }
 
-    // Khôi phục trạng thái sidebar khi tải trang
+    // Restore sidebar state when page loads
     document.addEventListener('DOMContentLoaded', function() {
         restoreSidebarState();
 
@@ -703,50 +766,52 @@
 
                 <!-- Profile Content -->
                 <div class="profile-content">
-                    <div class="row gy-4 align-items-start">
+                    <div class="equal-height-row">
                         <!-- Avatar Section -->
-                        <div class="col-md-4">
-                            <div class="avatar-section">
-                                <form th:action="@{/profile/updateAvatar}" method="post" enctype="multipart/form-data" id="avatarForm">
-                                    <div class="avatar-wrapper">
-                                        <img th:src="${avatarSrc}" id="previewAvatar" alt="Avatar" class="profile-avatar" style="cursor:pointer;" onclick="toggleChangeBox()">
-                                    </div>
-
-                                    <h5 class="mb-3">Profile Picture</h5>
-                                    <p class="text-muted mb-3">Click on your avatar to change it</p>
-
-                                    <!-- Avatar Change Box -->
-                                    <div id="changeBox" class="change-avatar-box mt-3" style="display:none;">
-                                        <div class="upload-btn-wrapper mb-3">
-                                            <button type="button" class="btn btn-secondary w-100" onclick="document.getElementById('avatarFile').click()">
-                                                <i class="bi bi-cloud-upload me-2"></i>
-                                                Upload from Computer
-                                            </button>
-                                            <input type="file" name="avatarFile" id="avatarFile" accept="image/*" onchange="previewFile()">
+                        <div class="avatar-section">
+                            <div class="avatar-content">
+                                <div>
+                                    <form th:action="@{/profile/updateAvatar}" method="post" enctype="multipart/form-data" id="avatarForm">
+                                        <div class="avatar-wrapper">
+                                            <img th:src="${avatarSrc}" id="previewAvatar" alt="Avatar" class="profile-avatar" style="cursor:pointer;" onclick="toggleChangeBox()">
                                         </div>
 
-                                        <div class="text-center mb-3">
-                                            <span class="text-muted">or</span>
-                                        </div>
+                                        <h5 class="mb-3">Profile Picture</h5>
+                                        <p class="text-muted mb-3">Click on your avatar to change it</p>
 
-                                        <input type="url" name="avatarUrl" id="avatarUrl" class="form-control mb-3" placeholder="Paste image URL here" onchange="previewUrl()">
+                                        <!-- Avatar Change Box -->
+                                        <div id="changeBox" class="change-avatar-box mt-3" style="display:none;">
+                                            <div class="upload-btn-wrapper mb-3">
+                                                <button type="button" class="btn btn-secondary w-100" onclick="document.getElementById('avatarFile').click()">
+                                                    <i class="bi bi-cloud-upload me-2"></i>
+                                                    Upload from Computer
+                                                </button>
+                                                <input type="file" name="avatarFile" id="avatarFile" accept="image/*" onchange="previewFile()">
+                                            </div>
 
-                                        <div class="d-flex gap-2">
-                                            <button type="button" class="btn btn-info flex-fill" onclick="handlePreview()">
-                                                <i class="bi bi-eye me-2"></i>Preview
-                                            </button>
-                                            <button type="submit" class="btn btn-primary flex-fill">
-                                                <i class="bi bi-save me-2"></i>Save Avatar
-                                            </button>
+                                            <div class="text-center mb-3">
+                                                <span class="text-muted">or</span>
+                                            </div>
+
+                                            <input type="url" name="avatarUrl" id="avatarUrl" class="form-control mb-3" placeholder="Paste image URL here" onchange="previewUrl()">
+
+                                            <div class="d-flex gap-2">
+                                                <button type="button" class="btn btn-info flex-fill" onclick="handlePreview()">
+                                                    <i class="bi bi-eye me-2"></i>Preview
+                                                </button>
+                                                <button type="submit" class="btn btn-primary flex-fill">
+                                                    <i class="bi bi-save me-2"></i>Save Avatar
+                                                </button>
+                                            </div>
                                         </div>
-                                    </div>
-                                </form>
+                                    </form>
+                                </div>
                             </div>
                         </div>
 
                         <!-- Information Section -->
-                        <div class="col-md-8">
-                            <div class="info-section">
+                        <div class="info-section">
+                            <div class="info-content">
                                 <h3 class="section-title">
                                     <i class="bi bi-info-circle"></i>
                                     Personal Information
@@ -778,12 +843,11 @@
                                                   th:field="*{bio}"></textarea>
                                     </div>
 
-                                    <div class="d-flex gap-2">
+                                    <div class="d-flex gap-2 mt-auto">
                                         <button type="submit" class="btn btn-primary">
                                             <i class="bi bi-save me-2"></i>
                                             Save changes
                                         </button>
-
                                     </div>
                                 </form>
                             </div>

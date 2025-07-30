@@ -25,8 +25,8 @@ public class AdminModerateController {
         List<Posts> allPostPending = postService.findAllPostPending();
 
         model.addAttribute("totalPending", allPostPending.size());
-        model.addAttribute("approvedToday", postService.countApprovedToday());
-        model.addAttribute("rejectedToday", postService.countRejectedToday());
+        model.addAttribute("approved", postService.countApproved());
+        model.addAttribute("rejected", postService.countRejected());
         model.addAttribute("posts",allPostPending);
         model.addAttribute("rejectedTab", false);
         return "AdminDashboard/moderateNewBlogs";
@@ -36,8 +36,8 @@ public class AdminModerateController {
     public String moderateRejectedBlogs(Model model){
         List<Posts> rejectedPosts = postService.findAllByUsers_DeletedFalseAndStatusRejected();
         model.addAttribute("totalPending", postService.findAllPostPending().size());
-        model.addAttribute("approvedToday", postService.countApprovedToday());
-        model.addAttribute("rejectedToday", postService.countRejectedToday());
+        model.addAttribute("approved", postService.countApproved());
+        model.addAttribute("rejected", postService.countRejected());
         model.addAttribute("posts", rejectedPosts);
         model.addAttribute("rejectedTab", true);
         return "AdminDashboard/moderateNewBlogs";
@@ -94,8 +94,8 @@ public class AdminModerateController {
 
         model.addAttribute("posts", filteredPosts);
         model.addAttribute("totalPending", allPostPending.size());
-        model.addAttribute("approvedToday", postService.countApprovedToday());
-        model.addAttribute("rejectedToday", postService.countRejectedToday());
+        model.addAttribute("approved", postService.countApproved());
+        model.addAttribute("rejected", postService.countRejected());
         model.addAttribute("searchQuery", searchQuery);
         return "AdminDashboard/moderateNewBlogs";
     }

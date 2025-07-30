@@ -127,13 +127,13 @@ public class PostServiceImpl implements PostService {
 }
 
     @Override
-    public long countApprovedToday() {
-        return postRepository.countApprovedToday();
+    public long countApproved() {
+        return postRepository.countApproved();
     }
 
     @Override
-    public long countRejectedToday() {
-        return postRepository.countRejectedToday();
+    public long countRejected() {
+        return postRepository.countRejected();
     }
 
     @Override
