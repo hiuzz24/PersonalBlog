@@ -4,6 +4,7 @@ import com.he181180.personalblog.entity.Posts;
 import com.he181180.personalblog.repository.PostRepository;
 import com.he181180.personalblog.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -78,6 +79,12 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public Page<Posts> getPostByUserIDPagination(int userID, int page, int size) {
+        Pageable pageable = PageRequest.of(page,size);
+        return postRepository.findAllPostsByUserIDPagination(userID,pageable);
+    }
+
+    @Override
     public List<Posts> getPostByUserID(int userID) {
         return postRepository.findAllPostsByUserID(userID);
     }
@@ -112,19 +119,24 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public String handleImageUrl(String imageUrl, MultipartFile fileImage) throws IOException {
-        if(imageUrl != null && !imageUrl.isEmpty()){
+        if (imageUrl != null && !imageUrl.isEmpty()) {
             return imageUrl;
         }
-         if(!fileImage.isEmpty()){
-             String uploadDir = "D:/uploads/";
-             String fileName = UUID.randomUUID() + "_" +fileImage.getOriginalFilename();
-             Files.createDirectories(Path.of(uploadDir));
-             Path path = Path.of(uploadDir + fileName);
-             Files.copy(fileImage.getInputStream(),path, StandardCopyOption.REPLACE_EXISTING);
-             return "/uploads/" +fileName;
+        if (!fileImage.isEmpty()) {
+            Map<String, String> url = new HashMap<>();
+
+            String uploadDir = System.getProperty("user.dir") + "/uploads/img/";
+            Files.createDirectories(Path.of(uploadDir));
+
+            String fileName = UUID.randomUUID() + "_" + fileImage.getOriginalFilename();
+            Path filePath = Path.of(uploadDir + fileName);
+
+            Files.copy(fileImage.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+            return "/uploads/img/" + fileName;
+        }
+        return null;
     }
-         return null;
-}
 
     @Override
     public long countApproved() {
@@ -144,24 +156,24 @@ public class PostServiceImpl implements PostService {
     @Override
     public Map<String, Integer> getPostCountByTag() {
         List<Object[]> result = postRepository.getPostCountByTag();
-        Map<String,Integer> map = new HashMap<>();
-        for(Object[] row : result){
-            String name = (String)row[0];
-            Long value = (Long)row[1];
-            map.put(name,value.intValue());
+        Map<String, Integer> map = new HashMap<>();
+        for (Object[] row : result) {
+            String name = (String) row[0];
+            Long value = (Long) row[1];
+            map.put(name, value.intValue());
         }
         return map;
     }
 
     @Override
     public Map<String, Integer> top5Author() {
-        Pageable top5 = PageRequest.of(0,5);
+        Pageable top5 = PageRequest.of(0, 5);
         List<Object[]> result = postRepository.top5Author(top5);
-        Map<String,Integer> map = new HashMap<>();
-        for(Object[] row : result){
-            String name = (String)row[0];
-            Long value = (Long)row[1];
-            map.put(name,value.intValue());
+        Map<String, Integer> map = new HashMap<>();
+        for (Object[] row : result) {
+            String name = (String) row[0];
+            Long value = (Long) row[1];
+            map.put(name, value.intValue());
         }
         return map;
     }
@@ -169,11 +181,11 @@ public class PostServiceImpl implements PostService {
     @Override
     public Map<String, Integer> postPerStatus() {
         List<Object[]> result = postRepository.postPerStatus();
-        Map<String,Integer> map  = new HashMap<>();
-        for(Object[] row : result){
-            String name = (String)row[0];
-            Long value = (Long)row[1];
-            map.put(name,value.intValue());
+        Map<String, Integer> map = new HashMap<>();
+        for (Object[] row : result) {
+            String name = (String) row[0];
+            Long value = (Long) row[1];
+            map.put(name, value.intValue());
         }
         return map;
     }
@@ -181,17 +193,17 @@ public class PostServiceImpl implements PostService {
     @Override
     public Map<String, Integer> postPerMonth(int year) {
         List<Object[]> result = postRepository.postPerMonth(year);
-        Map<String,Integer> map = new HashMap<>();
+        Map<String, Integer> map = new HashMap<>();
         String[] months = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
                 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
-        for(String mon : months){
-            map.put(mon,0);
+        for (String mon : months) {
+            map.put(mon, 0);
         }
 
-        for(Object[] row : result){
+        for (Object[] row : result) {
             Integer monthIndex = (Integer) row[0];
             Long value = (Long) row[1];
-            map.put(months[monthIndex-1],value.intValue());
+            map.put(months[monthIndex - 1], value.intValue());
         }
         return map;
     }
@@ -200,16 +212,21 @@ public class PostServiceImpl implements PostService {
     public List<Posts> findAllByUsers_DeletedFalseAndStatusRejected() {
         return postRepository.findAllByUsers_DeletedFalseAndStatusRejected();
     }
+
     @Override
     public Map<String, String> uploadImageForCkeditor(MultipartFile upload) throws IOException {
-        String uploadDir = "D:/uploads/";
-        String fileName = UUID.randomUUID() + "_" + upload.getOriginalFilename();
+        Map<String, String> url = new HashMap<>();
+
+        String uploadDir = System.getProperty("user.dir") + "/uploads/img/";
         Files.createDirectories(Path.of(uploadDir));
-        Path path = Path.of(uploadDir + fileName);
-        Files.copy(upload.getInputStream(),path,StandardCopyOption.REPLACE_EXISTING);
-        Map<String,String> url = new HashMap<>();
-        url.put("url","/uploads/"+fileName);
-        url.put("uploaded","true");
+
+        String fileName = UUID.randomUUID() + "_" + upload.getOriginalFilename();
+        Path filePath = Path.of(uploadDir + fileName);
+
+        Files.copy(upload.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+        url.put("url", "/uploads/img/" + fileName);
+        url.put("uploaded", "true");
         return url;
     }
 }

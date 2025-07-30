@@ -127,8 +127,8 @@
 
                             <div class="meta-top">
                                 <ul>
-                                    <li class="d-flex align-items-center"><i class="bi bi-person"
-                                                                             th:text="${postDetail.users.fullName}"></i>
+                                    <li class="d-flex align-items-center">
+                                        <a th:href="@{/author/ProfileUser/{userID}(userID=${postDetail.users.userID})}"><i class="bi bi-person" th:text="${postDetail.users.fullName}"></i></a>
                                     </li>
                                     <li class="d-flex align-items-center"><i class="bi bi-clock"></i> <a
                                             href="blog-details.html">

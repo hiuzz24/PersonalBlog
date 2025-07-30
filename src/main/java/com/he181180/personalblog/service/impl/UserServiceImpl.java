@@ -102,4 +102,10 @@ public class UserServiceImpl implements UserService {
         users.setDeleted(false);
         userRepository.save(users);
     }
+
+    @Override
+    public Users findUserByUserIDAndDeletedFalse(int userID) {
+        Users user = userRepository.findUsersByUserIDAndDeletedFalse(userID);
+        return user;
+    }
 }

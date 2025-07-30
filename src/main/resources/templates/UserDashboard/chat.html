@@ -406,7 +406,7 @@
                         <div class="col-md-8 chat-area">
                             <!-- Chat Header -->
                             <div id="chatHeader" class="chat-header" style="display: none;">
-                                <img id="chatPartnerAvatar" src="/assets/img/user.png" alt="Avatar" class="chat-partner-avatar">
+                                <img id="chatPartnerAvatar" src="" alt="Avatar" class="chat-partner-avatar">
                                 <div class="chat-partner-info">
                                     <h6 id="chatPartnerName">Select conversation</h6>
                                 </div>
@@ -562,13 +562,13 @@
             `;
 
             conversationItem.addEventListener('click', function() {
-                selectConversation(partnerId, partnerName);
+                selectConversation(partnerId, partnerName, partnerAvatar);
             });
             conversationsList.appendChild(conversationItem);
         });
     }
 
-    function selectConversation(userId, userName) {
+    function selectConversation(userId, userName, avatarUrl) {
         currentChatUserId = userId;
 
         // Update active conversation
@@ -581,6 +581,7 @@
         document.getElementById('chatHeader').style.display = 'block';
         document.getElementById('chatInputArea').style.display = 'block';
         document.getElementById('chatPartnerName').textContent = userName;
+        document.getElementById('chatPartnerAvatar').src = avatarUrl;
 
         // Load chat history
         loadChatHistory(userId);

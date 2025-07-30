@@ -60,31 +60,55 @@ public class ChangePasswordController {
         }
         if (user == null) {
             model.addAttribute("error", "User not found.");
-            // Render the change-password page with error
             model.addAttribute("user", null);
             return "UserDashboard/change-password";
         }
+
         if (user.getPassword() != null && !user.getPassword().isEmpty()) {
-            String sessionCode = (String) session.getAttribute("confirmationCode");
-            if (sessionCode == null || !sessionCode.equals(confirmationCode)) {
-                model.addAttribute("error", "Invalid or expired confirmation code.");
+            Boolean codeVerified = (Boolean) session.getAttribute("codeVerified");
+            Long codeVerifiedTimestamp = (Long) session.getAttribute("codeVerifiedTimestamp");
+
+            long currentTime = System.currentTimeMillis();
+            boolean verificationExpired = codeVerifiedTimestamp == null ||
+                                        (currentTime - codeVerifiedTimestamp) > 300000;
+
+            if (verificationExpired) {
+                session.removeAttribute("codeVerified");
+                session.removeAttribute("codeVerifiedTimestamp");
+                session.removeAttribute("confirmationCode");
+                session.removeAttribute("confirmationCodeTimestamp");
+                model.addAttribute("error", "Verification session has expired. Please verify your email again.");
                 model.addAttribute("user", user);
                 return "UserDashboard/change-password";
             }
+
+            if (codeVerified == null || !codeVerified) {
+                model.addAttribute("error", "Please verify your email first.");
+                model.addAttribute("user", user);
+                return "UserDashboard/change-password";
+            }
+
             if (currentPassword == null || !userService.checkPassword(user, currentPassword)) {
                 model.addAttribute("error", "Current password is incorrect.");
                 model.addAttribute("user", user);
                 return "UserDashboard/change-password";
             }
         }
+
         if (!newPassword.equals(confirmPassword)) {
             model.addAttribute("error", "New passwords do not match.");
             model.addAttribute("user", user);
             return "UserDashboard/change-password";
         }
+
         userService.changeUserPassword(user, newPassword);
         session.removeAttribute("confirmationCode");
+        session.removeAttribute("confirmationCodeTimestamp");
+        session.removeAttribute("codeVerified");
+        session.removeAttribute("codeVerifiedTimestamp");
+
         model.addAttribute("success", "Password changed successfully.");
+        model.addAttribute("user", user);
         return "UserDashboard/change-password";
     }
 }

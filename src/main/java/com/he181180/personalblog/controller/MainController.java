@@ -99,7 +99,7 @@ public class MainController {
         newUser.setEmail(email);
         newUser.setPassword(passwordEncoder.encode(password));
         newUser.setRole("WRITER");
-        newUser.setAvatarUrl("/avatar/user.png");
+        newUser.setAvatarUrl("/img/user.png");
         userRepository.save(newUser);
         return "redirect:/login";
     }
@@ -199,7 +199,7 @@ public class MainController {
             model.addAttribute("tokenError", "The link is invalid: Invalid token.");
         } else if (passToken.getExpiryDate().before(cal.getTime())) {
             passwordResetTokenRepository.delete(passToken);
-            model.addAttribute("tokenError", "The link is invalid: Token expired and is deleted.");
+            model.addAttribute("tokenError", "The link is invalid: Token expired.");
         } else {
             model.addAttribute("token", token);
         }

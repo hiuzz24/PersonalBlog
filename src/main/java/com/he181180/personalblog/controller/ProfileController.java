@@ -92,10 +92,10 @@ public class ProfileController {
 
         // Handle avatar file upload
         if (avatarFile != null && !avatarFile.isEmpty()) {
-            // Save to src/main/resources/static/img/ so it works in both dev and prod
-            String uploadDir = System.getProperty("user.dir") + "/src/main/resources/static/img/";
+            String uploadDir = System.getProperty("user.dir") + "/uploads/img/";
             File dir = new File(uploadDir);
             if (!dir.exists()) dir.mkdirs();
+
             String fileName = System.currentTimeMillis() + "_" + avatarFile.getOriginalFilename();
             File dest = new File(dir, fileName);
             try {
@@ -110,7 +110,7 @@ public class ProfileController {
             user.setAvatarUrl(avatarUrl.trim());
         } else if (user.getAvatarUrl() == null || user.getAvatarUrl().isEmpty()) {
             // Set default avatar if none is set
-            user.setAvatarUrl("/img/default-avatar.png");
+            user.setAvatarUrl("/img/user.png");
         }
         userService.saveUser(user);
 
@@ -133,33 +133,6 @@ public class ProfileController {
         model.addAttribute("avatarSrc", avatarSrc);
         return "UserDashboard/Profile";
     }
-
-    private String saveFileSomewhere(MultipartFile file) {
-        if (file == null || file.isEmpty()) return null;
-        // Save to static/img/ so Spring Boot can serve it
-        String uploadDir = "src/main/resources/static/img/";
-        File dir = new File(uploadDir);
-        if (!dir.exists()) dir.mkdirs();
-        String originalFilename = file.getOriginalFilename();
-        String ext = originalFilename.substring(originalFilename.lastIndexOf('.') + 1).toLowerCase();
-        String filename = System.currentTimeMillis() + "_avatar." + ext;
-        File dest = new File(uploadDir + filename);
-        try {
-            BufferedImage originalImage = ImageIO.read(file.getInputStream());
-            BufferedImage resizedImage = new BufferedImage(150, 150, BufferedImage.TYPE_INT_RGB);
-            Graphics2D g = resizedImage.createGraphics();
-            g.drawImage(originalImage, 0, 0, 150, 150, null);
-            g.dispose();
-            ImageIO.write(resizedImage, ext, dest);
-        } catch (IOException e) {
-            // TODO: Use proper logging
-            e.printStackTrace();
-            return null;
-        }
-        // Return URL for static/img/
-        return "/img/" + filename;
-    }
-
     @PostMapping("/send-confirmation-code")
     @ResponseBody
     public ResponseEntity<?> sendConfirmationCode(Authentication authentication, HttpSession session) {
@@ -179,8 +152,12 @@ public class ProfileController {
         }
         // Generate 6-digit code
         String code = String.format("%06d", new Random().nextInt(1000000));
-        // Store code in session
+        // Store code in session with timestamp
         session.setAttribute("confirmationCode", code);
+        session.setAttribute("confirmationCodeTimestamp", System.currentTimeMillis());
+        // Remove any previous verification status
+        session.removeAttribute("codeVerified");
+        session.removeAttribute("codeVerifiedTimestamp");
         // Send code to email (implement sendEmail in your UserService or MailService)
         try {
             userService.sendConfirmationCodeEmail(user.getEmail(), code);
@@ -195,9 +172,25 @@ public class ProfileController {
     public Map<String, Object> verifyConfirmationCode(@RequestBody Map<String, String> payload, HttpSession session) {
         String inputCode = payload.get("code");
         String sessionCode = (String) session.getAttribute("confirmationCode");
+        Long codeTimestamp = (Long) session.getAttribute("confirmationCodeTimestamp");
+
+        long currentTime = System.currentTimeMillis();
+        boolean codeExpired = codeTimestamp == null || (currentTime - codeTimestamp) > 300000;
+
+        if (codeExpired) {
+            session.removeAttribute("confirmationCode");
+            session.removeAttribute("confirmationCodeTimestamp");
+            return Map.of("success", false, "message", "Verification code has expired. Please request a new one.");
+        }
+
         boolean success = sessionCode != null && sessionCode.equals(inputCode);
+
+        if (success) {
+            // Mark code as verified with timestamp
+            session.setAttribute("codeVerified", true);
+            session.setAttribute("codeVerifiedTimestamp", currentTime);
+        }
+
         return Map.of("success", success);
     }
-
-
 }

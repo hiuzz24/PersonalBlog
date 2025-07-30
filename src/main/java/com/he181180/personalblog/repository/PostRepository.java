@@ -1,6 +1,7 @@
 package com.he181180.personalblog.repository;
 
 import com.he181180.personalblog.entity.Posts;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -49,6 +50,12 @@ public interface PostRepository extends JpaRepository<Posts, Integer> {
 
     @Query("SELECT COUNT(p) FROM Posts p WHERE p.status = 'Rejected'")
     long countRejected();
+
+    @Query("SELECT p FROM Posts p WHERE p.users.userID = :userID " +
+            "AND p.users.deleted = false " +
+            "and p.published = true " +
+            "order by p.published desc")
+    Page<Posts> findAllPostsByUserIDPagination(@Param("userID") int userID, Pageable pageable);
 
     @Query("SELECT p FROM Posts p WHERE p.users.userID = :userID " +
             "AND p.users.deleted = false " +
