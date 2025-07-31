@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -76,5 +77,27 @@ public class FollowServiceImpl implements FollowService {
         Users userToCheck = userToCheckOpt.get();
         Optional<Users> currentUserWithFollowing = userRepository.findByIdWithFollowing(currentUser.getUserID());
         return currentUserWithFollowing.map(users -> users.getFollowing().contains(userToCheck)).orElse(false);
+    }
+
+    @Override
+    @Transactional
+    public Set<Users> getFollowers(Authentication authentication) {
+        Users currentUser = currentUserService.getCurrentUser(authentication);
+        if (currentUser == null) {
+            throw new RuntimeException("User not authenticated");
+        }
+        Optional<Users> userWithFollowers = userRepository.findByIdWithFollowers(currentUser.getUserID());
+        return userWithFollowers.map(Users::getFollowers).orElse(Set.of());
+    }
+
+    @Override
+    @Transactional
+    public Set<Users> getFollowing(Authentication authentication) {
+        Users currentUser = currentUserService.getCurrentUser(authentication);
+        if (currentUser == null) {
+            throw new RuntimeException("User not authenticated");
+        }
+        Optional<Users> userWithFollowing = userRepository.findByIdWithFollowing(currentUser.getUserID());
+        return userWithFollowing.map(Users::getFollowing).orElse(Set.of());
     }
 }

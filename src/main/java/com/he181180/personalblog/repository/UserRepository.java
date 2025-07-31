@@ -29,4 +29,8 @@ public interface UserRepository extends JpaRepository<Users,Integer> {
 
     @Query("SELECT u FROM Users u LEFT JOIN FETCH u.following WHERE u.userID = :userId")
     Optional<Users> findByIdWithFollowing(@Param("userId") int userId);
+
+    @Query("SELECT u FROM Users u LEFT JOIN FETCH u.followers WHERE u.userID = :userId")
+    Optional<Users> findByIdWithFollowers(@Param("userId") int userId);
+
 }
