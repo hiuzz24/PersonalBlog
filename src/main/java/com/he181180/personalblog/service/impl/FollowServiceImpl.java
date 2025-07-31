@@ -28,7 +28,7 @@ public class FollowServiceImpl implements FollowService {
     @Transactional
     public void followUser(int userId,Authentication authentication) {
         Users currentUser = currentUserService.getCurrentUser(authentication);
-        Optional<Users> userToFollowOpt = userRepository.findById(userId);
+        Optional<Users> userToFollowOpt = userRepository.findByUserIDAndDeletedFalse(userId);
 
         if (userToFollowOpt.isEmpty()) {
             throw new RuntimeException("User not found");
@@ -50,7 +50,7 @@ public class FollowServiceImpl implements FollowService {
     @Transactional
     public void unfollowUser(int userId, Authentication authentication) {
         Users currentUser = currentUserService.getCurrentUser(authentication);
-        Optional<Users> userToUnfollowOpt = userRepository.findById(userId);
+        Optional<Users> userToUnfollowOpt = userRepository.findByUserIDAndDeletedFalse(userId);
 
         if (userToUnfollowOpt.isEmpty()) {
             throw new RuntimeException("User not found");
@@ -70,7 +70,7 @@ public class FollowServiceImpl implements FollowService {
     @Transactional
     public boolean isFollowing(int userId, Authentication authentication) {
         Users currentUser = currentUserService.getCurrentUser(authentication);
-        Optional<Users> userToCheckOpt = userRepository.findById(userId);
+        Optional<Users> userToCheckOpt = userRepository.findByUserIDAndDeletedFalse(userId);
         if (userToCheckOpt.isEmpty()) {
             throw new RuntimeException("User not found");
         }
@@ -99,5 +99,16 @@ public class FollowServiceImpl implements FollowService {
         }
         Optional<Users> userWithFollowing = userRepository.findByIdWithFollowing(currentUser.getUserID());
         return userWithFollowing.map(Users::getFollowing).orElse(Set.of());
+    }
+
+
+    @Override
+    public Integer totalFollower(int userID) {
+        return userRepository.totalFollower(userID);
+    }
+
+    @Override
+    public Integer totalFollowing(int userID) {
+        return userRepository.totalFollowing(userID);
     }
 }

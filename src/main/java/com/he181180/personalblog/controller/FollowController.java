@@ -1,12 +1,14 @@
 package com.he181180.personalblog.controller;
 
 import com.he181180.personalblog.entity.Users;
+import com.he181180.personalblog.service.CurrentUserService;
 import com.he181180.personalblog.service.FollowService;
+import com.he181180.personalblog.service.NotificationService;
+import com.he181180.personalblog.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -14,7 +16,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Controller
+@RestController
 @RequestMapping("/api/follows")
 @RequiredArgsConstructor
 public class FollowController {
@@ -22,10 +24,22 @@ public class FollowController {
     @Autowired
     private final FollowService followService;
 
+    @Autowired
+    private NotificationService notificationService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private CurrentUserService currentUserService;
+
     @PostMapping("/follow/{userId}")
     public ResponseEntity<?> followUser(@PathVariable("userId") int userId, Authentication authentication) {
         System.out.println("Following user with ID: " + userId);
         followService.followUser(userId, authentication);
+        Users currentUser = currentUserService.getCurrentUser(authentication);
+        Users user = userService.findUserByUserIDAndDeletedFalse(userId);
+        notificationService.createNotification(user,currentUser,"follow",null);
         return ResponseEntity.ok(Map.of("success", true, "message", "Followed successfully"));
     }
 

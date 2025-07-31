@@ -88,6 +88,9 @@ public class MainController {
         }
 
         if (hasError) {
+            model.addAttribute("fullName", fullName);
+            model.addAttribute("username", username);
+            model.addAttribute("email", email);
             return "register";
         }
         Users newUser = new Users();

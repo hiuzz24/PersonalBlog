@@ -1,7 +1,10 @@
 package com.he181180.personalblog.controller;
 
 import com.he181180.personalblog.entity.Posts;
+import com.he181180.personalblog.entity.Users;
+import com.he181180.personalblog.service.NotificationService;
 import com.he181180.personalblog.service.PostService;
+import com.he181180.personalblog.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,14 +22,18 @@ import java.util.List;
 public class AdminModerateController {
     @Autowired
     private PostService postService;
+    @Autowired
+    private NotificationService notifiicationService;
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/moderateNewBlogs")
     public String moderateNewBlog(Model model){
         List<Posts> allPostPending = postService.findAllPostPending();
 
         model.addAttribute("totalPending", allPostPending.size());
-        model.addAttribute("approvedToday", postService.countApprovedToday());
-        model.addAttribute("rejectedToday", postService.countRejectedToday());
+        model.addAttribute("approved", postService.countApproved());
+        model.addAttribute("rejected", postService.countRejected());
         model.addAttribute("posts",allPostPending);
         model.addAttribute("rejectedTab", false);
         return "AdminDashboard/moderateNewBlogs";
@@ -36,8 +43,8 @@ public class AdminModerateController {
     public String moderateRejectedBlogs(Model model){
         List<Posts> rejectedPosts = postService.findAllByUsers_DeletedFalseAndStatusRejected();
         model.addAttribute("totalPending", postService.findAllPostPending().size());
-        model.addAttribute("approvedToday", postService.countApprovedToday());
-        model.addAttribute("rejectedToday", postService.countRejectedToday());
+        model.addAttribute("approved", postService.countApproved());
+        model.addAttribute("rejected", postService.countRejected());
         model.addAttribute("posts", rejectedPosts);
         model.addAttribute("rejectedTab", true);
         return "AdminDashboard/moderateNewBlogs";
@@ -49,12 +56,15 @@ public class AdminModerateController {
     }
 
     @RequestMapping("/approve/{id}")
-    public String approve(@PathVariable("id") int postID){
+    public String approve(@PathVariable("id") int postID,
+                          @RequestParam("userID")int userID){
         Posts post = postService.findPostByPostID(postID);
+        Users user = userService.findUserByUserIDAndDeletedFalse(userID);
         post.setPublishedAt(new Timestamp(new Date().getTime()));
         post.setStatus("Approved");
         post.setPublished(true);
         postService.savePost(post);
+        notifiicationService.createNotification(user,user,"newPost",post);
         return "redirect:/admin/moderate/moderateNewBlogs";
     }
 
@@ -64,6 +74,7 @@ public class AdminModerateController {
         post.setStatus("Rejected");
         post.setReasonRejected("dwadawdawdad");
         post.setPublished(false);
+        post.setUpdatedAt(new Timestamp(new Date().getTime()));
         postService.savePost(post);
         return "redirect:/admin/moderate/moderateNewBlogs";
     }
@@ -93,8 +104,8 @@ public class AdminModerateController {
 
         model.addAttribute("posts", filteredPosts);
         model.addAttribute("totalPending", allPostPending.size());
-        model.addAttribute("approvedToday", postService.countApprovedToday());
-        model.addAttribute("rejectedToday", postService.countRejectedToday());
+        model.addAttribute("approved", postService.countApproved());
+        model.addAttribute("rejected", postService.countRejected());
         model.addAttribute("searchQuery", searchQuery);
         return "AdminDashboard/moderateNewBlogs";
     }

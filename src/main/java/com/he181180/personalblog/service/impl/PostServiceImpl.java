@@ -4,6 +4,7 @@ import com.he181180.personalblog.entity.Posts;
 import com.he181180.personalblog.repository.PostRepository;
 import com.he181180.personalblog.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -77,6 +79,12 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public Page<Posts> getPostByUserIDPagination(int userID, int page, int size) {
+        Pageable pageable = PageRequest.of(page,size);
+        return postRepository.findAllPostsByUserIDPagination(userID,pageable);
+    }
+
+    @Override
     public List<Posts> getPostByUserID(int userID) {
         return postRepository.findAllPostsByUserID(userID);
     }
@@ -127,13 +135,13 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public long countApprovedToday() {
-        return postRepository.countApprovedToday();
+    public long countApproved() {
+        return postRepository.countApproved();
     }
 
     @Override
-    public long countRejectedToday() {
-        return postRepository.countRejectedToday();
+    public long countRejected() {
+        return postRepository.countRejected();
     }
 
     @Override
@@ -200,5 +208,16 @@ public class PostServiceImpl implements PostService {
     public List<Posts> findAllByUsers_DeletedFalseAndStatusRejected() {
         return postRepository.findAllByUsers_DeletedFalseAndStatusRejected();
     }
-
+    @Override
+    public Map<String, String> uploadImageForCkeditor(MultipartFile upload) throws IOException {
+        String uploadDir = "D:/uploads/";
+        String fileName = UUID.randomUUID() + "_" + upload.getOriginalFilename();
+        Files.createDirectories(Path.of(uploadDir));
+        Path path = Path.of(uploadDir + fileName);
+        Files.copy(upload.getInputStream(),path,StandardCopyOption.REPLACE_EXISTING);
+        Map<String,String> url = new HashMap<>();
+        url.put("url","/uploads/"+fileName);
+        url.put("uploaded","true");
+        return url;
+    }
 }

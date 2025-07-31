@@ -51,16 +51,15 @@ public class ProfileController {
 
     @GetMapping
     public String profile(Authentication authentication, Model model) {
-        Users user = null ;
+        Users user = null;
         if (authentication != null) {
-            user = currentUserService.getCurrentUser(authentication);
-            UserUpdateDTO userUpdateDTO = UserUpdateDTO.builder()
+           user = currentUserService.getCurrentUser(authentication);
+           UserUpdateDTO userUpdateDTO = UserUpdateDTO.builder()
                     .email(user.getEmail())
                     .fullName(user.getFullName())
                     .bio(user.getBio())
                     .build();
             model.addAttribute("userUpdateDTO", userUpdateDTO);
-
         }
         if (user == null) {
             user = new Users();
@@ -75,7 +74,6 @@ public class ProfileController {
         model.addAttribute("avatarSrc", avatarSrc);
         return "UserDashboard/Profile";
     }
-
 
 
     @PostMapping("/updateAvatar")
@@ -117,11 +115,16 @@ public class ProfileController {
     @PostMapping("/update")
     public String updateProfile(Authentication authentication, Model model,
                                 @ModelAttribute("userUpdateDTO")  @Valid UserUpdateDTO userUpdate) {
-        Users user = currentUserService.getCurrentUser(authentication) ;
+
+        Users user = currentUserService.getCurrentUser(authentication);
         userMapper.updateUser(user,userUpdate);
+        System.out.println(user.getAvatarUrl());
         userService.saveUser(user);
         model.addAttribute("user", user);
-        System.out.println(userUpdate.toString());
+        String avatarSrc = (user.getAvatarUrl() != null && !user.getAvatarUrl().isEmpty())
+                ? user.getAvatarUrl() + "?t=" + System.currentTimeMillis()
+                : "/img/default-avatar.png";
+        model.addAttribute("avatarSrc", avatarSrc);
         return "UserDashboard/Profile";
     }
 

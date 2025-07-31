@@ -12,7 +12,7 @@ public interface UserRepository extends JpaRepository<Users,Integer> {
 
     Optional<Users> findByUsername(String username);
     Optional<Users> findByEmail(String email);
-    Optional<Users> findById(int id);
+    Optional<Users> findByUserIDAndDeletedFalse(int id);
     Optional<Users> findByUsernameAndDeletedFalse(String username);
     Optional<Users> findByEmailAndDeletedFalse(String email);
 
@@ -27,10 +27,26 @@ public interface UserRepository extends JpaRepository<Users,Integer> {
 
     List<Users> findAllByDeletedFalse();
 
+    Users findUsersByUserIDAndDeletedFalse(int userID);
+
     @Query("SELECT u FROM Users u LEFT JOIN FETCH u.following WHERE u.userID = :userId")
     Optional<Users> findByIdWithFollowing(@Param("userId") int userId);
 
     @Query("SELECT u FROM Users u LEFT JOIN FETCH u.followers WHERE u.userID = :userId")
     Optional<Users> findByIdWithFollowers(@Param("userId") int userId);
+
+    @Query(value = "SELECT COUNT(*) FROM follows WHERE following_id = :userID", nativeQuery = true)
+    Integer totalFollower(@Param("userID") int userID);
+
+    @Query(value = "SELECT COUNT(*) FROM follows WHERE follower_id = :userID", nativeQuery = true)
+    Integer totalFollowing(@Param("userID") int userID);
+
+    @Query(value = "SELECT u.* FROM users u " +
+            "JOIN follows f ON u.user_id = f.follower_id " +
+            "WHERE f.following_id = :userID", nativeQuery = true)
+    List<Users> findFollowerByUserID(@Param("userID") int userID);
+
+    Users findUsersByUsernameAndDeletedFalse(String userName);
+
 
 }

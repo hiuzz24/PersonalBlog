@@ -41,7 +41,7 @@ public class Comments {
     private Comments parentComment;
 
     @Transient
-    private ArrayList<Comments> children ;
+    private List<Comments> children ;
 
     @Column(name = "created_at")
     private Timestamp createdAt;

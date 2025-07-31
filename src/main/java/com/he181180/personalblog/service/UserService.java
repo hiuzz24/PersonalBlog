@@ -28,4 +28,8 @@ public interface UserService {
     void updateRole(int userID,String role);
     void delete(int userID);
     void recover(int userID);
+
+    Users findUserByUserIDAndDeletedFalse(int userID);
+    List<Users> findFollowerByUserID(int userID);
+    Users findUserByUserNameAndDeletedFalse(String userName);
 }

@@ -70,6 +70,12 @@ public class Users {
     public boolean isHasPassword() {
         return password != null && !password.isEmpty();
     }
+
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+    private List<Notification> receiveNotifications;
+
+    @OneToMany(mappedBy = "fromUser",cascade = CascadeType.ALL)
+    private List<Notification> sendNotifications;
 }
 
 

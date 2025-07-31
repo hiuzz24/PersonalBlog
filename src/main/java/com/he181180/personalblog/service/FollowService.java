@@ -15,5 +15,9 @@ public interface FollowService {
     Set<Users> getFollowers(Authentication authentication);
 
     Set<Users> getFollowing(Authentication authentication);
+
+
+    Integer totalFollower(int userID);
+    Integer totalFollowing(int userID);
 }
 

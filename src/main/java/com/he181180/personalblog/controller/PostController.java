@@ -2,19 +2,24 @@ package com.he181180.personalblog.controller;
 
 import com.he181180.personalblog.DTO.CommentReplyDTO;
 import com.he181180.personalblog.entity.Comments;
+import com.he181180.personalblog.entity.Notification;
 import com.he181180.personalblog.entity.Posts;
 import com.he181180.personalblog.entity.Users;
 import com.he181180.personalblog.service.*;
 import com.he181180.personalblog.service.TagService;
+import com.he181180.personalblog.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.apache.bcel.generic.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Collections;
+import java.io.IOException;
+import java.util.*;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -40,11 +45,15 @@ public class PostController {
 
     @Autowired
     private CurrentUserService currentUserService;
+
     @Autowired
     private FavoriteService favoriteService;
 
     @Autowired
     private FollowService followService;
+
+    @Autowired
+    private NotificationService notificationService;
 
 
     @GetMapping("/explore")
@@ -126,6 +135,12 @@ public class PostController {
         model.addAttribute("comments", comments);
         model.addAttribute("countComment", countComment);
         return "postDetail";
+    }
+
+    @PostMapping("/upload-image")
+    @ResponseBody
+    public Map<String,String> uploadImageForCkeditor(@RequestParam("upload")MultipartFile upload) throws IOException {
+        return postService.uploadImageForCkeditor(upload);
     }
 
 }

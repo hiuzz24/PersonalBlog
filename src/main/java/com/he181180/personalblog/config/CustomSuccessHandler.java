@@ -15,7 +15,7 @@ import java.util.Collection;
 public class CustomSuccessHandler implements AuthenticationSuccessHandler {
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-                                        Authentication authentication) throws IOException, ServletException {
+                                        Authentication authentication) throws IOException {
         Collection<? extends GrantedAuthority> authorities =  authentication.getAuthorities();
         String redirectUrl = "/explore";
         for(GrantedAuthority authority: authorities){

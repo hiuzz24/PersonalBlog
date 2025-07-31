@@ -336,17 +336,27 @@
                 </a>
 
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                    <li>
-                        <form th:action="@{/profile}" style="display: inline;">
-                            <button type="submit" class="dropdown-item">Profile</button>
+                    <li th:if="${user != null && user.role == 'ADMIN'}">
+                        <form th:action="@{/admin}" style="display: inline;">
+                            <button type="submit" class="dropdown-item" style="border-radius: 8px; transition: all 0.3s ease;">
+                                <i class="bi bi-speedometer2 me-2"></i>Dashboard Admin</button>
                         </form>
+                        <hr class="dropdown-divider">
                     </li>
+                    <li th:if="${user != null && user.role == 'WRITER'}">
+                        <form th:action="@{/profile}" style="display: inline;">
+                            <button type="submit" class="dropdown-item" style="border-radius: 8px; transition: all 0.3s ease;">
+                                <i class="bi bi-person me-2"></i>Profile
+                            </button>
+                        </form>
+                        <hr class="dropdown-divider"></li>
 
-                    <li><hr class="dropdown-divider"></li>
-
+                    </li>
                     <li>
                         <form th:action="@{/logout}" method="post" style="display: inline;">
-                            <button type="submit" class="dropdown-item">Logout</button>
+                            <button type="submit" class="dropdown-item text-danger" style="border-radius: 8px; transition: all 0.3s ease;">
+                                <i class="bi bi-box-arrow-right me-2"></i>Logout
+                            </button>
                         </form>
                     </li>
                 </ul>
@@ -365,7 +375,7 @@
             <h1 class="mb-2 mb-lg-0">Chat</h1>
             <nav class="breadcrumbs">
                 <ol>
-                    <li><a th:href="@{/static}">Home</a></li>
+                    <li><a th:href="@{/explore}">Home</a></li>
                     <li class="current">Chat</li>
                 </ol>
             </nav>
@@ -383,7 +393,8 @@
                                 <h5 class="mb-0">Conversation</h5>
                                 <small class="text-muted">Select a conversation to start</small>
                             </div>
-                            <div class="conversations-list" id="conversationsList">
+                            <div class="conversations-
+                            list" id="conversationsList">
                                 <div class="loading">
                                     <div class="spinner-border spinner-border-sm me-2" role="status"></div>
                                     <span>Loading...</span>
@@ -395,9 +406,9 @@
                         <div class="col-md-8 chat-area">
                             <!-- Chat Header -->
                             <div id="chatHeader" class="chat-header" style="display: none;">
-                                <img id="chatPartnerAvatar" alt="Avatar" class="chat-partner-avatar">
+                                <img id="chatPartnerAvatar" src="/assets/img/user.png" alt="Avatar" class="chat-partner-avatar">
                                 <div class="chat-partner-info">
-                                    <h6 id="chatPartnerName">Select conversation 1dcda2412414</h6>
+                                    <h6 id="chatPartnerName">Select conversation</h6>
                                 </div>
                             </div>
 
@@ -519,8 +530,8 @@
             conversationsList.innerHTML = `
                 <div class="empty-state">
                     <i class="bi bi-chat-dots fs-1 mb-3"></i>
-                    <h5>Chưa có cuộc trò chuyện nào</h5>
-                    <p class="text-muted">Chọn một cuộc trò chuyện từ danh sách bên trái để bắt đầu nhắn tin</p>
+                    <h5>There are no conversations yet.</h5>
+                    <p class="text-muted">Select a conversation from the list on the left to start messaging.</p>
                 </div>
             `;
             return;
