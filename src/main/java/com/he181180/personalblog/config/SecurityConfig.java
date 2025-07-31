@@ -35,7 +35,7 @@ public class SecurityConfig {
                         .requestMatchers("/login", "/oauth2/**",
                                          "/register", "/img/**",
                                          "/css/**","/js/**","/assets/**", "/favicon.ico", "/forgotPassword", "/resetPassword", "/savePassword").permitAll()
-                        .requestMatchers("/profile/**", "/dashboard/**","blog/**","favorites/**","changePassword").hasRole("WRITER")
+                        .requestMatchers("/profile/**", "/dashboard/**","blog/**","favorites/**","changePassword","chat").hasRole("WRITER")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
@@ -55,7 +55,6 @@ public class SecurityConfig {
                 .logout(logout -> logout
                         .logoutSuccessUrl("/login?logout")
                         .permitAll()
-
                 );
 
         http.csrf(csrf -> csrf.disable());
