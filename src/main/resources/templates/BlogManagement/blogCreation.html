@@ -112,6 +112,17 @@
             color: #6b7280;
             font-weight: 400;
         }
+        .nav-link {
+            transition: all 0.3s ease;
+            border-radius: 12px;
+            margin: 2px 0;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+        }
+
 
         .form-section {
             margin-bottom: 35px;
@@ -499,6 +510,43 @@
             <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
         </nav>
         <div class="header-social-links d-flex align-items-center pe-3" style="margin-left:auto;">
+            <!-- Notification Button -->
+            <div class="nav-item dropdown me-3">
+                <a class="nav-link position-relative" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 1.5rem; color: #535353;">
+                    <i class="bi bi-bell"></i>
+                    <!-- Badge: show unread count -->
+                    <span class="position-absolute top-0 start-100 translate-middle-z badge rounded-pill bg-danger"
+                          id="notificationBadge"
+                          style="font-size: 0.75rem;"
+                          th:text="${notification != null ? #lists.size(notification.?[!isRead]) : 0}">
+    </span>
+                    <span class="visually-hidden">unread notifications</span>
+                </a>
+
+
+                <!-- Dropdown Menu -->
+                <ul class="dropdown-menu dropdown-menu-end"  aria-labelledby="notificationDropdown" style="min-width: 300px; max-height: 400px; overflow-y: auto;">
+                    <!-- If no notifications -->
+                    <li th:if="${#lists.isEmpty(notification)}">
+                        <span class="dropdown-item-text text-muted">No new notifications</span>
+                    </li>
+
+                    <!-- Show each notification -->
+                    <li th:each="noti : ${notification}">
+                        <a class="dropdown-item"
+                           th:if="${noti.post != null}"
+                           th:href="@{/PostDetail/{id}(id=${noti.post.postID})}">
+                            <span th:text="${noti.message}">New post</span><br>
+                            <small class="text-muted" th:text="${#dates.format(noti.createdAt, 'dd/MM/yyyy HH:mm')}">Time</small>
+                        </a>
+
+                        <a class="dropdown-item"
+                           th:if="${noti.post == null}">
+                            <span th:text="${noti.message}">Notification</span><br>
+                            <small class="text-muted" th:text="${#dates.format(noti.createdAt, 'dd/MM/yyyy HH:mm')}">Time</small>
+                        </a>
+                </ul>
+            </div>
             <div class="dropdown">
                 <a href="#" class="d-flex align-items-center" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding:0; border:none; background:none; transition: all 0.3s ease; text-decoration: none;">
                     <h5 class="sitename mb-0 d-flex align-items-center" style="font-size: 1.2rem; margin-right: 12px; display: flex; align-items: center; height: 56px; line-height: 56px; color: #535353; font-weight: 500;" th:text="${user.fullName != null ? user.fullName : user.username}"></h5>

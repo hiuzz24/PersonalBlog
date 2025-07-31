@@ -162,7 +162,6 @@
         display: flex;
         align-items: center;
         padding: 12px 16px;
-        color: rgba(255,255,255,0.8);
     }
 
     .nav-link.active {
@@ -344,6 +343,24 @@
         border-radius: 8px;
         font-size: 0.85rem;
     }
+    .badge-1 {
+        --bs-badge-padding-x: 0.65em;
+        --bs-badge-padding-y: 0.35em;
+        --bs-badge-font-size: 0.75em;
+        --bs-badge-font-weight: 700;
+        --bs-badge-color: #fff;
+        --bs-badge-border-radius: var(--bs-border-radius);
+        display: inline-block;
+        padding: var(--bs-badge-padding-y) var(--bs-badge-padding-x);
+        font-size: var(--bs-badge-font-size);
+        font-weight: var(--bs-badge-font-weight);
+        line-height: 1;
+        color: var(--bs-badge-color);
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        border-radius: var(--bs-badge-border-radius)
+    }
 
     .badge.bg-success {
         background: var(--success-gradient) !important;
@@ -355,7 +372,8 @@
     }
 
     .badge.bg-danger {
-        background: var(--secondary-gradient) !important;
+        --bs-bg-opacity: 1;
+        background-color: rgba(var(--bs-danger-rgb), var(--bs-bg-opacity)) !important
     }
 
     /* Mobile Responsiveness */
@@ -419,6 +437,43 @@
             <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
         </nav>
         <div class="header-social-links d-flex align-items-center pe-3" style="margin-left:auto;">
+            <!-- Notification Button -->
+            <div class="nav-item dropdown me-3">
+                <a class="nav-link position-relative" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 1.5rem; color: #535353;">
+                    <i class="bi bi-bell"></i>
+                    <!-- Badge: show unread count -->
+                    <span class="position-absolute top-0 start-100 translate-middle-z badge-1 rounded-pill bg-danger"
+                          id="notificationBadge"
+                          style="font-size: 0.75rem;"
+                          th:text="${notification != null ? #lists.size(notification.?[!isRead]) : 0}">
+    </span>
+                    <span class="visually-hidden">unread notifications</span>
+                </a>
+
+
+                <!-- Dropdown Menu -->
+                <ul class="dropdown-menu dropdown-menu-end"  aria-labelledby="notificationDropdown" style="min-width: 300px; max-height: 400px; overflow-y: auto;">
+                    <!-- If no notifications -->
+                    <li th:if="${#lists.isEmpty(notification)}">
+                        <span class="dropdown-item-text text-muted">No new notifications</span>
+                    </li>
+
+                    <!-- Show each notification -->
+                    <li th:each="noti : ${notification}">
+                        <a class="dropdown-item"
+                           th:if="${noti.post != null}"
+                           th:href="@{/PostDetail/{id}(id=${noti.post.postID})}">
+                            <span th:text="${noti.message}">New post</span><br>
+                            <small class="text-muted" th:text="${#dates.format(noti.createdAt, 'dd/MM/yyyy HH:mm')}">Time</small>
+                        </a>
+
+                        <a class="dropdown-item"
+                           th:if="${noti.post == null}">
+                            <span th:text="${noti.message}">Notification</span><br>
+                            <small class="text-muted" th:text="${#dates.format(noti.createdAt, 'dd/MM/yyyy HH:mm')}">Time</small>
+                        </a>
+                </ul>
+            </div>
             <div class="dropdown">
                 <a href="#" class="d-flex align-items-center" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding:0; border:none; background:none; transition: all 0.3s ease;">
                     <h5 class="sitename mb-0 d-flex align-items-center" style="font-size: 1.2rem; margin-right: 12px; display: flex; align-items: center; height: 56px; line-height: 56px; color: #535353; font-weight: 500;" th:text="${user.fullName != null ? user.fullName : user.username}"></h5>
@@ -490,8 +545,14 @@
 
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/favorites/dashboard}" style="color: rgba(255,255,255,0.8);">
-                    <i class="bi bi-heart-fill me-3"></i>
+                    <i class="bi bi-heart me-3"></i>
                     <span class="link-text">Favorite blogs</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/api/follows}" style="color: rgba(255,255,255,0.9);">
+                    <i class="bi bi-people me-3"></i>
+                    <span class="link-text">Followers & Following</span>
                 </a>
             </li>
 
@@ -588,10 +649,23 @@
                                     <i class="bi bi-trash"></i>
                                 </a>
                             </div>
+
+                            <!-- Status message for non-approved posts -->
+                            <div th:if="${post.status != 'Approved'}" class="ms-2">
+                                <small class="text-muted">
+                                    <span th:if="${post.status == 'Pending'}">
+                                        <i class="bi bi-info-circle me-1"></i>Waiting for approval
+                                    </span>
+                                    <span th:if="${post.status == 'Rejected'}">
+                                        <i class="bi bi-exclamation-triangle me-1"></i>Post rejected
+                                    </span>
+                                </small>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
 
             <div th:if="${posts == null or #lists.isEmpty(posts)}" class="empty-state">
                 <i class="bi bi-journal-x" style="font-size: 4rem;"></i>

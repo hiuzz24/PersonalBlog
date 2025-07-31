@@ -2,6 +2,7 @@ package com.he181180.personalblog.controller;
 
 import com.he181180.personalblog.DTO.CommentReplyDTO;
 import com.he181180.personalblog.entity.Comments;
+import com.he181180.personalblog.entity.Notification;
 import com.he181180.personalblog.entity.Posts;
 import com.he181180.personalblog.entity.Users;
 import com.he181180.personalblog.service.*;
@@ -11,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.apache.bcel.generic.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -48,6 +50,9 @@ public class PostController {
 
     @Autowired
     private FollowService followService;
+
+    @Autowired
+    private NotificationService notificationService;
 
 
     @GetMapping("/explore")

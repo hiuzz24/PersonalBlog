@@ -55,6 +55,28 @@ CREATE TABLE comments (
                           FOREIGN KEY (parent_comment_id) REFERENCES comments(comment_id)
 );
 
+CREATE TABLE follows (
+                         follower_id INT,
+                         following_id INT,
+                         PRIMARY KEY (follower_id, following_id),
+                         FOREIGN KEY (follower_id) REFERENCES users(user_id),
+                         FOREIGN KEY (following_id) REFERENCES users(user_id)
+);
+
+CREATE TABLE notifications(
+    notification_id int auto_increment primary key,
+    user_id int not null,
+    type varchar(50) not null,
+    from_user_id int not null,
+    post_id int,
+    message varchar(255),
+    is_read boolean default false,
+    created_at timestamp default current_timestamp,
+    foreign key (user_id) references users(user_id),
+    foreign key (from_user_id) references users(user_id),
+    foreign key (post_id) references posts(post_id)
+);
+
 INSERT INTO users (username, email, password, full_name, bio, avatar_url, role, is_deleted)
 VALUES
     ('admin', 'admin@blog.vn', 'admin123', 'Admin', 'Admin of the blog.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmjC0CZGGDJbJ4hH1_jLKaMzhL96cwCQ8OeQ&s', 'ADMIN', FALSE),
@@ -324,3 +346,10 @@ VALUES
     (2, 3, 'Thanks for the recommendations! I love Da Nang.', NULL),
     (3, 2, 'Great tutorial. Java is awesome!', NULL),
     (3, 3, 'Could you share more Spring Boot resources?', NULL);
+
+
+INSERT INTO follows (follower_id, following_id) VALUES
+(2, 1),
+(3, 1),
+(1, 3);
+
