@@ -108,4 +108,14 @@ public class UserServiceImpl implements UserService {
         Users user = userRepository.findUsersByUserIDAndDeletedFalse(userID);
         return user;
     }
+
+    @Override
+    public List<Users> findFollowerByUserID(int userID) {
+        return userRepository.findFollowerByUserID(userID);
+    }
+
+    @Override
+    public Users findUserByUserNameAndDeletedFalse(String userName) {
+        return userRepository.findUsersByUsernameAndDeletedFalse(userName);
+    }
 }

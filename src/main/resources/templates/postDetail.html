@@ -128,7 +128,18 @@
                             <div class="meta-top">
                                 <ul>
                                     <li class="d-flex align-items-center">
-                                        <a th:href="@{/author/ProfileUser/{userID}(userID=${postDetail.users.userID})}"><i class="bi bi-person" th:text="${postDetail.users.fullName}"></i></a>
+                                        <i class="bi bi-person"></i>
+                                        <a th:href="@{/author/ProfileUser/{userID}(userID=${postDetail.users.userID})}">
+                                            <span th:text="${postDetail.users.fullName}"></span>
+                                        </a>
+                                        <button type="button" class="btn btn-sm  ms-2 follow-btn"
+                                                th:data-author-id="${postDetail.users.userID}"
+                                                th:classappend="${isFollowing} ? 'btn-primary' : 'btn-outline-primary'"
+                                                style="font-size: 0.75rem; padding: 0.15rem 0.5rem;">
+                                            <i class="bi"
+                                               th:classappend="${isFollowing} ? 'bi-person-check-fill' : 'bi-person-plus'"></i>
+                                            <span th:text="${isFollowing} ? 'Following' : 'Follow'"></span>
+                                        </button>
                                     </li>
                                     <li class="d-flex align-items-center"><i class="bi bi-clock"></i> <a
                                             href="blog-details.html">
@@ -515,6 +526,7 @@
             const chatModal = new bootstrap.Modal(document.getElementById('chatModal'));
             const sendBtn = document.getElementById('sendMessageBtn');
             const messageInput = document.getElementById('messageInput');
+            const followBtn = document.querySelector('.follow-btn');
 
             if (chatBtn) {
                 chatBtn.addEventListener('click', function () {
@@ -536,6 +548,52 @@
                     chatModal.show();
                 });
             }
+
+            if (followBtn) {
+                followBtn.addEventListener('click', function () {
+                    const authorId = this.getAttribute('data-author-id');
+                    const isFollowing = this.classList.contains('btn-primary');
+                    const url = isFollowing ? `/api/follows/unfollow/${authorId}` : `/api/follows/follow/${authorId}`;
+                    fetch(url, {
+                        method: isFollowing ? 'DELETE' : 'POST', // Sử dụng DELETE cho unfollow
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        credentials: 'same-origin'
+                    })
+                        .then(response => {
+                            console.log(response);
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                                response.json();
+                            }
+                        })
+                        .then(() => {
+                                const icon = this.querySelector('i');
+                                const text = this.querySelector('span');
+                                if (isFollowing) {
+                                    this.classList.remove('btn-primary');
+                                    this.classList.add('btn-outline-primary');
+                                    icon.classList.remove('bi-person-check-fill');
+                                    icon.classList.add('bi-person-plus');
+                                    text.textContent = 'Follow';
+                                 } else {
+                                    this.classList.remove('btn-outline-primary');
+                                    this.classList.add('btn-primary');
+                                    icon.classList.remove('bi-person-plus');
+                                    icon.classList.add('bi-person-check-fill');
+                                    text.textContent = 'Following';
+                                }
+                                showToast(data.message || 'Operation successful', 'success');
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showToast('An error occurred. Try again later', 'error');
+                        }) ;
+                });
+            }
+
 
             if (sendBtn) {
                 sendBtn.addEventListener('click', sendMessage);
@@ -606,6 +664,9 @@
 
         // Toast notification function
         function showToast(message, type = 'info') {
+
+            const toastContainer = document.getElementById('toastContainer');
+            if (!toastContainer) return;
             // Create toast element
             const toast = document.createElement('div');
             toast.className = `toast align-items-center text-white bg-${type === 'success' ? 'success' : 'danger'} border-0`;
@@ -625,6 +686,12 @@
                     <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
                 </div>
             `;
+            toastContainer.appendChild(toast);
+            // Remove toast after it's hidden
+            toast.addEventListener('hidden.bs.toast', function() {
+                toast.remove();
+            });
+
 
             document.body.appendChild(toast);
 

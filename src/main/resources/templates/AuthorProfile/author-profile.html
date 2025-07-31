@@ -67,11 +67,11 @@
                                         <span class="stat-label">Posts</span>
                                     </div>
                                     <div class="stat-item">
-                                        <span class="stat-number" th:text="${author?.totalViews ?: '1.2K'}">1.2K</span>
-                                        <span class="stat-label">Views</span>
+                                        <span class="stat-number" th:text="${totalFollowing}"></span>
+                                        <span class="stat-label">Following</span>
                                     </div>
                                     <div class="stat-item">
-                                        <span class="stat-number" th:text="${author?.followers ?: '150'}">150</span>
+                                        <span class="stat-number" th:text="${totalFollower}"></span>
                                         <span class="stat-label">Followers</span>
                                     </div>
                                 </div>
@@ -96,24 +96,24 @@
 
                             <!-- Blog Posts List -->
                             <div class="posts-list">
-                                <!-- Sample posts - replace with Thymeleaf iteration -->
-                                <div class="post-item" th:if="${totalPost != null and !totalPost.empty}" th:each="post : ${totalPost}">
-                                    <div class="post-img">
-                                        <img th:src="${post.imageUrl}" alt="Blog Post" class="img-fluid">
-                                    </div>
-                                    <div class="post-content">
-                                        <div class="post-meta">
-                                            <span class="post-date"><i class="bi bi-calendar"></i> <span th:text="${#dates.format(post.publishedAt, 'MMMM dd, yyyy')}"></span></span>
+                                <div th:if="${totalPost != null and !totalPost.empty}" th:each="post : ${totalPost}">
+                                    <a class="post-item" th:href="@{/PostDetail/{postID}(postID=${post.postID})}">
+                                        <div class="post-img">
+                                            <img th:src="${post.imageUrl}" alt="Blog Post" class="img-fluid">
                                         </div>
-                                        <h4 class="post-title">
-                                            <a th:href="@{'/PostDetail/' +${post.postID}}" th:text="${post.title}"></a>
-                                        </h4>
-                                        <p class="post-excerpt" th:text="${post.content}">
-                                        </p>
-                                        <div class="post-tags" th:if="${post.tags != null and !post.tags.empty}">
-                                            <span class="tag" th:each="tag : ${post.tags}" th:text="${tag.tagName}"></span>
+                                        <div class="post-content">
+                                            <div class="post-meta">
+                                            <span class="post-date"><i class="bi bi-calendar"></i>
+                                                <span th:text="${#dates.format(post.publishedAt, 'MMMM dd, yyyy')}"></span>
+                                            </span>
+                                            </div>
+                                            <h4 class="post-title" th:text="${post.title}"></h4>
+                                            <p class="post-excerpt" th:text="${post.content}"></p>
+                                            <div class="post-tags" th:if="${post.tags != null and !post.tags.empty}">
+                                                <span class="tag" th:each="tag : ${post.tags}" th:text="${tag.tagName}"></span>
+                                            </div>
                                         </div>
-                                    </div>
+                                    </a>
                                 </div>
 
                             <!-- Pagination -->

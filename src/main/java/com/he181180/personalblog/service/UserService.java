@@ -30,4 +30,6 @@ public interface UserService {
     void recover(int userID);
 
     Users findUserByUserIDAndDeletedFalse(int userID);
+    List<Users> findFollowerByUserID(int userID);
+    Users findUserByUserNameAndDeletedFalse(String userName);
 }
