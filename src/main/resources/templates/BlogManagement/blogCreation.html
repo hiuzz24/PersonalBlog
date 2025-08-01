@@ -691,7 +691,7 @@
                         <input type="checkbox" th:id="'tag_' + ${tag.tagID}" name="tagID"
                                th:value="${tag.tagID}"
                                th:checked="${selectedTagID != null and selectedTagID.contains(tag.tagID)}"
-                               hidden>
+                               hidden required>
                         <label th:for="'tag_' + ${tag.tagID}" class="tag-label" th:text="${tag.tagName}"></label>
                     </div>
                 </div>

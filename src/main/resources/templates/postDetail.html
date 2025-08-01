@@ -28,6 +28,12 @@
     <link th:href="@{/assets/css/main.css}" rel="stylesheet">
 
     <style>
+        #header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
         table {
             border-collapse: collapse;
             width: 100%;
@@ -179,9 +185,8 @@
                                         </button>
                                     </li>
                                     <li class="d-flex align-items-center"><i class="bi bi-clock"></i> <a
-                                            href="blog-details.html">
-                                        <time th:text="${postDetail.publishedAt}"></time>
-                                    </a></li>
+                                        <span th:text="${#dates.format(postDetail.publishedAt,  'yyyy-MM-dd HH:mm')}"></span>
+                                        </a></li>
                                     <li class="d-flex align-items-center"><i class="bi bi-chat-dots"
                                                                              th:text="${' ' + postDetail.comments.size() + ' comments'}"></i></a>
                                     </li>
@@ -195,8 +200,9 @@
                             <div class="meta-bottom">
                                 <i class="bi bi-tags"></i>
                                 <ul class="tags" th:each="tag: ${postDetail.tags}">
-                                    <li><a th:href="@{/tags/{tagID}(tagID = ${tag.tagName})}"
+                                    <li><a th:href="@{/tags/{tagID}(tagID = ${tag.tagID})}"
                                            th:text="${tag.tagName}"></a></li>
+
                                 </ul>
                             </div><!-- End meta bottom -->
 
@@ -358,7 +364,7 @@
                             <div>
                                 <a th:href="@{'/PostDetail/' + ${relatedPost.postID}}"
                                    th:text="${relatedPost.title}"></a>
-                                <time th:text="${#dates.format(relatedPost.publishedAt, 'dd MMM yyyy')}"></time>
+                                <span th:text="${#dates.format(relatedPost.publishedAt, 'yyyy MM dd HH:mm')}"></span>
                             </div>
                         </div><!-- End recent post item-->
                     </div>
@@ -753,13 +759,10 @@
 </main>
 
 <footer id="footer" class="footer dark-background">
-
-
     <div class="container copyright text-center mt-4">
         <p>© <span>Copyright</span> <strong class="px-1 sitename">PersonalBlog</strong> <span>All Rights Reserved</span>
         </p>
     </div>
-
 </footer>
 
 <!-- Scroll Top -->
