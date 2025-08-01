@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Author Profile - Personal Blog</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+
+    <!-- Favicons -->
+    <link href="/assets/img/favicon.png" rel="icon">
+    <link href="/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Main CSS Files -->
+    <link href="/css/main.css" rel="stylesheet">
+    <link href="/css/author-profile.css" rel="stylesheet">
+</head>
+
+<body class="author-profile-page">
+
+    <!-- Header -->
+    <header id="header" class="header d-flex align-items-center sticky-top">
+        <div class="container-fluid container-xl position-relative d-flex align-items-center">
+            <a href="/" class="logo d-flex align-items-center me-auto">
+                <h1 class="sitename">Personal Blog</h1>
+            </a>
+
+            <nav id="navmenu" class="navmenu">
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/explore">Explore</a></li>
+                    <li><a href="/login">Login</a></li>
+                </ul>
+                <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main">
+        <!-- Author Profile Section -->
+        <section id="author-profile" class="author-profile section">
+            <div class="container">
+                <div class="row">
+                    <!-- Author Info -->
+                    <div class="col-lg-4">
+                        <div class="author-card">
+                            <div class="author-avatar">
+                                <img th:src="${userProfile.avatarUrl}" alt="Author Avatar" class="img-fluid rounded-circle">
+                            </div>
+                            <div class="author-info">
+                                <h2 class="author-name" th:text="${userProfile.username}"></h2>
+                                <p class="author-title" th:text="${userProfile.email}"></p>
+                                <div class="author-stats">
+                                    <div class="stat-item">
+                                        <span class="stat-number" th:text="${totalPostSize}"></span>
+                                        <span class="stat-label">Posts</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-number" th:text="${totalFollowing}"></span>
+                                        <span class="stat-label">Following</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-number" th:text="${totalFollower}"></span>
+                                        <span class="stat-label">Followers</span>
+                                    </div>
+                                </div>
+                                <div class="author-bio">
+                                    <p th:text="${userProfile.bio}">
+                                    </p>
+                                </div>
+                                <div class="author-contact">
+                                    <p><i class="bi bi-calendar"></i> Joined <span th:text="${userProfile.createdAt}"></span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Author's Blog Posts -->
+                    <div class="col-lg-8">
+                        <div class="author-posts">
+                            <div class="section-header">
+                                <h3>Latest Blog Posts</h3>
+                                <p>Explore my recent articles and thoughts</p>
+                            </div>
+
+                            <!-- Blog Posts List -->
+                            <div class="posts-list">
+                                <div th:if="${totalPost != null and !totalPost.empty}" th:each="post : ${totalPost}">
+                                    <a class="post-item" th:href="@{/PostDetail/{postID}(postID=${post.postID})}">
+                                        <div class="post-img">
+                                            <img th:src="${post.imageUrl}" alt="Blog Post" class="img-fluid">
+                                        </div>
+                                        <div class="post-content">
+                                            <div class="post-meta">
+                                            <span class="post-date"><i class="bi bi-calendar"></i>
+                                                <span th:text="${#dates.format(post.publishedAt, 'MMMM dd, yyyy')}"></span>
+                                            </span>
+                                            </div>
+                                            <h4 class="post-title" th:text="${post.title}"></h4>
+                                            <p class="post-excerpt" th:text="${post.content}"></p>
+                                            <div class="post-tags" th:if="${post.tags != null and !post.tags.empty}">
+                                                <span class="tag" th:each="tag : ${post.tags}" th:text="${tag.tagName}"></span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+
+                            <!-- Pagination -->
+                                <section id="blog-pagination" class="blog-pagination section">
+                                    <div class="container">
+                                        <div class="d-flex justify-content-center">
+                                            <ul class="pagination">
+
+                                                <!-- Nút Previous -->
+                                                <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                                                    <a class="page-link"
+                                                       th:href="@{/author/ProfileUser/{userID}(userID=${userProfile.userID}, page=${currentPage - 1})}">
+                                                        <i class="bi bi-chevron-left"></i>
+                                                    </a>
+                                                </li>
+
+                                                <!-- Các số trang -->
+                                                <li class="page-item"
+                                                    th:each="i : ${#numbers.sequence(1, totalPages)}"
+                                                    th:classappend="${i == currentPage} ? 'active'">
+                                                    <a class="page-link"
+                                                       th:href="@{/author/ProfileUser/{userID}(userID=${userProfile.userID}, page=${i})}"
+                                                       th:text="${i}"></a>
+                                                </li>
+
+                                                <!-- Nút Next -->
+                                                <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                                                    <a class="page-link"
+                                                       th:href="@{/author/ProfileUser/{userID}(userID=${userProfile.userID}, page=${currentPage + 1})}">
+                                                        <i class="bi bi-chevron-right"></i>
+                                                    </a>
+                                                </li>
+
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </section>
+
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+
+
+    <!-- Scroll Top -->
+    <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+    <!-- Vendor JS Files -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Main JS File -->
+    <script src="/js/main.js"></script>
+
+</body>
+</html>
