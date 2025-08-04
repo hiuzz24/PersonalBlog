@@ -108,9 +108,9 @@ public class ChangePasswordController {
         session.removeAttribute("codeVerified");
         session.removeAttribute("codeVerifiedTimestamp");
 
-        model.addAttribute("success", "Password changed successfully.");
+        model.addAttribute("message", "Password changed successfully. Please return to the login page and log in again.");
         model.addAttribute("user", user);
-        return "UserDashboard/change-password";
+        return "login";
     }
 
     @PostMapping("/send-confirmation-code")
