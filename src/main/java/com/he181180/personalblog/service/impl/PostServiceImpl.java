@@ -215,8 +215,6 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Map<String, String> uploadImageForCkeditor(MultipartFile upload) throws IOException {
-        Map<String, String> url = new HashMap<>();
-
         String uploadDir = System.getProperty("user.dir") + "/uploads/img/";
         Files.createDirectories(Path.of(uploadDir));
 
@@ -224,7 +222,7 @@ public class PostServiceImpl implements PostService {
         Path filePath = Path.of(uploadDir + fileName);
 
         Files.copy(upload.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-
+        Map<String,String> url = new HashMap<>();
         url.put("url", "/uploads/img/" + fileName);
         url.put("uploaded", "true");
         return url;

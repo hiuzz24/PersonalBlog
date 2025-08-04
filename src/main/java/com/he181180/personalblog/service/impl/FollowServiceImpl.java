@@ -80,14 +80,6 @@ public class FollowServiceImpl implements FollowService {
     }
 
     @Override
-    public Integer totalFollower(int userID) {
-        return userRepository.totalFollower(userID);
-    }
-
-    @Override
-    public Integer totalFollowing(int userID) {
-        return userRepository.totalFollowing(userID);
-    }
     @Transactional
     public Set<Users> getFollowers(Authentication authentication) {
         Users currentUser = currentUserService.getCurrentUser(authentication);
@@ -107,5 +99,16 @@ public class FollowServiceImpl implements FollowService {
         }
         Optional<Users> userWithFollowing = userRepository.findByIdWithFollowing(currentUser.getUserID());
         return userWithFollowing.map(Users::getFollowing).orElse(Set.of());
+    }
+
+
+    @Override
+    public Integer totalFollower(int userID) {
+        return userRepository.totalFollower(userID);
+    }
+
+    @Override
+    public Integer totalFollowing(int userID) {
+        return userRepository.totalFollowing(userID);
     }
 }
