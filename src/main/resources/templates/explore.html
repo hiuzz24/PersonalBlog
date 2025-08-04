@@ -68,7 +68,7 @@
 
 
                 <!-- Dropdown Menu -->
-                <ul class="dropdown-menu dropdown-menu-end"  aria-labelledby="notificationDropdown" style="min-width: 300px; max-height: 400px; overflow-y: auto;">
+                <ul class="dropdown-menu dropdown-menu-end"  aria-labelledby="notificationDropdown" style="min-width: 400px; max-height: 400px; overflow-y: auto;">
                     <!-- If no notifications -->
                     <li th:if="${#lists.isEmpty(notification)}">
                         <span class="dropdown-item-text text-muted">No new notifications</span>
@@ -292,6 +292,10 @@
 <!-- Main JS File -->
 <script th:src="@{/assets/js/main.js}"></script>
 
+<script>
+    fetch("/api/notifications")
+    .then(response => response.json())
+    .then(data -> data.)
 </script>
 </body>
 
