@@ -5,20 +5,23 @@ import com.he181180.personalblog.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Map;
 import java.util.Random;
 
 @Controller
+@RequestMapping("/change-password")
 public class ChangePasswordController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/change-password")
+    @GetMapping
     public String showChangePasswordForm(Authentication authentication, Model model) {
         Users user = null;
         if (authentication != null) {
@@ -40,7 +43,7 @@ public class ChangePasswordController {
         return "UserDashboard/change-password";
     }
 
-    @PostMapping("/change-password")
+    @PostMapping
     public String changePassword(@RequestParam(required = false) String currentPassword,
                                  @RequestParam String newPassword,
                                  @RequestParam String confirmPassword,
@@ -108,9 +111,9 @@ public class ChangePasswordController {
         session.removeAttribute("codeVerified");
         session.removeAttribute("codeVerifiedTimestamp");
 
-        model.addAttribute("message", "Password changed successfully. Please return to the login page and log in again.");
+        model.addAttribute("success", "Password changed successfully.");
         model.addAttribute("user", user);
-        return "login";
+        return "UserDashboard/change-password";
     }
 
     @PostMapping("/send-confirmation-code")
