@@ -223,7 +223,7 @@ public class PostServiceImpl implements PostService {
 
         Files.copy(upload.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
         Map<String,String> url = new HashMap<>();
-        url.put("url", "/uploads/img/" + fileName);
+        url.put("url", "/img/" + fileName);
         url.put("uploaded", "true");
         return url;
     }

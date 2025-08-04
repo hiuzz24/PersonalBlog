@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml" lang="en">
 
 <head>
     <meta charset="utf-8">
@@ -579,7 +579,8 @@
                             </div><!-- End meta bottom -->
 
                             <!-- Favorite Button -->
-                            <div class="mt-3 mb-3">
+
+                            <div class="mt-3 mb-3" sec:authorize="!hasRole('ADMIN')">
                                 <button type="button" class="btn" id="favoriteBtn"
                                         th:data-post-id="${postDetail.postID}"
                                         th:classappend="${isFavorited} ? 'btn-danger' : 'btn-outline-danger'">
