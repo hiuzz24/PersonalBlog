@@ -547,7 +547,7 @@
                                         <a th:href="@{/author/ProfileUser/{userID}(userID=${postDetail.users.userID})}">
                                             <span th:text="${postDetail.users.fullName}"></span>
                                         </a>
-                                        <button th:if="${#authentication.name != postDetail.users.username}" type="button" class="btn btn-sm  ms-2 follow-btn"
+                                        <button type="button" class="btn btn-sm  ms-2 follow-btn"
                                                 th:data-author-id="${postDetail.users.userID}"
                                                 th:classappend="${isFollowing} ? 'btn-primary' : 'btn-outline-primary'"
                                                 style="font-size: 0.75rem; padding: 0.15rem 0.5rem;">
@@ -580,7 +580,7 @@
 
                             <!-- Favorite Button -->
 
-                            <div  class="mt-3 mb-3" sec:authorize="!hasRole('ADMIN')">
+                            <div class="mt-3 mb-3" sec:authorize="!hasRole('ADMIN')">
                                 <button type="button" class="btn" id="favoriteBtn"
                                         th:data-post-id="${postDetail.postID}"
                                         th:classappend="${isFavorited} ? 'btn-danger' : 'btn-outline-danger'">
@@ -597,6 +597,7 @@
                                     <i class="bi bi-chat-dots"></i> Chat with the author
                                 </button>
                             </div>
+
 
                         </article>
 
@@ -736,7 +737,7 @@
                             <div>
                                 <a th:href="@{'/PostDetail/' + ${relatedPost.postID}}"
                                    th:text="${relatedPost.title}"></a>
-                                <span th:text="${#dates.format(relatedPost.publishedAt, 'yyyy MM dd HH:mm')}"></span>
+                                <time th:text="${#dates.format(relatedPost.publishedAt, 'dd MMM yyyy')}"></time>
                             </div>
                         </div><!-- End recent post item-->
                     </div>
@@ -780,8 +781,9 @@
                     </div>
                     <div class="input-group p-3 bg-white border-top align-items-center"
                          style="border-radius: 0 0 1rem 1rem;">
-                        <input type="text" id="messageInput" class="form-control rounded-pill me-2"
-                               placeholder="Type your message..." maxlength="500" style="background: #f8f9fa;">
+                        <label for="messageInput"></label><input type="text" id="messageInput" class="form-control rounded-pill me-2"
+                                                                 placeholder="Type your message..." maxlength="500" style="background: #f8f9fa;">
+
                         <button class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center"
                                 type="button" id="sendMessageBtn" style="width: 45px; height: 45px;">
                             <i class="bi bi-send fs-5"></i>
@@ -791,6 +793,8 @@
             </div>
         </div>
     </div>
+
+
 
     </div>
 
@@ -979,7 +983,7 @@
                             console.log(response);
                             if (!response.ok) {
                                 return response.json().then(err => {
-                                    throw new Error(err.message || 'An error occurred while performing the operation.');
+                                    throw new Error(err.message || 'Có lỗi xảy ra khi thực hiện thao tác');
                                 });
                             }
                             return response.json();
