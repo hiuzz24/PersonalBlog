@@ -39,6 +39,9 @@ public class Posts {
     @Column(name = "is_published")
     private boolean published;
 
+    @Column(name = "is_deleted")
+    private boolean deleted;
+
     @Column(name = "published_at")
     private Timestamp publishedAt;
 

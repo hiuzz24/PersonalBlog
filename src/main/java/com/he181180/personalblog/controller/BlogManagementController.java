@@ -83,6 +83,7 @@ public class BlogManagementController {
             post.setPublishedAt(new Timestamp(new Date().getTime()));
             post.setUsers(user);
             post.setPublished(false);
+            post.setDeleted(false);
             post.setStatus("Pending");
             post.setReasonRejected(null);
             post.setUpdatedAt(new Timestamp(new Date().getTime()));
@@ -138,6 +139,7 @@ public class BlogManagementController {
             post.setPublishedAt(post.getPublishedAt());
             post.setUsers(user);
             post.setPublished(true);
+            post.setDeleted(false);
             post.setUpdatedAt(new Timestamp(new Date().getTime()));
             try {
                 String finalImage = postService.handleImageUrl(imageUrl, fileImage);
