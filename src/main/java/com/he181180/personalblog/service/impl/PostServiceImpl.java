@@ -133,7 +133,7 @@ public class PostServiceImpl implements PostService {
 
             Files.copy(fileImage.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-            return "/uploads/img/" + fileName;
+            return "/img/" + fileName;
         }
         return null;
     }
