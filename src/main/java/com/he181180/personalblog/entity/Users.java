@@ -1,6 +1,8 @@
 package com.he181180.personalblog.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
@@ -29,6 +31,9 @@ public class Users {
     private String email;
 
     @Column(name = "password", nullable = false)
+    @Size(min = 6, message = "Password must be at least 6 characters long")
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]+$",
+            message = "Password must contain at least one lowercase letter, one uppercase letter, one number and one special character")
     private String password;
 
     @Column(name = "full_name")

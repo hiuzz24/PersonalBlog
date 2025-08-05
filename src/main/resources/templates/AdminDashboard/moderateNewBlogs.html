@@ -518,7 +518,7 @@
                                     </a>
 
                                     <a th:if="${post.status == 'Pending'}"
-                                       th:href="@{/admin/moderate/approve/{id}(id=${post.postID})}"
+                                       th:href="@{'/admin/moderate/approve/'+ ${post.postID} + '?userID=' + ${post.users.userID} }"
                                        class="modern-btn btn-success-modern"
                                        onclick="return confirm('Are you sure you want to browse this article?')"
                                        title="Browse articles">

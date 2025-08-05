@@ -1,36 +1,40 @@
 package com.he181180.personalblog.controller;
 
 import com.he181180.personalblog.entity.Users;
+import com.he181180.personalblog.service.CurrentUserService;
 import com.he181180.personalblog.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Map;
 import java.util.Random;
+import java.util.regex.Pattern;
 
 @Controller
+@RequestMapping("/change-password")
 public class ChangePasswordController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/change-password")
+    @Autowired
+    private CurrentUserService currentUserService;
+
+    // Pattern to validate password
+    private static final String PASSWORD_PATTERN =
+            "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{6,}$";
+
+    private static final Pattern pattern = Pattern.compile(PASSWORD_PATTERN);
+
+    @GetMapping
     public String showChangePasswordForm(Authentication authentication, Model model) {
-        Users user = null;
-        if (authentication != null) {
-            Object principal = authentication.getPrincipal();
-            if (principal instanceof org.springframework.security.oauth2.core.user.OAuth2User oauth2User) {
-                String email = oauth2User.getAttribute("email");
-                user = userService.findUserByEmail(email).orElse(null);
-            } else {
-                String username = authentication.getName();
-                user = userService.findUserByUsername(username).orElse(null);
-            }
-        }
+        Users user = currentUserService.getCurrentUser(authentication);
         if (user == null) {
             // Instead of returning error, redirect to login or show a friendly message
             return "redirect:/login";
@@ -40,7 +44,7 @@ public class ChangePasswordController {
         return "UserDashboard/change-password";
     }
 
-    @PostMapping("/change-password")
+    @PostMapping
     public String changePassword(@RequestParam(required = false) String currentPassword,
                                  @RequestParam String newPassword,
                                  @RequestParam String confirmPassword,
@@ -48,17 +52,7 @@ public class ChangePasswordController {
                                  Authentication authentication,
                                  HttpSession session,
                                  Model model) {
-        Users user = null;
-        if (authentication != null) {
-            Object principal = authentication.getPrincipal();
-            if (principal instanceof org.springframework.security.oauth2.core.user.OAuth2User oauth2User) {
-                String email = oauth2User.getAttribute("email");
-                user = userService.findUserByEmail(email).orElse(null);
-            } else {
-                String username = authentication.getName();
-                user = userService.findUserByUsername(username).orElse(null);
-            }
-        }
+        Users user = currentUserService.getCurrentUser(authentication);
         if (user == null) {
             model.addAttribute("error", "User not found.");
             model.addAttribute("user", null);
@@ -85,6 +79,11 @@ public class ChangePasswordController {
 
             if (codeVerified == null || !codeVerified) {
                 model.addAttribute("error", "Please verify your email first.");
+                model.addAttribute("user", user);
+                return "UserDashboard/change-password";
+            }
+            if(!pattern.matcher(newPassword).matches()) {
+                model.addAttribute("error", "Password must be at least 6 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.");
                 model.addAttribute("user", user);
                 return "UserDashboard/change-password";
             }

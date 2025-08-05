@@ -513,7 +513,7 @@
     }
 
     function requestConfirmationCode() {
-        fetch('/profile/send-confirmation-code', {
+        fetch('/change-password/send-confirmation-code', {
             method: 'POST',
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
@@ -826,10 +826,6 @@
                                             <i class="bi bi-save me-2"></i>
                                             Save changes
                                         </button>
-                                        <a th:href="@{/dashboard}" class="btn btn-secondary">
-                                            <i class="bi bi-arrow-left me-2"></i>
-                                            Back to Dashboard
-                                        </a>
                                     </div>
                                 </form>
                             </div>
@@ -854,4 +850,3 @@
 
 </body>
 </html>
-
