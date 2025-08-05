@@ -513,7 +513,7 @@
     }
 
     function requestConfirmationCode() {
-        fetch('/profile/send-confirmation-code', {
+        fetch('/change-password/send-confirmation-code', {
             method: 'POST',
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
@@ -795,37 +795,37 @@
                                     Personal Information
                                 </h3>
 
-                                <form th:action="@{/profile/update}" method="post">
-                                    <div class="row g-3">
+                                <form th:action="@{/profile/update}" th:object="${userUpdateDTO}" method="post">
+                                    <div class="row">
                                         <div class="col-md-6">
-                                            <label for="fullName" class="form-label">Full Name</label>
-                                            <input type="text" class="form-control" id="fullName" name="fullName" th:value="${user.fullName}" required>
-                                        </div>
-
-                                        <div class="col-md-6">
-                                            <label for="email" class="form-label">Email Address</label>
-                                            <input type="email" class="form-control" id="email" th:value="${user.email}" readonly>
-                                            <div class="form-text">
-                                                <i class="bi bi-shield-lock me-1"></i>
-                                                Email cannot be changed for security reasons
+                                            <div class="mb-3">
+                                                <label for="fullName" class="form-label">Full Name</label>
+                                                <input type="text" class="form-control" id="fullName"
+                                                       name="fullName" th:field="*{fullName}" required>
                                             </div>
                                         </div>
 
-                                        <div class="col-12">
-                                            <label for="bio" class="form-label">Bio</label>
-                                            <textarea class="form-control" id="bio" name="bio" rows="4" placeholder="Tell us about yourself..." th:text="${user.bio}"></textarea>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="email" class="form-label">Email</label>
+                                                <input type="email" class="form-control" id="email"
+                                                       th:field="*{email}" readonly>
+                                                <div class="form-text">Email cannot be changed</div>
+                                            </div>
                                         </div>
                                     </div>
 
-                                    <div class="d-flex gap-3 mt-4">
+                                    <div class="mb-3">
+                                        <label for="bio" class="form-label">Bio</label>
+                                        <textarea class="form-control" id="bio" name="bio" rows="3"
+                                                  th:field="*{bio}"></textarea>
+                                    </div>
+
+                                    <div class="d-flex gap-2 mt-auto">
                                         <button type="submit" class="btn btn-primary">
                                             <i class="bi bi-save me-2"></i>
-                                            Save Changes
+                                            Save changes
                                         </button>
-                                        <a th:href="@{/dashboard}" class="btn btn-secondary">
-                                            <i class="bi bi-arrow-left me-2"></i>
-                                            Back to Dashboard
-                                        </a>
                                     </div>
                                 </form>
                             </div>
@@ -850,4 +850,3 @@
 
 </body>
 </html>
-

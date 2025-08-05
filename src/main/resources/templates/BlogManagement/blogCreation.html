@@ -472,6 +472,14 @@
             }
         }
 
+        .ck-content img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 10px auto;
+        }
+
+
         .loading-shimmer {
             animation: shimmer 1.5s infinite linear;
             background: linear-gradient(to right, #f6f7f8 0%, #edeef1 20%, #f6f7f8 40%, #f6f7f8 100%);
@@ -593,7 +601,7 @@
             <p class="header-subtitle">Share your ideas and stories with the community</p>
         </div>
 
-        <form th:action="@{${formAction}}" enctype="multipart/form-data" method="post" class="blog-form">
+        <form th:action="@{${formAction}}" enctype="multipart/form-data" method="post" class="blog-form" onsubmit="return validationForm()">
             <input type="hidden" name="postID" th:value="${post.postID}">
 
             <!-- Basic Information Section -->
@@ -731,35 +739,27 @@
 </div>
 
 <script>
-    // Base64 Upload Adapter for CKEditor
-    function Base64UploadAdapter(editor) {
-        editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
-            return new Adapter(loader);
-        };
-    }
+    function validationForm(){
+        const imageUrl = document.getElementById("imageUrl").value;
+        const fileImage = document.getElementById("fileImage").files.length;
+        const body = window.editor.getData().trim();
+        const tagChecked = document.querySelectorAll("input[name=tagID]:checked");
 
-    class Adapter {
-        constructor(loader) {
-            this.loader = loader;
+        if(tagChecked.length === 0){
+            alert("please choose 1 tag for post")
+            return false;
         }
 
-        upload() {
-            return this.loader.file
-                .then(file => new Promise((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.onload = () => {
-                        resolve({
-                            default: reader.result
-                        });
-                    };
-                    reader.onerror = reject;
-                    reader.readAsDataURL(file);
-                }));
+        if(imageUrl === "" && fileImage === 0){
+            alert("please insert image (URL or upload)")
+            return false;
         }
 
-        abort() {
-            // Handle abort if needed
+        if(body === ""){
+            alert("please enter body post")
+            return false;
         }
+        return true;
     }
 
     document.addEventListener("DOMContentLoaded", function () {
@@ -812,8 +812,9 @@
                         'alignRight'
                     ]
                 },
-                // Use base64 adapter for image upload (no server endpoint needed)
-                extraPlugins: [Base64UploadAdapter]
+                ckfinder:{
+                    uploadUrl:'/uploads/img'
+                }
             })
             .then(editor => {
                 window.editor = editor;
@@ -881,7 +882,7 @@
             if(inputImageUrl.value){
                 thumbnail.setAttribute('src',inputImageUrl.value);
             }else{
-                thumbnail.setAttribute('src','/img/user.png');
+                thumbnail.setAttribute('src','/img/default-post.png');
             }
         })
         if(inputImageUrl.value){

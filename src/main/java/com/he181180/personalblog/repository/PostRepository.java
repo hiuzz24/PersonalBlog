@@ -59,7 +59,6 @@ public interface PostRepository extends JpaRepository<Posts, Integer> {
 
     @Query("SELECT p FROM Posts p WHERE p.users.userID = :userID " +
             "AND p.users.deleted = false " +
-            "and p.published = true " +
             "order by p.published desc")
     List<Posts> findAllPostsByUserID(@Param("userID") int userID);
 

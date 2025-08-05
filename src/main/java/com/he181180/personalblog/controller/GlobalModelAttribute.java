@@ -74,6 +74,9 @@ public class GlobalModelAttribute {
         }
         String userName = authentication.getName();
         Users user = userService.findUserByUserNameAndDeletedFalse(userName);
+        if (user == null) {
+            return Collections.emptyList();
+        }
         return notificationService.findNotificationsByUserID(user.getUserID());
     }
 }

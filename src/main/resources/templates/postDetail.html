@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml" lang="en">
 
 <head>
     <meta charset="utf-8">
@@ -28,6 +28,12 @@
     <link th:href="@{/assets/css/main.css}" rel="stylesheet">
 
     <style>
+        #header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
         table {
             border-collapse: collapse;
             width: 100%;
@@ -42,10 +48,384 @@
         figure.table {
             margin: 1em 0;
         }
+
+        /* Beautiful Comment Section Styles */
+        .blog-comments {
+            background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .comments-count {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e3f2fd;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .comments-count::before {
+            content: '💬';
+            font-size: 1.2rem;
+        }
+
+        .comments-count::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(90deg, #4f46e5, #7c3aed);
+            border-radius: 1px;
+        }
+
+        .comment-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .comment {
+            background: transparent;
+            border-radius: 0;
+            padding: 4px 0;
+            margin-bottom: 8px;
+            box-shadow: none;
+            border: none;
+            transition: none;
+            position: relative;
+            overflow: visible;
+        }
+
+        .comment::before {
+            display: none;
+        }
+
+        .comment:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        .comment:hover::before {
+            opacity: 0;
+        }
+
+        .comment .d-flex.align-items-start {
+            margin-bottom: 4px;
+            gap: 8px;
+        }
+
+        .comment .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: none;
+            transition: none;
+            flex-shrink: 0;
+        }
+
+        .comment:hover .avatar {
+            border-color: transparent;
+        }
+
+        .comment-body {
+            flex: 1;
+        }
+
+        .comment-author {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .comment-author .fn {
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 1rem;
+            margin: 0;
+        }
+
+        .comment-author .text-muted {
+            color: #64748b;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .comment-body p {
+            color: #050505;
+            line-height: 1.34;
+            font-size: 0.9375rem;
+            margin: 0;
+            padding: 8px 12px;
+            background: #f0f2f5;
+            border-radius: 16px;
+            border: none;
+            position: relative;
+            display: inline-block;
+            max-width: fit-content;
+        }
+
+        .comment-body p::before {
+            display: none;
+        }
+
+        .reply {
+            margin-top: 0rem;
+        }
+
+        .comment-reply-link {
+            background: none;
+            border: none;
+            color: #65676b !important;
+            text-decoration: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0;
+            cursor: pointer;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+
+        .comment-reply-link::before {
+            display: none;
+        }
+
+        .comment-reply-link:hover {
+            background: #f2f3f5;
+            color: #65676b !important;
+            transform: none;
+            box-shadow: none;
+            text-decoration: underline;
+        }
+
+        .reply-box {
+            margin-top: 1rem;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #fefefe 0%, #f8fafc 100%);
+            border-radius: 16px;
+            border: 2px dashed #e2e8f0;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .reply-box .form-control {
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1rem;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .reply-box .form-control:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+            outline: none;
+        }
+
+        .reply-box .btn {
+            background: linear-gradient(45deg, #4f46e5, #7c3aed);
+            border: none;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .reply-box .btn::before {
+            content: '📤';
+            font-size: 0.8rem;
+        }
+
+        .reply-box .btn:hover {
+            background: linear-gradient(45deg, #3730a3, #6d28d9);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(79, 70, 229, 0.3);
+        }
+
+        .children {
+            margin-left: 2rem;
+            margin-top: 1.5rem;
+            position: relative;
+            list-style: none;
+            padding: 0;
+        }
+
+        .children::before {
+            content: '';
+            position: absolute;
+            left: -1rem;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: transparent;
+        }
+
+        .children .comment {
+            background: transparent;
+            border: 0px;
+        }
+
+        .comment-form {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .comment-form h4 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .comment-form h4::before {
+            content: '✍️';
+            font-size: 1.2rem;
+        }
+
+        .comment-form p {
+            color: #64748b;
+            margin-bottom: 2rem;
+            font-size: 1rem;
+        }
+
+        .comment-form .form-control {
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 1.5rem;
+            font-size: 1rem;
+            line-height: 1.6;
+            transition: all 0.3s ease;
+            background: white;
+            min-height: 120px;
+        }
+
+        .comment-form .form-control:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+            outline: none;
+        }
+
+        .comment-form .btn-primary {
+            background: linear-gradient(45deg, #4f46e5, #7c3aed);
+            border: none;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 16px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0 auto;
+            margin-top: 1rem;
+        }
+
+        .comment-form .btn-primary::before {
+            content: '📤';
+            font-size: 0.9rem;
+        }
+
+        .comment-form .btn-primary:hover {
+            background: linear-gradient(45deg, #3730a3, #6d28d9);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(79, 70, 229, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .blog-comments,
+            .comment-form {
+                padding: 1.5rem;
+                margin: 1rem 0;
+            }
+
+            .children {
+                margin-left: 1rem;
+            }
+
+            .comment .d-flex.align-items-start {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .comment .avatar {
+                width: 40px;
+                height: 40px;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .comment.new-comment {
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        /* Toast Container */
+        #toastContainer {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
     </style>
 </head>
 
 <body class="single-post-page">
+
+<!-- Toast Container -->
+<div id="toastContainer"></div>
 
 <header id="header" class="header d-flex align-items-center sticky-top">
     <div class="container position-relative d-flex align-items-center justify-content-between">
@@ -55,7 +435,6 @@
         </a>
 
         <nav id="navmenu" class="navmenu">
-
             <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
         </nav>
 
@@ -72,7 +451,6 @@
     </span>
                     <span class="visually-hidden">unread notifications</span>
                 </a>
-
 
                 <!-- Dropdown Menu -->
                 <ul class="dropdown-menu dropdown-menu-end"  aria-labelledby="notificationDropdown" style="min-width: 300px; max-height: 400px; overflow-y: auto;">
@@ -179,9 +557,8 @@
                                         </button>
                                     </li>
                                     <li class="d-flex align-items-center"><i class="bi bi-clock"></i> <a
-                                            href="blog-details.html">
-                                        <time th:text="${postDetail.publishedAt}"></time>
-                                    </a></li>
+                                        <span th:text="${#dates.format(postDetail.publishedAt,  'yyyy-MM-dd HH:mm')}"></span>
+                                        </a></li>
                                     <li class="d-flex align-items-center"><i class="bi bi-chat-dots"
                                                                              th:text="${' ' + postDetail.comments.size() + ' comments'}"></i></a>
                                     </li>
@@ -195,16 +572,18 @@
                             <div class="meta-bottom">
                                 <i class="bi bi-tags"></i>
                                 <ul class="tags" th:each="tag: ${postDetail.tags}">
-                                    <li><a th:href="@{/tags/{tagID}(tagID = ${tag.tagName})}"
+                                    <li><a th:href="@{/tags/{tagID}(tagID = ${tag.tagID})}"
                                            th:text="${tag.tagName}"></a></li>
+
                                 </ul>
                             </div><!-- End meta bottom -->
 
                             <!-- Favorite Button -->
-                            <div class="mt-3 mb-3">
+
+                            <div class="mt-3 mb-3" sec:authorize="!hasRole('ADMIN')">
                                 <button type="button" class="btn" id="favoriteBtn"
                                         th:data-post-id="${postDetail.postID}"
-                                            th:classappend="${isFavorited} ? 'btn-danger' : 'btn-outline-danger'">
+                                        th:classappend="${isFavorited} ? 'btn-danger' : 'btn-outline-danger'">
                                     <i class="bi" th:classappend="${isFavorited} ? 'bi-heart-fill' : 'bi-heart'"></i>
                                     <span th:text="${isFavorited} ? 'Saved' : 'Save post'"></span>
                                 </button>
@@ -218,7 +597,6 @@
                                     <i class="bi bi-chat-dots"></i> Chat with the author
                                 </button>
                             </div>
-
 
                         </article>
 
@@ -358,7 +736,7 @@
                             <div>
                                 <a th:href="@{'/PostDetail/' + ${relatedPost.postID}}"
                                    th:text="${relatedPost.title}"></a>
-                                <time th:text="${#dates.format(relatedPost.publishedAt, 'dd MMM yyyy')}"></time>
+                                <span th:text="${#dates.format(relatedPost.publishedAt, 'yyyy MM dd HH:mm')}"></span>
                             </div>
                         </div><!-- End recent post item-->
                     </div>
@@ -413,8 +791,6 @@
             </div>
         </div>
     </div>
-
-
 
     </div>
 
@@ -607,22 +983,22 @@
                             }
                         })
                         .then(() => {
-                                const icon = this.querySelector('i');
-                                const text = this.querySelector('span');
-                                if (isFollowing) {
-                                    this.classList.remove('btn-primary');
-                                    this.classList.add('btn-outline-primary');
-                                    icon.classList.remove('bi-person-check-fill');
-                                    icon.classList.add('bi-person-plus');
-                                    text.textContent = 'Follow';
-                                 } else {
-                                    this.classList.remove('btn-outline-primary');
-                                    this.classList.add('btn-primary');
-                                    icon.classList.remove('bi-person-plus');
-                                    icon.classList.add('bi-person-check-fill');
-                                    text.textContent = 'Following';
-                                }
-                                showToast(data.message || 'Operation successful', 'success');
+                            const icon = this.querySelector('i');
+                            const text = this.querySelector('span');
+                            if (isFollowing) {
+                                this.classList.remove('btn-primary');
+                                this.classList.add('btn-outline-primary');
+                                icon.classList.remove('bi-person-check-fill');
+                                icon.classList.add('bi-person-plus');
+                                text.textContent = 'Follow';
+                            } else {
+                                this.classList.remove('btn-outline-primary');
+                                this.classList.add('btn-primary');
+                                icon.classList.remove('bi-person-plus');
+                                icon.classList.add('bi-person-check-fill');
+                                text.textContent = 'Following';
+                            }
+                            showToast(data.message || 'Operation successful', 'success');
                         })
                         .catch(error => {
                             console.error('Error:', error);
@@ -753,13 +1129,10 @@
 </main>
 
 <footer id="footer" class="footer dark-background">
-
-
     <div class="container copyright text-center mt-4">
-        <p>© <span>Copyright</span> <strong class="px-1 sitename">PersonalBlog</strong> <span>All Rights Reserved</span>
+        <p><span>Copyright</span> <strong class="px-1 sitename">PersonalBlog</strong> <span>All Rights Reserved</span>
         </p>
     </div>
-
 </footer>
 
 <!-- Scroll Top -->
@@ -780,4 +1153,3 @@
 </body>
 
 </html>
-

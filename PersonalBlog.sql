@@ -23,7 +23,7 @@ CREATE TABLE posts (
                        image_url TEXT,
                        body TEXT,
                        status VARCHAR(50) NOT NULL,
-                       reason_rejected TEXT,
+                       reason_rejected MEDIUMTEXT,
                        is_published BOOLEAN,
                        published_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                        updated_at TIMESTAMP NULL DEFAULT NULL,

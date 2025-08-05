@@ -551,7 +551,7 @@
 
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/favorites/dashboard}" style="color: rgba(255,255,255,0.8);">
-                    <i class="bi bi-heart-fill me-3"></i>
+                    <i class="bi bi-heart me-3"></i>
                     <span class="link-text">Favorite blogs</span>
                 </a>
             </li>
@@ -814,19 +814,4 @@
     document.addEventListener('DOMContentLoaded', loadDashboardData);
 </script>
 </body>
-</html> userCard = document.createElement('div');
-userCard.className = 'user-card';
-userCard.innerHTML = `
-<img src="${user.avatarUrl || 'https://via.placeholder.com/60'}" alt="Avatar">
-<div class="user-info">
-    <strong>${user.username}</strong>
-    <p>${user.fullName || 'No full name provided'}</p>
-</div>
-<button class="btn ${isFollowing ? 'btn-primary' : 'btn-outline-primary'}" data-user-id="${user.userId}">
-    <i class="bi ${isFollowing ? 'bi-person-check-fill' : 'bi-person-plus'}"></i>
-    <span>${isFollowing ? 'Following' : 'Follow'}</span>
-</button>
-`;
-container.appendChild(userCard);
-
-const
+</html>

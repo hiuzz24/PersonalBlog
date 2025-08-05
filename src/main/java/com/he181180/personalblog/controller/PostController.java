@@ -136,7 +136,7 @@ public class PostController {
         return "postDetail";
     }
 
-    @PostMapping("/upload-image")
+    @PostMapping("/uploads/img")
     @ResponseBody
     public Map<String,String> uploadImageForCkeditor(@RequestParam("upload")MultipartFile upload) throws IOException {
         return postService.uploadImageForCkeditor(upload);

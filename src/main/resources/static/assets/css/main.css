@@ -1487,7 +1487,11 @@ section,
   height: 100%;
   object-fit: cover;
 }
-
+.img-thumbnail {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+}
 
 .blog-details .title {
   color: var(--heading-color);
@@ -1636,7 +1640,7 @@ section,
 }
 
 .blog-comments .comment {
-  margin-top: 30px;
+  margin-top: 0px;
   position: relative;
 }
 
@@ -2328,7 +2332,7 @@ body {
 }
 .nav-link i {
   transition: all 0.3s ease;
-  font-size: 18px;
+  font-size: 20px;
   width: 20px;
   display: flex;
   align-items: center;
@@ -2462,6 +2466,17 @@ body {
 }
 
 /* Blog creation image section */
+figure.image > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.img-thumbnail {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+}
+
 .image-section {
   background: rgba(248, 250, 252, 0.8);
   backdrop-filter: blur(10px);
