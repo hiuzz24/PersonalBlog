@@ -162,7 +162,6 @@
         display: flex;
         align-items: center;
         padding: 12px 16px;
-        color: rgba(255,255,255,0.8);
     }
 
     .nav-link.active {
@@ -189,14 +188,19 @@
         transition: all 0.3s ease;
     }
 
+    .nav-link::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: left 0.5s ease;
+    }
 
     .nav-link:hover::before {
         left: 100%;
-    }
-
-    .nav-link:hover {
-        background: rgba(255, 255, 255, 0.1);
-        transform: translateX(5px);
     }
 
     /* Enhanced Post Cards */
@@ -339,6 +343,24 @@
         border-radius: 8px;
         font-size: 0.85rem;
     }
+    .badge-1 {
+        --bs-badge-padding-x: 0.65em;
+        --bs-badge-padding-y: 0.35em;
+        --bs-badge-font-size: 0.75em;
+        --bs-badge-font-weight: 700;
+        --bs-badge-color: #fff;
+        --bs-badge-border-radius: var(--bs-border-radius);
+        display: inline-block;
+        padding: var(--bs-badge-padding-y) var(--bs-badge-padding-x);
+        font-size: var(--bs-badge-font-size);
+        font-weight: var(--bs-badge-font-weight);
+        line-height: 1;
+        color: var(--bs-badge-color);
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        border-radius: var(--bs-badge-border-radius)
+    }
 
     .badge.bg-success {
         background: var(--success-gradient) !important;
@@ -350,7 +372,8 @@
     }
 
     .badge.bg-danger {
-        background: var(--secondary-gradient) !important;
+        --bs-bg-opacity: 1;
+        background-color: rgba(var(--bs-danger-rgb), var(--bs-bg-opacity)) !important
     }
 
     /* Mobile Responsiveness */
@@ -414,27 +437,57 @@
             <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
         </nav>
         <div class="header-social-links d-flex align-items-center pe-3" style="margin-left:auto;">
+            <!-- Notification Button -->
+            <div class="nav-item dropdown me-3">
+                <a class="nav-link position-relative" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 1.5rem; color: #535353;">
+                    <i class="bi bi-bell"></i>
+                    <!-- Badge: show unread count -->
+                    <span class="position-absolute top-0 start-100 translate-middle-z badge-1 rounded-pill bg-danger"
+                          id="notificationBadge"
+                          style="font-size: 0.75rem;"
+                          th:text="${notification != null ? #lists.size(notification.?[!isRead]) : 0}">
+    </span>
+                    <span class="visually-hidden">unread notifications</span>
+                </a>
+
+
+                <!-- Dropdown Menu -->
+                <ul class="dropdown-menu dropdown-menu-end"  aria-labelledby="notificationDropdown" style="min-width: 300px; max-height: 400px; overflow-y: auto;">
+                    <!-- If no notifications -->
+                    <li th:if="${#lists.isEmpty(notification)}">
+                        <span class="dropdown-item-text text-muted">No new notifications</span>
+                    </li>
+
+                    <!-- Show each notification -->
+                    <li th:each="noti : ${notification}">
+                        <a class="dropdown-item"
+                           th:if="${noti.post != null}"
+                           th:href="@{/PostDetail/{id}(id=${noti.post.postID})}">
+                            <span th:text="${noti.message}">New post</span><br>
+                            <small class="text-muted" th:text="${#dates.format(noti.createdAt, 'dd/MM/yyyy HH:mm')}">Time</small>
+                        </a>
+
+                        <a class="dropdown-item"
+                           th:if="${noti.post == null}">
+                            <span th:text="${noti.message}">Notification</span><br>
+                            <small class="text-muted" th:text="${#dates.format(noti.createdAt, 'dd/MM/yyyy HH:mm')}">Time</small>
+                        </a>
+                </ul>
+            </div>
             <div class="dropdown">
                 <a href="#" class="d-flex align-items-center" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding:0; border:none; background:none; transition: all 0.3s ease;">
                     <h5 class="sitename mb-0 d-flex align-items-center" style="font-size: 1.2rem; margin-right: 12px; display: flex; align-items: center; height: 56px; line-height: 56px; color: #535353; font-weight: 500;" th:text="${user.fullName != null ? user.fullName : user.username}"></h5>
                     <img th:src="${user != null && user.avatarUrl != null && !#strings.isEmpty(user.avatarUrl) ? user.avatarUrl : '/assets/img/user.png'}" alt="avatar" style="width:40px; height:40px; border-radius:50%; object-fit:cover; border: 2px solid rgba(102, 126, 234, 0.3); transition: all 0.3s ease;">
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end shadow-lg" aria-labelledby="userDropdown" style="border: none; border-radius: 12px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px);">
-                    <li th:if="${user != null && user.role == 'ADMIN'}">
-                        <form th:action="@{/admin}" style="display: inline;">
-                            <button type="submit" class="dropdown-item" style="border-radius: 8px; transition: all 0.3s ease;">
-                                <i class="bi bi-speedometer2 me-2"></i>Dashboard Admin</button>
-                        </form>
-                        <hr class="dropdown-divider">
-                    </li>
-                    <li th:if="${user != null && user.role.toUpperCase() == 'WRITER'}">
+                    <li>
                         <form th:action="@{/profile}" style="display: inline;">
                             <button type="submit" class="dropdown-item" style="border-radius: 8px; transition: all 0.3s ease;">
                                 <i class="bi bi-person me-2"></i>Profile
                             </button>
                         </form>
-                        <hr class="dropdown-divider">
                     </li>
+                    <li><hr class="dropdown-divider" style="opacity: 0.3;"></li>
                     <li>
                         <form th:action="@{/logout}" method="post" style="display: inline;">
                             <button type="submit" class="dropdown-item text-danger" style="border-radius: 8px; transition: all 0.3s ease;">
@@ -492,8 +545,14 @@
 
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/favorites/dashboard}" style="color: rgba(255,255,255,0.8);">
-                    <i class="bi bi-heart-fill me-3"></i>
+                    <i class="bi bi-heart me-3"></i>
                     <span class="link-text">Favorite blogs</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/api/follows}" style="color: rgba(255,255,255,0.9);">
+                    <i class="bi bi-people me-3"></i>
+                    <span class="link-text">Followers & Following</span>
                 </a>
             </li>
 
@@ -580,14 +639,14 @@
                                    class="btn btn-sm btn-outline-success" title="View">
                                     <i class="bi bi-eye"></i>
                                 </a>
-
                                 <a th:href="@{/blog/edit/{postID}(postID=${post.postID})}"
                                    class="btn btn-sm btn-outline-primary" title="Edit">
                                     <i class="bi bi-pencil"></i>
                                 </a>
                                 <a th:href="@{/blog/delete/{postID}(postID=${post.postID})}"
                                    class="btn btn-sm btn-outline-danger" title="Delete"
-                                   onclick="return confirm('are u sure want to delete?')">                                    <i class="bi bi-trash"></i>
+                                   onclick="return confirmDelete(event, '${post.postID}', '${post.title}')">
+                                    <i class="bi bi-trash"></i>
                                 </a>
                             </div>
 
@@ -647,34 +706,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    function confirmDelete(postId, title) {
-        document.getElementById('postTitle').textContent = title;
-        document.getElementById('deleteForm').action = '/dashboard/posts/delete/' + postId;
-        new bootstrap.Modal(document.getElementById('deleteModal')).show();
-    }
-    document.addEventListener('DOMContentLoaded', function() {
-        restoreSidebarState();
-
-        // Handle avatar change interactions
-        const avatarWrapper = document.querySelector('.avatar-wrapper');
-        const changeBox = document.getElementById('changeBox');
-
-        const avatarFile = document.getElementById('avatarFile');
-        const avatarUrl = document.getElementById('avatarUrl');
-
-        if (avatarFile) {
-            avatarFile.addEventListener('change', function() {
-                if (avatarUrl) avatarUrl.value = '';
-                document.getElementById('avatarForm').submit(); // Auto-submit on file select
-            });
-        }
-
-        if (avatarUrl) {
-            avatarUrl.addEventListener('input', function() {
-                if (avatarFile) avatarFile.value = '';
-            });
-        }
-    });
-</script>
-</body>
-</html>
+    function confirmDelete(event, postId, title) {
+        event.preventDefault();
+        document.getElementById('postTitle

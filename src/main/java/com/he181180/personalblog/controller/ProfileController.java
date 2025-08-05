@@ -82,14 +82,20 @@ public class ProfileController {
             @RequestParam(value = "avatarFile", required = false) MultipartFile avatarFile,
             @RequestParam(value = "avatarUrl", required = false) String avatarUrl) throws IOException {
 
-        Users user = currentUserService.getCurrentUser(authentication);
+        Users user = null;
+        if (authentication != null) {
+            user = currentUserService.getCurrentUser(authentication);
+        }
+        if (user == null) {
+            return "redirect:/profile?error=user-not-found";
+        }
 
         // Handle avatar file upload
         if (avatarFile != null && !avatarFile.isEmpty()) {
-            // Save to src/main/resources/static/img/ so it works in both dev and prod
-            String uploadDir = System.getProperty("user.dir") + "/src/main/resources/static/img/";
+            String uploadDir = System.getProperty("user.dir") + "/uploads/img/";
             File dir = new File(uploadDir);
             if (!dir.exists()) dir.mkdirs();
+
             String fileName = System.currentTimeMillis() + "_" + avatarFile.getOriginalFilename();
             File dest = new File(dir, fileName);
             try {
@@ -192,57 +198,6 @@ public class ProfileController {
         boolean success = sessionCode != null && sessionCode.equals(inputCode);
         return Map.of("success", success);
     }
-
-    @PostMapping("/change-password")
-    public String changePassword(@RequestParam(required = false) String currentPassword,
-                                 @RequestParam String newPassword,
-                                 @RequestParam String confirmPassword,
-                                 @RequestParam(required = false) String confirmationCode,
-                                 Authentication authentication,
-                                 HttpSession session,
-                                 Model model) {
-        // Get user
-        Users user = null;
-        if (authentication != null) {
-            Object principal = authentication.getPrincipal();
-            if (principal instanceof org.springframework.security.oauth2.core.user.OAuth2User oauth2User) {
-                String email = oauth2User.getAttribute("email");
-                user = userService.findUserByEmail(email).orElse(null);
-            } else {
-                String username = authentication.getName();
-                user = userService.findUserByUsername(username).orElse(null);
-            }
-        }
-        if (user == null) {
-            model.addAttribute("error", "User not found.");
-            return "UserDashboard/Profile";
-        }
-        // If user has a password, require confirmation code and current password
-        if (user.getPassword() != null && !user.getPassword().isEmpty()) {
-            String sessionCode = (String) session.getAttribute("confirmationCode");
-            if (sessionCode == null || !sessionCode.equals(confirmationCode)) {
-                model.addAttribute("error", "Invalid or expired confirmation code.");
-                return "UserDashboard/Profile";
-            }
-            if (currentPassword == null || !userService.checkPassword(user, currentPassword)) {
-                model.addAttribute("error", "Current password is incorrect.");
-                return "UserDashboard/Profile";
-            }
-        }
-        // For users without a password, skip confirmation code and current password
-        // Check new password match
-        if (!newPassword.equals(confirmPassword)) {
-            model.addAttribute("error", "New passwords do not match.");
-            return "UserDashboard/Profile";
-        }
-        // Change password
-        userService.changeUserPassword(user, newPassword);
-        // Optionally clear confirmation code from session
-        session.removeAttribute("confirmationCode");
-        model.addAttribute("success", "Password changed successfully.");
-        return "/profile";
-    }
-
 
 
 }

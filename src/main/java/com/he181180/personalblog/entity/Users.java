@@ -77,5 +77,3 @@ public class Users {
     @OneToMany(mappedBy = "fromUser",cascade = CascadeType.ALL)
     private List<Notification> sendNotifications;
 }
-
-

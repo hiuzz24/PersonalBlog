@@ -1,5 +1,5 @@
 <!-- Thymeleaf template for recursive comments -->
-<li class="comment odd child " th:each="child : ${childComments}" th:fragment="commentList(childComments)" style="list-style: none; padding-left: 0;">
+<li class="comment odd child " th:each="child : ${childComments}" th:fragment="commentList(childComments)" style="list-style: none; padding-left: 20px;">
     <div class="d-flex align-items-start">
     <img class="avatar photo me-2" th:src="${child.user.avatarUrl != null ? child.user.avatarUrl : '/assets/img/user.png'}" alt="avatar" style="width:32px; height:32px; border-radius:50%; object-fit:cover; font-size:1.5rem;">
     <div class="comment-body">

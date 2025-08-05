@@ -48,5 +48,4 @@ public interface UserRepository extends JpaRepository<Users,Integer> {
 
     Users findUsersByUsernameAndDeletedFalse(String userName);
 
-
 }

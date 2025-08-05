@@ -19,12 +19,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Collections;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -45,7 +45,6 @@ public class PostController {
 
     @Autowired
     private CurrentUserService currentUserService;
-
     @Autowired
     private FavoriteService favoriteService;
 
@@ -137,7 +136,7 @@ public class PostController {
         return "postDetail";
     }
 
-    @PostMapping("/upload-image")
+    @PostMapping("/uploads/img")
     @ResponseBody
     public Map<String,String> uploadImageForCkeditor(@RequestParam("upload")MultipartFile upload) throws IOException {
         return postService.uploadImageForCkeditor(upload);

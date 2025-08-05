@@ -33,7 +33,7 @@ public class Posts {
     private String imageUrl;
 
     @Lob
-    @Column(name = "body",columnDefinition = "text")
+    @Column(name = "body",columnDefinition = "mediumtext")
     private String body;
 
     @Column(name = "is_published")
