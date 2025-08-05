@@ -723,7 +723,7 @@
             userCard.innerHTML = `
                     <img src="${user.avatarUrl || 'https://via.placeholder.com/40'}" alt="Avatar">
                     <div class="user-info">
-                        <strong>${user.username}</strong>
+                        <strong><a href="/author/ProfileUser/${user.userId}" class="profile-link">${user.username}</a></strong>
                         <p>${user.fullName || ''}</p>
                     </div>
                     <button class="btn ${isFollowing ? 'btn-primary' : 'btn-outline-primary'}" data-user-id="${user.userId}">

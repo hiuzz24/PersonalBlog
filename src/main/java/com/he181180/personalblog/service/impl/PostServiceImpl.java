@@ -39,7 +39,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<Posts> findTop5RecentPosts() {
-        return postRepository.findTop5ByPublishedTrueAndUsers_DeletedFalseOrderByPublishedAtDesc();
+        return postRepository.findTop5ByPublishedTrueAndUsers_DeletedFalseAndDeletedFalseOrderByPublishedAtDesc();
     }
 
     @Override
@@ -94,6 +94,7 @@ public class PostServiceImpl implements PostService {
         Posts post = postRepository.findPostByIDs(postID);
         if (post != null) {
             post.setPublished(false);
+            post.setDeleted(true);
             postRepository.save(post);
         }
     }
@@ -109,7 +110,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<Posts> getAllPosts() {
-        return postRepository.findAllByUsers_DeletedFalseAndStatusApproved();
+        return postRepository.findAllByUsers_DeletedFalse();
     }
 
     @Override
@@ -133,7 +134,7 @@ public class PostServiceImpl implements PostService {
 
             Files.copy(fileImage.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-            return "/uploads/img/" + fileName;
+            return "/img/" + fileName;
         }
         return null;
     }
@@ -156,24 +157,24 @@ public class PostServiceImpl implements PostService {
     @Override
     public Map<String, Integer> getPostCountByTag() {
         List<Object[]> result = postRepository.getPostCountByTag();
-        Map<String, Integer> map = new HashMap<>();
-        for (Object[] row : result) {
-            String name = (String) row[0];
-            Long value = (Long) row[1];
-            map.put(name, value.intValue());
+        Map<String,Integer> map = new HashMap<>();
+        for(Object[] row : result){
+            String name = (String)row[0];
+            Long value = (Long)row[1];
+            map.put(name,value.intValue());
         }
         return map;
     }
 
     @Override
     public Map<String, Integer> top5Author() {
-        Pageable top5 = PageRequest.of(0, 5);
+        Pageable top5 = PageRequest.of(0,5);
         List<Object[]> result = postRepository.top5Author(top5);
-        Map<String, Integer> map = new HashMap<>();
-        for (Object[] row : result) {
-            String name = (String) row[0];
-            Long value = (Long) row[1];
-            map.put(name, value.intValue());
+        Map<String,Integer> map = new HashMap<>();
+        for(Object[] row : result){
+            String name = (String)row[0];
+            Long value = (Long)row[1];
+            map.put(name,value.intValue());
         }
         return map;
     }
@@ -181,11 +182,11 @@ public class PostServiceImpl implements PostService {
     @Override
     public Map<String, Integer> postPerStatus() {
         List<Object[]> result = postRepository.postPerStatus();
-        Map<String, Integer> map = new HashMap<>();
-        for (Object[] row : result) {
-            String name = (String) row[0];
-            Long value = (Long) row[1];
-            map.put(name, value.intValue());
+        Map<String,Integer> map  = new HashMap<>();
+        for(Object[] row : result){
+            String name = (String)row[0];
+            Long value = (Long)row[1];
+            map.put(name,value.intValue());
         }
         return map;
     }
@@ -193,17 +194,17 @@ public class PostServiceImpl implements PostService {
     @Override
     public Map<String, Integer> postPerMonth(int year) {
         List<Object[]> result = postRepository.postPerMonth(year);
-        Map<String, Integer> map = new HashMap<>();
+        Map<String,Integer> map = new HashMap<>();
         String[] months = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
                 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
-        for (String mon : months) {
-            map.put(mon, 0);
+        for(String mon : months){
+            map.put(mon,0);
         }
 
-        for (Object[] row : result) {
+        for(Object[] row : result){
             Integer monthIndex = (Integer) row[0];
             Long value = (Long) row[1];
-            map.put(months[monthIndex - 1], value.intValue());
+            map.put(months[monthIndex-1],value.intValue());
         }
         return map;
     }
