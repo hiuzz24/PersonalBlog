@@ -53,8 +53,8 @@ public class BlogManagementController {
     // Hiển thị form tạo bài viết mới
     @GetMapping("/create")
     public String createPost(Model model) {
-        model.addAttribute("post",new Posts());
-        model.addAttribute("formAction","/blog/create");
+        model.addAttribute("post", new Posts());
+        model.addAttribute("formAction", "/blog/create");
         return "BlogManagement/blogCreation";
     }
 

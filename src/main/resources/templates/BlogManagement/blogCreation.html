@@ -621,7 +621,7 @@
                                 Post Title
                             </label>
                             <input type="text" id="title" name="title" th:value="${post.title}"
-                                   required class="form-control" placeholder="Enter an engaging title...">
+                                   class="form-control" placeholder="Enter an engaging title...">
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -631,7 +631,7 @@
                                 Short Description
                             </label>
                             <input type="text" id="content" name="content" th:value="${post.content}"
-                                   required class="form-control" placeholder="Brief description of the post...">
+                                   class="form-control" placeholder="Brief description of the post...">
                         </div>
                     </div>
                 </div>
@@ -742,13 +742,30 @@
 
 <script>
     function validationForm(){
+        const title = document.getElementById("title").value;
+        const content = document.getElementById("content").value;
         const imageUrl = document.getElementById("imageUrl").value;
         const fileImage = document.getElementById("fileImage").files.length;
         const body = window.editor.getData().trim();
         const tagChecked = document.querySelectorAll("input[name=tagID]:checked");
 
+        if(title === ""){
+            alert("please insert title")
+            return false;
+        }
+
+        if(content === ""){
+            alert("please insert content")
+            return false;
+        }
+
         if(tagChecked.length === 0){
             alert("please choose 1 tag for post")
+            return false;
+        }
+
+        if(tagChecked.length > 4){
+            alert("please choose only 4 tags")
             return false;
         }
 
