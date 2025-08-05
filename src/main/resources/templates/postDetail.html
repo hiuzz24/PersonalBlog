@@ -579,25 +579,29 @@
                                 </ul>
                             </div><!-- End meta bottom -->
 
-                            <!-- Favorite Button -->
+                            <div class="d-flex mt-3 mb-3">
+                                <!-- Save Post Button:  -->
+                                <div sec:authorize="!hasRole('ADMIN')">
+                                    <button type="button" class="btn"
+                                            id="favoriteBtn"
+                                            th:data-post-id="${postDetail.postID}"
+                                            th:classappend="${isFavorited} ? 'btn-danger' : 'btn-outline-danger'">
+                                        <i class="bi" th:classappend="${isFavorited} ? 'bi-heart-fill' : 'bi-heart'"></i>
+                                        <span th:text="${isFavorited} ? 'Saved' : 'Save post'"></span>
+                                    </button>
+                                </div>
 
-                            <div  class="mt-3 mb-3" sec:authorize="!hasRole('ADMIN')">
-                                <button type="button" class="btn" id="favoriteBtn"
-                                        th:data-post-id="${postDetail.postID}"
-                                        th:classappend="${isFavorited} ? 'btn-danger' : 'btn-outline-danger'">
-                                    <i class="bi" th:classappend="${isFavorited} ? 'bi-heart-fill' : 'bi-heart'"></i>
-                                    <span th:text="${isFavorited} ? 'Saved' : 'Save post'"></span>
-                                </button>
+                                <!-- Chat with Author Button:  -->
+                                <div th:if="${#authentication.name != postDetail.users.username}" class="ms-3">
+                                    <button type="button" class="btn btn-primary"
+                                            id="chatWithAuthorBtn"
+                                            th:data-author-id="${postDetail.users.userID}"
+                                            th:data-author-name="${postDetail.users.fullName != null ? postDetail.users.fullName : postDetail.users.username}">
+                                        <i class="bi bi-chat-dots"></i> Chat with the author
+                                    </button>
+                                </div>
                             </div>
 
-                            <!-- Chat with Author Button (only show if not the author) -->
-                            <div th:if="${#authentication.name != postDetail.users.username}" class="mt-4">
-                                <button type="button" class="btn btn-primary" id="chatWithAuthorBtn"
-                                        th:data-author-id="${postDetail.users.userID}"
-                                        th:data-author-name="${postDetail.users.fullName != null ? postDetail.users.fullName : postDetail.users.username}">
-                                    <i class="bi bi-chat-dots"></i> Chat with the author
-                                </button>
-                            </div>
 
                         </article>
 
