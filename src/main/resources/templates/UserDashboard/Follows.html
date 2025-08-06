@@ -763,7 +763,6 @@
             .catch(error => {
                 showToast('An error occurred while loading followers', 'error');
             });
-
         fetch('/api/follows/following', {
             method: 'GET',
             headers: {

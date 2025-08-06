@@ -98,6 +98,7 @@ public class MainController {
     public String googleLoginSuccess(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, Model model) {
         if (customOAuth2User != null) {
             Users user = customOAuth2User.getUser();
+
             // If user does not have a username → ask for username
             if (user.getUsername() == null || user.getUsername().isEmpty()) {
                 // Set default avatar for new user

@@ -507,7 +507,6 @@
             const chatMessages = document.getElementById('chatMessages');
             const messageDiv = document.createElement('div');
             messageDiv.className = 'message mb-2';
-
             const isCurrentUser = message.senderId === currentUserId;
             const alignClass = isCurrentUser ? 'text-end' : 'text-start';
             const bgClass = isCurrentUser ? 'bg-primary text-white' : 'bg-light';
@@ -645,7 +644,6 @@
                 favoriteBtn.addEventListener('click', function () {
                     const postId = this.getAttribute('data-post-id');
                     const btn = this;
-
                     btn.disabled = true;
 
                     fetch(`/favorites/toggle/${postId}`, {
@@ -670,7 +668,6 @@
                                     icon.className = 'bi bi-heart';
                                     span.textContent = 'Save post';
                                 }
-
                                 showToast(data.message, 'success');
                             } else {
                                 showToast(data.message || 'An error occurred.', 'error');
@@ -717,18 +714,15 @@
 
 
             document.body.appendChild(toast);
-
             const bsToast = new bootstrap.Toast(toast, {
                 autohide: true,
                 delay: 3000
             });
             bsToast.show();
-
             toast.addEventListener('hidden.bs.toast', function () {
                 document.body.removeChild(toast);
             });
         }
-
         window.addEventListener('beforeunload', function () {
             disconnect();
         });
