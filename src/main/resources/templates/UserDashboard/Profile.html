@@ -409,12 +409,10 @@
         const sidebar = document.getElementById('sidebark');
         sidebar.classList.toggle('closed');
 
-        // Lưu trạng thái sidebar vào session
         const isClosed = sidebar.classList.contains('closed');
         sessionStorage.setItem('sidebarClosed', isClosed);
     }
 
-    // Khôi phục trạng thái sidebar khi tải trang
     function restoreSidebarState() {
         const sidebar = document.getElementById('sidebark');
         const isClosed = sessionStorage.getItem('sidebarClosed') === 'true';
@@ -440,7 +438,7 @@
         const preview = document.getElementById('previewAvatar');
         if (input.files && input.files[0]) {
             preview.src = URL.createObjectURL(input.files[0]);
-            document.getElementById('profileForm').submit(); // Tự động submit
+            document.getElementById('profileForm').submit();
         }
     }
 
@@ -515,11 +513,9 @@
             });
     }
 
-    // Khôi phục trạng thái sidebar khi tải trang
     document.addEventListener('DOMContentLoaded', function() {
         restoreSidebarState();
 
-        // Handle avatar change interactions
         const avatarWrapper = document.querySelector('.avatar-wrapper');
         const changeBox = document.getElementById('changeBox');
 
@@ -529,7 +525,7 @@
         if (avatarFile) {
             avatarFile.addEventListener('change', function() {
                 if (avatarUrl) avatarUrl.value = '';
-                document.getElementById('avatarForm').submit(); // Auto-submit on file select
+                document.getElementById('avatarForm').submit();
             });
         }
 

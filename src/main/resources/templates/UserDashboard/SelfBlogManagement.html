@@ -590,7 +590,7 @@
                             <div class="d-flex gap-3 align-items-center">
                                 <small class="text-muted">
                                     <i class="bi bi-calendar me-1"></i>
-                                    <span th:text="${post.updatedAt != null ? #dates.format(post.updatedAt, 'dd-MM-yyyy HH:mm') : #dates.format(post.publishedAt, 'dd-MM-yyyy HH:mm')}">
+                                    <span th:text="${post.updatedAt != null ? #dates.format(post.updatedAt, 'dd/MM/yyyy HH:mm') : #dates.format(post.publishedAt, 'dd/MM/yyyy HH:mm')}">
                                         Updated date
                                     </span>
                                 </small>
@@ -699,7 +699,6 @@
     document.addEventListener('DOMContentLoaded', function() {
         restoreSidebarState();
 
-        // Handle avatar change interactions
         const avatarWrapper = document.querySelector('.avatar-wrapper');
         const changeBox = document.getElementById('changeBox');
 
@@ -709,7 +708,7 @@
         if (avatarFile) {
             avatarFile.addEventListener('change', function() {
                 if (avatarUrl) avatarUrl.value = '';
-                document.getElementById('avatarForm').submit(); // Auto-submit on file select
+                document.getElementById('avatarForm').submit();
             });
         }
 

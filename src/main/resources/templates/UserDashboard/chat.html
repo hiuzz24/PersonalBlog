@@ -665,12 +665,10 @@
         const sidebar = document.getElementById('sidebark');
         sidebar.classList.toggle('closed');
 
-        // Save sidebar state
         const isClosed = sidebar.classList.contains('closed');
         sessionStorage.setItem('sidebarClosed', isClosed);
     }
 
-    // Restore sidebar state when page loads
     function restoreSidebarState() {
         const sidebar = document.getElementById('sidebark');
         const isClosed = sessionStorage.getItem('sidebarClosed') === 'true';
@@ -682,7 +680,6 @@
         }
     }
 
-    // Chat functionality
     let stompClient = null;
     let currentChatUserId = null;
     let currentUsername = null;
@@ -693,7 +690,6 @@
         loadConversations();
         connect();
 
-        // Event listeners
         document.getElementById('sendMessageBtn').addEventListener('click', sendMessage);
         document.getElementById('messageInput').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
@@ -761,12 +757,10 @@
                     if (messageData.senderId === currentChatUserId || messageData.receiverId === currentChatUserId) {
                         displayMessage(messageData);
                     }
-                    // Refresh conversations to update latest message
                     loadConversations();
                 });
             }, function (error) {
                 console.error('WebSocket connection error:', error);
-                // Retry connection after 5 seconds
                 setTimeout(() => connect(), 5000);
             });
         } catch (error) {
@@ -793,7 +787,6 @@
             })
             .catch(error => {
                 console.error('Error loading conversations:', error);
-                // Show error message in conversations list
                 const conversationsList = document.getElementById('conversationsList');
                 conversationsList.innerHTML = `
                     <div class="empty-state">
@@ -854,7 +847,6 @@
     function selectConversation(userId, userName, avatarUrl) {
         currentChatUserId = userId;
 
-        // Update active conversation
         document.querySelectorAll('.conversation-item').forEach(item => {
             item.classList.remove('active');
         });
@@ -863,13 +855,11 @@
             selectedItem.classList.add('active');
         }
 
-        // Show chat header and input
         document.getElementById('chatAreaHeader').style.display = 'block';
         document.getElementById('chatInputArea').style.display = 'block';
         document.getElementById('chatPartnerName').textContent = userName;
         document.getElementById('chatPartnerAvatar').src = avatarUrl;
 
-        // Load chat history
         loadChatHistory(userId);
     }
 
@@ -954,7 +944,6 @@
         try {
             const date = new Date(dateTime);
 
-            // Check if date is valid
             if (isNaN(date.getTime())) {
                 return '';
             }
@@ -984,7 +973,6 @@
         }
     }
 
-    // Disconnect when page unloads
     window.addEventListener('beforeunload', function () {
         if (stompClient !== null) {
             stompClient.disconnect();
