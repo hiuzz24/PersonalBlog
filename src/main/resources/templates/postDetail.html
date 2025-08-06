@@ -26,27 +26,6 @@
 
     <!-- Main CSS File -->
     <link th:href="@{/assets/css/main.css}" rel="stylesheet">
-
-    <style>
-        table {
-            border-collapse: collapse;
-            width: 100%;
-        }
-
-        table, th, td {
-            border: 1px solid black;
-            padding: 8px;
-            text-align: left;
-        }
-
-        figure.table {
-            margin: 1em 0;
-        }
-        .post-date {
-            font-size: 0.9rem;
-            color: gray;
-        }
-    </style>
 </head>
 
 <body class="single-post-page">
@@ -171,7 +150,7 @@
                                         </button>
                                     </li>
                                     <li class="d-flex align-items-center"><i class="bi bi-clock"></i> <a
-                                        <span th:text="${#dates.format(postDetail.publishedAt,  'yyyy-MM-dd HH:mm')}"></span>
+                                        <span th:text="${#dates.format(postDetail.publishedAt,  'dd-MM-yyyy HH:mm')}"></span>
                                         </a></li>
                                     <li class="d-flex align-items-center"><i class="bi bi-chat-dots" th:text="${' ' + postDetail.comments.size() + ' comments'}"></i></a>
                                     </li>
@@ -239,7 +218,7 @@
                                                   th:text="${parent.user.username}">User Name</cite>
                                             <span th:if="${parent.createdAt != null}" class="text-muted ms-2"
                                                   style="font-size:0.95rem;">| <span
-                                                    th:text="${#dates.format(parent.createdAt, 'yyyy-MM-dd HH:mm')}"></span></span>
+                                                    th:text="${#dates.format(parent.createdAt, 'dd-MM-yyyy HH:mm')}"></span></span>
                                             <span th:if="${parent.createdAt == null}"
                                                   class="text-muted ms-2">| No date</span>
                                         </div>

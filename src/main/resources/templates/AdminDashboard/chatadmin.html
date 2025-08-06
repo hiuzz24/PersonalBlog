@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>ChatAdmin - PersonalBlog</title>
+    <title>Chat - PersonalBlog</title>
     <meta name="description" content="">
     <meta name="keywords" content="">
 
@@ -512,11 +512,10 @@
                     <div class="dropdown-menu bg-transparent border-0">
                         <a th:href="@{/admin/user/userManagement}" class="dropdown-item">User Management</a>
                         <a th:href="@{/admin/blog/blogManagement}" class="dropdown-item">Blog Management</a>
-                        <a th:href="@{/admin/moderate/moderateNewBlogs}" class="dropdown-item">Moderate New
-                            Blogs</a>
+                        <a th:href="@{/admin/moderate/moderateNewBlogs}" class="dropdown-item">Moderate New Blogs</a>
                     </div>
                 </div>
-                <a th:href="@{/admin/chat}" class="nav-item nav-link active"><i class="far fa-comment-dots"></i>Chat</a>
+                <a th:href="@{/admin/chat}" class="nav-item nav-link active"><i class="fa fa-comment-dots me-2"></i>Chat</a>
                 <a th:href="@{/explore}" class="nav-item nav-link"><i class="fa fa-home me-2"></i>Back to Site</a>
                 <a th:href="@{/logout}" class="nav-item nav-link"><i class="fa fa-sign-out-alt me-2"></i>Logout</a>
             </div>
@@ -533,6 +532,7 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <h2 class="mb-2"><i class="fas fa-comments me-3"></i>Chat System</h2>
+                        <p class="mb-0 opacity-90">Connect and communicate with your community members in real-time</p>
                     </div>
                 </div>
             </div>
@@ -749,6 +749,10 @@
     }
 
     function displayConversations(conversations) {
+        const spinner = document.getElementById('spinner');
+        if (spinner) {
+            spinner.classList.remove('show');
+        }
         const conversationsList = document.getElementById('conversationsList');
 
         if (conversations.length === 0) {
@@ -791,12 +795,6 @@
             });
             conversationsList.appendChild(conversationItem);
         });
-
-        // Hide spinner after loading
-        const spinner = document.getElementById('spinner');
-        if (spinner) {
-            spinner.classList.remove('show');
-        }
     }
 
     function selectConversation(userId, userName, avatarUrl) {

@@ -28,7 +28,7 @@ public class Users {
     @Column(name = "email")
     private String email;
 
-    @Column(name = "password")
+    @Column(name = "password",nullable = false)
     private String password;
 
     @Column(name = "full_name")

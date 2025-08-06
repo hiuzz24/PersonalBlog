@@ -590,7 +590,7 @@
                             <div class="d-flex gap-3 align-items-center">
                                 <small class="text-muted">
                                     <i class="bi bi-calendar me-1"></i>
-                                    <span th:text="${post.updatedAt != null ? #dates.format(post.updatedAt, 'dd/MMMM/yyyy HH:mm') : #dates.format(post.publishedAt, 'dd/MMMM/yyyy HH:mm')}">
+                                    <span th:text="${post.updatedAt != null ? #dates.format(post.updatedAt, 'dd-MM-yyyy HH:mm') : #dates.format(post.publishedAt, 'dd-MM-yyyy HH:mm')}">
                                         Updated date
                                     </span>
                                 </small>
