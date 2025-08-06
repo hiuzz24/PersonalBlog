@@ -31,7 +31,7 @@ public interface PostRepository extends JpaRepository<Posts, Integer> {
         """, nativeQuery = true)
     List<Posts> findPostsWithPagination(@Param("start") int start, @Param("size") int size);
 
-    @Query("SELECT p FROM Posts p WHERE p.postID = :postID AND p.deleted = false AND p.users.deleted = false")
+    @Query("SELECT p FROM Posts p WHERE p.postID = :postID AND p.users.deleted = false")
     Posts findPostByIDs(@Param("postID") int postID);
 
     @Query("SELECT p FROM Posts p " +
@@ -42,7 +42,8 @@ public interface PostRepository extends JpaRepository<Posts, Integer> {
     @Query("SELECT p FROM Posts p WHERE p.status = 'Pending' AND p.deleted = false")
     List<Posts> findAllPostPending();
 
-    Posts findPostByPostID(int postID);
+    @Query("select p from Posts p where p.postID = :postID and  p.deleted = false and (p.status = 'Approved' or p.status = 'Pending')")
+    Posts findPostByPostIDAndDeletedFalse(@Param("postID") int postID);
 
     @Query("SELECT COUNT(p) FROM Posts p WHERE p.status = 'Approved' AND p.deleted = false")
     long countApproved();

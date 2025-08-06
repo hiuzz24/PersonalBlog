@@ -37,7 +37,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             user = new Users();
             user.setEmail(email);
             user.setFullName(name);
-            user.setRole("writer");
+            user.setRole("WRITER");
             // Note: username will be set later in complete-username flow
             userRepository.save(user);
         }

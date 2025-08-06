@@ -26,400 +26,34 @@
 
     <!-- Main CSS File -->
     <link th:href="@{/assets/css/main.css}" rel="stylesheet">
-
     <style>
-        #header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
-        }
-        table {
-            border-collapse: collapse;
-            width: 100%;
-        }
-
-        table, th, td {
-            border: 1px solid black;
-            padding: 8px;
-            text-align: left;
-        }
-
-        figure.table {
-            margin: 1em 0;
-        }
-
-        /* Beautiful Comment Section Styles */
-        .blog-comments {
-            background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
-            border-radius: 20px;
-            padding: 2rem;
-            margin: 2rem 0;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .comments-count {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #1e293b;
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid #e3f2fd;
-            position: relative;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .comments-count::before {
-            content: '💬';
-            font-size: 1.2rem;
-        }
-
-        .comments-count::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 60px;
-            height: 2px;
-            background: linear-gradient(90deg, #4f46e5, #7c3aed);
-            border-radius: 1px;
-        }
-
-        .comment-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .comment {
-            background: transparent;
-            border-radius: 0;
-            padding: 4px 0;
-            margin-bottom: 8px;
-            box-shadow: none;
-            border: none;
-            transition: none;
-            position: relative;
-            overflow: visible;
-        }
-
-        .comment::before {
-            display: none;
-        }
-
-        .comment:hover {
-            transform: none;
-            box-shadow: none;
-        }
-
-        .comment:hover::before {
-            opacity: 0;
-        }
-
-        .comment .d-flex.align-items-start {
-            margin-bottom: 4px;
-            gap: 8px;
-        }
-
-        .comment .avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: none;
-            transition: none;
-            flex-shrink: 0;
-        }
-
-        .comment:hover .avatar {
-            border-color: transparent;
-        }
-
-        .comment-body {
-            flex: 1;
-        }
-
-        .comment-author {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .comment-author .fn {
-            font-weight: 600;
-            color: #1e293b;
-            font-size: 1rem;
-            margin: 0;
-        }
-
-        .comment-author .text-muted {
-            color: #64748b;
-            font-size: 0.875rem;
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-        }
-
-        .comment-body p {
-            color: #050505;
-            line-height: 1.34;
-            font-size: 0.9375rem;
-            margin: 0;
+        .author-box {
+            border: 1px solid #ccc;
+            border-radius: 8px;
             padding: 8px 12px;
-            background: #f0f2f5;
-            border-radius: 16px;
-            border: none;
-            position: relative;
-            display: inline-block;
-            max-width: fit-content;
-        }
-
-        .comment-body p::before {
-            display: none;
-        }
-
-        .reply {
-            margin-top: 0rem;
-        }
-
-        .comment-reply-link {
-            background: none;
-            border: none;
-            color: #65676b !important;
-            text-decoration: none;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.8125rem;
-            font-weight: 600;
-            transition: all 0.2s ease;
             display: inline-flex;
             align-items: center;
-            gap: 0;
-            cursor: pointer;
-            text-transform: none;
-            letter-spacing: 0;
+            transition: background-color 0.3s ease;
         }
 
-        .comment-reply-link::before {
-            display: none;
+        .author-box:hover {
+            background-color: #f0f0f0; /* màu nền khi hover */
         }
 
-        .comment-reply-link:hover {
-            background: #f2f3f5;
-            color: #65676b !important;
-            transform: none;
-            box-shadow: none;
-            text-decoration: underline;
+        .author-link {
+            color: #333;
+            font-weight: 500;
+            text-decoration: none;
+            margin-left: 6px;
+            transition: color 0.3s ease;
         }
 
-        .reply-box {
-            margin-top: 1rem;
-            padding: 1.5rem;
-            background: linear-gradient(135deg, #fefefe 0%, #f8fafc 100%);
-            border-radius: 16px;
-            border: 2px dashed #e2e8f0;
-            animation: slideDown 0.3s ease-out;
-        }
-
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .reply-box .form-control {
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 1rem;
-            font-size: 0.95rem;
-            line-height: 1.6;
-            transition: all 0.3s ease;
-            background: white;
-        }
-
-        .reply-box .form-control:focus {
-            border-color: #4f46e5;
-            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
-            outline: none;
-        }
-
-        .reply-box .btn {
-            background: linear-gradient(45deg, #4f46e5, #7c3aed);
-            border: none;
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 12px;
+        .author-box:hover .author-link {
+            color: #000;           /* đậm màu khi hover */
             font-weight: 600;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .reply-box .btn::before {
-            content: '📤';
-            font-size: 0.8rem;
-        }
-
-        .reply-box .btn:hover {
-            background: linear-gradient(45deg, #3730a3, #6d28d9);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 25px rgba(79, 70, 229, 0.3);
-        }
-
-        .children {
-            margin-left: 2rem;
-            margin-top: 1.5rem;
-            position: relative;
-            list-style: none;
-            padding: 0;
-        }
-
-        .children::before {
-            content: '';
-            position: absolute;
-            left: -1rem;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: transparent;
-        }
-
-        .children .comment {
-            background: transparent;
-            border: 0px;
-        }
-
-        .comment-form {
-            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-            border-radius: 20px;
-            padding: 2rem;
-            margin: 2rem 0;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .comment-form h4 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #1e293b;
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .comment-form h4::before {
-            content: '✍️';
-            font-size: 1.2rem;
-        }
-
-        .comment-form p {
-            color: #64748b;
-            margin-bottom: 2rem;
-            font-size: 1rem;
-        }
-
-        .comment-form .form-control {
-            border: 2px solid #e2e8f0;
-            border-radius: 16px;
-            padding: 1.5rem;
-            font-size: 1rem;
-            line-height: 1.6;
-            transition: all 0.3s ease;
-            background: white;
-            min-height: 120px;
-        }
-
-        .comment-form .form-control:focus {
-            border-color: #4f46e5;
-            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
-            outline: none;
-        }
-
-        .comment-form .btn-primary {
-            background: linear-gradient(45deg, #4f46e5, #7c3aed);
-            border: none;
-            color: white;
-            padding: 1rem 2rem;
-            border-radius: 16px;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin: 0 auto;
-            margin-top: 1rem;
-        }
-
-        .comment-form .btn-primary::before {
-            content: '📤';
-            font-size: 0.9rem;
-        }
-
-        .comment-form .btn-primary:hover {
-            background: linear-gradient(45deg, #3730a3, #6d28d9);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(79, 70, 229, 0.3);
-        }
-
-        @media (max-width: 768px) {
-            .blog-comments,
-            .comment-form {
-                padding: 1.5rem;
-                margin: 1rem 0;
-            }
-
-            .children {
-                margin-left: 1rem;
-            }
-
-            .comment .d-flex.align-items-start {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 0.5rem;
-            }
-
-            .comment .avatar {
-                width: 40px;
-                height: 40px;
-            }
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .comment.new-comment {
-            animation: fadeInUp 0.5s ease-out;
-        }
-
-        /* Toast Container */
-        #toastContainer {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 9999;
         }
     </style>
+
 </head>
 
 <body class="single-post-page">
@@ -512,20 +146,6 @@
 </header>
 
 <main class="main">
-
-    <!-- Page Title -->
-    <div class="page-title">
-        <div class="container d-lg-flex justify-content-between align-items-center">
-            <h1 class="mb-2 mb-lg-0">Single Post</h1>
-            <nav class="breadcrumbs">
-                <ol>
-                    <li><a th:href="@{/}">Home</a></li>
-                    <li class="current">Single Post</li>
-                </ol>
-            </nav>
-        </div>
-    </div><!-- End Page Title -->
-
     <div class="container">
         <div class="row">
             <div class="col-lg-8">
@@ -543,12 +163,14 @@
 
                             <div class="meta-top">
                                 <ul>
-                                    <li class="d-flex align-items-center">
-                                        <i class="bi bi-person"></i>
-                                        <a th:href="@{/author/ProfileUser/{userID}(userID=${postDetail.users.userID})}">
-                                            <span th:text="${postDetail.users.fullName}"></span>
-                                        </a>
-                                        <button type="button" class="btn btn-sm  ms-2 follow-btn"
+                                    <li class="d-flex align-items-center ">
+                                        <div class="author-box">
+                                            <i class="bi bi-person"></i>
+                                            <a th:href="@{/author/ProfileUser/{userID}(userID=${postDetail.users.userID})}" class="author-link">
+                                                <span th:text="${postDetail.users.fullName}"></span>
+                                            </a>
+                                        </div>
+                                        <button th:if="${#authentication.name != postDetail.users.username}" type="button" class="btn btn-sm  ms-2 follow-btn"
                                                 th:data-author-id="${postDetail.users.userID}"
                                                 th:classappend="${isFollowing} ? 'btn-primary' : 'btn-outline-primary'"
                                                 style="font-size: 0.75rem; padding: 0.15rem 0.5rem;">
@@ -558,10 +180,9 @@
                                         </button>
                                     </li>
                                     <li class="d-flex align-items-center"><i class="bi bi-clock"></i> <a
-                                        <span th:text="${#dates.format(postDetail.publishedAt,  'yyyy-MM-dd HH:mm')}"></span>
+                                        <span th:text="${#dates.format(postDetail.publishedAt,  'dd/MM/yyyy HH:mm')}"></span>
                                         </a></li>
-                                    <li class="d-flex align-items-center"><i class="bi bi-chat-dots"
-                                                                             th:text="${' ' + postDetail.comments.size() + ' comments'}"></i></a>
+                                    <li class="d-flex align-items-center"><i class="bi bi-chat-dots" th:text="${' ' + postDetail.comments.size() + ' comments'}"></i></a>
                                     </li>
                                 </ul>
                             </div><!-- End meta top -->
@@ -571,32 +192,37 @@
                             </div><!-- End post content -->
 
                             <div class="meta-bottom">
-                                <i class="bi bi-tags"></i>
+                                <i class="bi bi-tags text-warning me-2"></i>
                                 <ul class="tags" th:each="tag: ${postDetail.tags}">
                                     <li><a th:href="@{/tags/{tagID}(tagID = ${tag.tagID})}"
-                                           th:text="${tag.tagName}"></a></li>
-
+                                           class="badge bg-light text-dark me-1 mb-1"
+                                           style="font-size: 0.85rem;"
+                                           th:text="${tag.tagName}"></a>
+                                    </li>
                                 </ul>
                             </div><!-- End meta bottom -->
 
-                            <!-- Favorite Button -->
+                            <div class="d-flex mt-3 mb-3">
+                                <!-- Save Post Button:  -->
+                                <div sec:authorize="!hasRole('ADMIN')">
+                                    <button type="button" class="btn"
+                                            id="favoriteBtn"
+                                            th:data-post-id="${postDetail.postID}"
+                                            th:classappend="${isFavorited} ? 'btn-danger' : 'btn-outline-danger'">
+                                        <i class="bi" th:classappend="${isFavorited} ? 'bi-heart-fill' : 'bi-heart'"></i>
+                                        <span th:text="${isFavorited} ? 'Saved' : 'Save post'"></span>
+                                    </button>
+                                </div>
 
-                            <div class="mt-3 mb-3" sec:authorize="!hasRole('ADMIN')">
-                                <button type="button" class="btn" id="favoriteBtn"
-                                        th:data-post-id="${postDetail.postID}"
-                                        th:classappend="${isFavorited} ? 'btn-danger' : 'btn-outline-danger'">
-                                    <i class="bi" th:classappend="${isFavorited} ? 'bi-heart-fill' : 'bi-heart'"></i>
-                                    <span th:text="${isFavorited} ? 'Saved' : 'Save post'"></span>
-                                </button>
-                            </div>
-
-                            <!-- Chat with Author Button (only show if not the author) -->
-                            <div th:if="${#authentication.name != postDetail.users.username}" class="mt-4">
-                                <button type="button" class="btn btn-primary" id="chatWithAuthorBtn"
-                                        th:data-author-id="${postDetail.users.userID}"
-                                        th:data-author-name="${postDetail.users.fullName != null ? postDetail.users.fullName : postDetail.users.username}">
-                                    <i class="bi bi-chat-dots"></i> Chat with the author
-                                </button>
+                                <!-- Chat with Author Button:  -->
+                                <div th:if="${#authentication.name != postDetail.users.username}" class="ms-3">
+                                    <button type="button" class="btn btn-primary"
+                                            id="chatWithAuthorBtn"
+                                            th:data-author-id="${postDetail.users.userID}"
+                                            th:data-author-name="${postDetail.users.fullName != null ? postDetail.users.fullName : postDetail.users.username}">
+                                        <i class="bi bi-chat-dots"></i> Chat with the author
+                                    </button>
+                                </div>
                             </div>
 
 
@@ -624,13 +250,14 @@
                                                   th:text="${parent.user.username}">User Name</cite>
                                             <span th:if="${parent.createdAt != null}" class="text-muted ms-2"
                                                   style="font-size:0.95rem;">| <span
-                                                    th:text="${#dates.format(parent.createdAt, 'yyyy-MM-dd HH:mm')}"></span></span>
+                                                    th:text="${#dates.format(parent.createdAt, 'dd/MM/yyyy HH:mm')}"></span></span>
                                             <span th:if="${parent.createdAt == null}"
                                                   class="text-muted ms-2">| No date</span>
                                         </div>
-                                        <p th:text="${parent.content}"
+                                        <p th:utext="${#strings.replace(parent.content, '\n', '<br/>')}"
                                            style="font-size:1.08rem; border-radius:10px; padding:10px 16px; margin-bottom:0.5rem; line-height:1.7; font-family:'Inter', 'Segoe UI', Arial, sans-serif; letter-spacing:0.01em;">
-                                            Comment content</p>
+                                        </p>
+
                                         <div class="reply">
                                             <div class="d-flex align-items-center gap-3 mb-1">
                                                 <a href="#" class="comment-reply-link"
@@ -736,9 +363,8 @@
                         <div class="post-item" th:each="relatedPost : ${relatedPosts}">
                             <img th:src="@{${relatedPost.imageUrl}}" alt="" class="flex-shrink-0">
                             <div>
-                                <a th:href="@{'/PostDetail/' + ${relatedPost.postID}}"
-                                   th:text="${relatedPost.title}"></a>
-                                <time th:text="${#dates.format(relatedPost.publishedAt, 'dd MMM yyyy')}"></time>
+                                <a th:href="@{'/PostDetail/' + ${relatedPost.postID}}" th:text="${relatedPost.title}"></a>
+                                <time th:text="${#dates.format(relatedPost.publishedAt, 'dd/MM/yyyy')}"></time>
                             </div>
                         </div><!-- End recent post item-->
                     </div>
@@ -782,9 +408,8 @@
                     </div>
                     <div class="input-group p-3 bg-white border-top align-items-center"
                          style="border-radius: 0 0 1rem 1rem;">
-                        <label for="messageInput"></label><input type="text" id="messageInput" class="form-control rounded-pill me-2"
-                                                                 placeholder="Type your message..." maxlength="500" style="background: #f8f9fa;">
-
+                        <input type="text" id="messageInput" class="form-control rounded-pill me-2"
+                               placeholder="Type your message..." maxlength="500" style="background: #f8f9fa;">
                         <button class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center"
                                 type="button" id="sendMessageBtn" style="width: 45px; height: 45px;">
                             <i class="bi bi-send fs-5"></i>
@@ -794,8 +419,6 @@
             </div>
         </div>
     </div>
-
-
 
     </div>
 
@@ -984,7 +607,7 @@
                             console.log(response);
                             if (!response.ok) {
                                 return response.json().then(err => {
-                                    throw new Error(err.message || 'Có lỗi xảy ra khi thực hiện thao tác');
+                                    throw new Error(err.message || 'An error occurred while performing the operation.');
                                 });
                             }
                             return response.json();

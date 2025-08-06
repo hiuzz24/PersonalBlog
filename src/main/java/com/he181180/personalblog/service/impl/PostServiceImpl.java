@@ -63,7 +63,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Posts findPostByPostID(int postID) {
-        Posts post = postRepository.findPostByPostID(postID);
+        Posts post = postRepository.findPostByPostIDAndDeletedFalse(postID);
         return post;
     }
 
@@ -121,19 +121,24 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public String handleImageUrl(String imageUrl, MultipartFile fileImage) throws IOException {
-        if(imageUrl != null && !imageUrl.isEmpty()){
+        if (imageUrl != null && !imageUrl.isEmpty()) {
             return imageUrl;
         }
-         if(!fileImage.isEmpty()){
-             String uploadDir = System.getProperty("user.dir") + "/uploads/img/";
-             String fileName = UUID.randomUUID() + "_" +fileImage.getOriginalFilename();
-             Files.createDirectories(Path.of(uploadDir));
-             Path path = Path.of(uploadDir + fileName);
-             Files.copy(fileImage.getInputStream(),path, StandardCopyOption.REPLACE_EXISTING);
-             return "/uploads/" +fileName;
+        if (!fileImage.isEmpty()) {
+            Map<String, String> url = new HashMap<>();
+
+            String uploadDir = System.getProperty("user.dir") + "/uploads/img/";
+            Files.createDirectories(Path.of(uploadDir));
+
+            String fileName = UUID.randomUUID() + "_" + fileImage.getOriginalFilename();
+            Path filePath = Path.of(uploadDir + fileName);
+
+            Files.copy(fileImage.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+            return "/img/" + fileName;
+        }
+        return null;
     }
-         return null;
-}
 
     @Override
     public long countApproved() {
@@ -209,18 +214,19 @@ public class PostServiceImpl implements PostService {
     public List<Posts> findAllByUsers_DeletedFalseAndStatusRejected() {
         return postRepository.findAllByUsers_DeletedFalseAndStatusRejected();
     }
+
     @Override
     public Map<String, String> uploadImageForCkeditor(MultipartFile upload) throws IOException {
         String uploadDir = System.getProperty("user.dir") + "/uploads/img/";
         Files.createDirectories(Path.of(uploadDir));
 
         String fileName = UUID.randomUUID() + "_" + upload.getOriginalFilename();
-        Files.createDirectories(Path.of(uploadDir));
-        Path path = Path.of(uploadDir + fileName);
-        Files.copy(upload.getInputStream(),path,StandardCopyOption.REPLACE_EXISTING);
+        Path filePath = Path.of(uploadDir + fileName);
+
+        Files.copy(upload.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
         Map<String,String> url = new HashMap<>();
-        url.put("url","/uploads/"+fileName);
-        url.put("uploaded","true");
+        url.put("url", "/img/" + fileName);
+        url.put("uploaded", "true");
         return url;
     }
 }

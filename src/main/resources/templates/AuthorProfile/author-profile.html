@@ -24,16 +24,6 @@
     <!-- Main CSS Files -->
     <link th:href="@{/assets/css/main.css}" rel="stylesheet">
     <link href="/css/author-profile.css" rel="stylesheet">
-    <style>
-
-        #header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
-        }
-
-    </style>
 </head>
 
 <body class="author-profile-page">
@@ -164,7 +154,7 @@
                                     </p>
                                 </div>
                                 <div class="author-contact">
-                                    <p><i class="bi bi-calendar"></i> Joined <span th:text="${userProfile.createdAt}"></span></p>
+                                    <p><i class="bi bi-calendar"></i> Joined <span th:text="${#dates.format(userProfile.createdAt , 'dd/MM/yyyy')}"></span></p>
                                 </div>
                             </div>
                         </div>
@@ -188,7 +178,7 @@
                                         <div class="post-content">
                                             <div class="post-meta">
                                             <span class="post-date"><i class="bi bi-calendar"></i>
-                                                <span th:text="${#dates.format(post.publishedAt, 'MMMM dd, yyyy')}"></span>
+                                                <span th:text="${#dates.format(post.publishedAt, 'dd/MM/yyyy')}"></span>
                                             </span>
                                             </div>
                                             <h4 class="post-title" th:text="${post.title}"></h4>

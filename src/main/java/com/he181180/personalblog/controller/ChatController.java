@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -140,7 +141,7 @@ public class ChatController {
                 Map<String, Object> conversation = new HashMap<>();
                 conversation.put("partnerId", partner.getUserID());
                 conversation.put("partnerName", partner.getFullName() != null ? partner.getFullName() : partner.getUsername());
-                conversation.put("partnerAvatar", partner.getAvatarUrl() != null ? partner.getAvatarUrl() : "/assets/img/person-1.jpg");
+                conversation.put("partnerAvatar", partner.getAvatarUrl() != null ? partner.getAvatarUrl() : "/assets/img/user.png");
                 conversation.put("partnerUsername", partner.getUsername());
                 
                 if (latestMessage != null) {
@@ -266,6 +267,11 @@ public class ChatController {
     /**
      * Trang chat chính
      */
+    @GetMapping("/admin/chat")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String chatPageForAdmin() {
+        return "AdminDashboard/chatadmin";  // Giao diện riêng cho admin
+    }
     @GetMapping("/chat")
     public String chatPage() {
         return "UserDashboard/chat";

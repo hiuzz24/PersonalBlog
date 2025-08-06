@@ -402,23 +402,6 @@
         }
     }
 
-    /* Scrollbar Styling */
-    ::-webkit-scrollbar {
-        width: 8px;
-    }
-
-    ::-webkit-scrollbar-track {
-        background: rgba(255, 255, 255, 0.1);
-    }
-
-    ::-webkit-scrollbar-thumb {
-        background: var(--primary-gradient);
-        border-radius: 4px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-        background: var(--secondary-gradient);
-    }
 </style>
 
 <body>
@@ -508,7 +491,7 @@
     <nav id="sidebark" class="sidebark open">
         <div class="text-center mb-4 user-profile" style="padding: 20px;">
             <div style="position: relative; display: inline-block;">
-                <img th:src="${user.avatarUrl != null ? user.avatarUrl : '/assets/img/default-avatar.png'}"
+                <img th:src="${user.avatarUrl != null ? user.avatarUrl : '/assets/img/user-avatar.png'}"
                      alt="Avatar" class="rounded-circle mb-3" width="90" height="90" style="border: 4px solid rgba(255,255,255,0.3); box-shadow: 0 8px 20px rgba(0,0,0,0.2);">
                 <div style="position: absolute; bottom: 10px; right: 0; width: 20px; height: 20px; background: #4CAF50; border-radius: 50%; border: 3px solid #2c3e50;"></div>
             </div>
@@ -607,7 +590,7 @@
                             <div class="d-flex gap-3 align-items-center">
                                 <small class="text-muted">
                                     <i class="bi bi-calendar me-1"></i>
-                                    <span th:text="${post.updatedAt != null ? #dates.format(post.updatedAt, 'dd/MMMM/yyyy HH:mm') : #dates.format(post.publishedAt, 'dd/MMMM/yyyy HH:mm')}">
+                                    <span th:text="${post.updatedAt != null ? #dates.format(post.updatedAt, 'dd-MM-yyyy HH:mm') : #dates.format(post.publishedAt, 'dd-MM-yyyy HH:mm')}">
                                         Updated date
                                     </span>
                                 </small>
@@ -631,22 +614,28 @@
 
                         <div class="col-md-3 text-end">
                             <div class="btn-group" role="group">
-                                <a th:href="@{/PostDetail/{postID}(postID=${post.postID})}"
-                                   class="btn btn-sm btn-outline-success" title="View">
+                                <a th:href="${post.status == 'Rejected'} ? '#' : @{/PostDetail/{postID}(postID=${post.postID})}"
+                                   class="btn btn-sm"
+                                   th:classappend="${post.status == 'Rejected'} ? 'btn-secondary disabled' : 'btn-outline-success'"
+                                   th:title="${post.status == 'Rejected'} ? 'Post bị từ chối – không thể xem' : 'View'">
                                     <i class="bi bi-eye"></i>
                                 </a>
-                                <a th:href="@{/blog/edit/{postID}(postID=${post.postID})}"
-                                   class="btn btn-sm btn-outline-primary" title="Edit">
+
+                                <a th:href="${post.status == 'Rejected'} ? '#' : @{/blog/edit/{postID}(postID=${post.postID})}"
+                                   class="btn btn-sm"
+                                   th:classappend="${post.status == 'Rejected'} ? 'btn-secondary disabled' : 'btn-outline-primary'"
+                                   th:title="${post.status == 'Rejected'} ? 'Post bị từ chối – không thể chỉnh sửa' : 'Edit'">
                                     <i class="bi bi-pencil"></i>
                                 </a>
+
                                 <a th:href="@{/blog/delete/{postID}(postID=${post.postID})}"
                                    class="btn btn-sm btn-outline-danger" title="Delete"
-                                   onclick="return confirm('are u sure want to delete?')">
+                                   onclick="return confirm('Are you sure you want to delete?')">
                                     <i class="bi bi-trash"></i>
                                 </a>
                             </div>
 
-                            <!-- Status message for non-approved posts -->
+
                             <div th:if="${post.status != 'Approved'}" class="ms-2">
                                 <small class="text-muted">
                                     <span th:if="${post.status == 'Pending'}">

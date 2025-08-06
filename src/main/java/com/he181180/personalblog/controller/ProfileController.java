@@ -96,7 +96,7 @@ public class ProfileController {
             user.setAvatarUrl(avatarUrl.trim());
         } else if (user.getAvatarUrl() == null || user.getAvatarUrl().isEmpty()) {
             // Set default avatar if none is set
-            user.setAvatarUrl("/img/default-avatar.png");
+            user.setAvatarUrl("/img/user.png");
         }
         userService.saveUser(user);
 

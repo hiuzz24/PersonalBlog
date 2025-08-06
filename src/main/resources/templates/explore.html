@@ -211,7 +211,7 @@
                                             <img th:src="@{${post.imageUrl}}" class="card-img-top" alt="Post Image"
                                                  style="height: 250px; object-fit: cover;">
                                             <span class="badge bg-dark position-absolute bottom-0 end-0 m-2"
-                                                  th:text="${#dates.format(post.publishedAt, 'dd MMM yyyy')}"></span>
+                                                  th:text="${#dates.format(post.publishedAt, 'dd/MM/yyyy')}"></span>
                                         </div>
 
                                         <!-- Post Content -->
@@ -314,7 +314,7 @@
                             <img th:src="@{${recentPost.imageUrl}}" alt="" class="flex-shrink-0">
                             <div>
                                 <a th:href="@{'/PostDetail/' + ${recentPost.postID}}" th:text="${recentPost.title}"></a>
-                                <time th:text="${#dates.format(recentPost.publishedAt, 'dd MMM yyyy')}"></time>
+                                <time th:text="${#dates.format(recentPost.publishedAt, 'dd/MM/yyyy')}"></time>
                             </div>
                         </div><!-- End recent post item-->
                     </div>
