@@ -15,7 +15,8 @@
     <!-- Fonts -->
     <link th:href="@{https://fonts.googleapis.com}" rel="preconnect">
     <link th:href="@{https://fonts.gstatic.com}" rel="preconnect" crossorigin>
-    <link th:href="@{https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700;1,800&display=swap}" rel="stylesheet">
+    <link th:href="@{https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700;1,800&display=swap}"
+          rel="stylesheet">
 
     <!-- Vendor CSS Files -->
     <link th:href="@{/assets/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
@@ -34,6 +35,53 @@
             box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
         }
 
+        .text-truncate-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.4;
+            max-height: 2.8em;
+        }
+
+        .text-truncate-3 {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.5;
+            max-height: 4.5em;
+        }
+
+        .card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+
+        .clickable-card {
+            cursor: pointer;
+        }
+
+        .clickable-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+        }
+
+        a:hover .clickable-card {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+        }
+
+        .btn {
+            transition: all 0.2s ease-in-out;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
     </style>
 </head>
 
@@ -54,8 +102,9 @@
         <div class="header-social-links d-flex align-items-center pe-3" style="margin-left:auto;">
             <!-- Notification Button -->
             <div class="nav-item dropdown me-3">
-                <a class="nav-link position-relative" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 2.5rem; color: #535353;">
-                    <i class="bi bi-bell"></i>
+                <a class="nav-link position-relative d-flex align-items-center" id="notificationDropdown"
+                   data-bs-toggle="dropdown" aria-expanded="false" style="height: 56px; color: #535353;">
+                    <i class="bi bi-bell" style="font-size: 1.5rem;"></i>
                     <!-- Badge: show unread count -->
                     <span class="position-absolute top-0 start-100 translate-middle-z badge rounded-pill bg-danger"
                           id="notificationBadge"
@@ -68,7 +117,8 @@
 
 
                 <!-- Dropdown Menu -->
-                <ul class="dropdown-menu dropdown-menu-end"  aria-labelledby="notificationDropdown" style="min-width: 400px; max-height: 400px; overflow-y: auto;">
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown"
+                    style="min-width: 400px; max-height: 400px; overflow-y: auto;">
                     <!-- If no notifications -->
                     <li th:if="${#lists.isEmpty(notification)}">
                         <span class="dropdown-item-text text-muted">No new notifications</span>
@@ -92,23 +142,30 @@
             </div>
 
             <div class="dropdown">
-                <a href="#" class="d-flex align-items-center" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding:0; border:none; background:none; transition: all 0.3s ease;">
-                    <h5 class="sitename mb-0 d-flex align-items-center" style="font-size: 1.2rem; margin-right: 12px; display: flex; align-items: center; height: 56px; line-height: 56px; color: #535353; font-weight: 500;" th:text="${user.fullName != null ? user.fullName : user.username}"></h5>
-                    <img th:src="${user.avatarUrl}" alt="avatar" style="width:40px; height:40px; border-radius:50%; object-fit:cover; border: 2px solid rgba(102, 126, 234, 0.3); transition: all 0.3s ease;">
+                <a href="#" class="d-flex align-items-center" id="userDropdown" data-bs-toggle="dropdown"
+                   aria-expanded="false" style="padding:0; border:none; background:none; transition: all 0.3s ease;">
+                    <h5 class="sitename mb-0 d-flex align-items-center"
+                        style="font-size: 1.2rem; margin-right: 12px; display: flex; align-items: center; height: 56px; line-height: 56px; color: #535353; font-weight: 500;"
+                        th:text="${user.fullName != null ? user.fullName : user.username}"></h5>
+                    <img th:src="${user.avatarUrl}" alt="avatar"
+                         style="width:40px; height:40px; border-radius:50%; object-fit:cover; border: 2px solid rgba(102, 126, 234, 0.3); transition: all 0.3s ease;">
                 </a>
 
 
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                     <li th:if="${user != null && user.role == 'ADMIN'}">
                         <form th:action="@{/admin}" style="display: inline;">
-                            <button type="submit" class="dropdown-item" style="border-radius: 8px; transition: all 0.3s ease;">
-                                <i class="bi bi-speedometer2 me-2"></i>Dashboard Admin</button>
+                            <button type="submit" class="dropdown-item"
+                                    style="border-radius: 8px; transition: all 0.3s ease;">
+                                <i class="bi bi-speedometer2 me-2"></i>Dashboard Admin
+                            </button>
                         </form>
                         <hr class="dropdown-divider">
                     </li>
                     <li th:if="${user != null && user.role.toUpperCase() == 'WRITER'}">
                         <form th:action="@{/profile}" style="display: inline;">
-                            <button type="submit" class="dropdown-item" style="border-radius: 8px; transition: all 0.3s ease;">
+                            <button type="submit" class="dropdown-item"
+                                    style="border-radius: 8px; transition: all 0.3s ease;">
                                 <i class="bi bi-person me-2"></i>Profile
                             </button>
                         </form>
@@ -116,14 +173,14 @@
                     </li>
                     <li>
                         <form th:action="@{/logout}" method="post" style="display: inline;">
-                            <button type="submit" class="dropdown-item text-danger" style="border-radius: 8px; transition: all 0.3s ease;">
+                            <button type="submit" class="dropdown-item text-danger"
+                                    style="border-radius: 8px; transition: all 0.3s ease;">
                                 <i class="bi bi-box-arrow-right me-2"></i>Logout
                             </button>
                         </form>
                     </li>
                 </ul>
             </div>
-
 
 
         </div>
@@ -141,50 +198,64 @@
 
                 <!-- Blog Posts Section -->
                 <section id="blog-posts" class="blog-posts section">
-
-                    <div class="container" >
-                        <div class="row gy-4" >
+                    <div class="container">
+                        <div class="row gy-4">
                             <div th:if="${#lists.isEmpty(allPost)}" class="col-12 text-center">
-                                <p>No results found.</p>
+                                <p class="text-muted fs-5">No results found.</p>
                             </div>
-                            <div class="col-lg-6"  th:each="post :${allPost}">
-                                <article class="position-relative h-100" >
-                                    <div class="post-img position-relative overflow-hidden">
-                                        <img th:src="@{${post.imageUrl}}" class="img-fluid" alt="Post Image">
-
-                                        <span class="post-date position-absolute bottom-0 end-0 bg-dark text-white px-2 py-1 small"
-                                              th:text="${#dates.format(post.publishedAt, 'dd MMM yyyy')}"></span>
-                                    </div>
-
-                                    <div class="post-content d-flex flex-column">
-
-                                        <h3 class="post-title" th:text="${post.title}"></h3>
-
-                                        <div class="meta d-flex align-items-center">
-                                            <div class="d-flex align-items-center">
-                                                <i class="bi bi-person"></i> <span class="ps-2" th:text="${post.users.fullName}"></span>
-                                            </div>
-                                            <span class="px-3 text-black-50">/</span>
-                                            <div class="d-flex align-items-center">
-                                                <i class="bi bi-tags"></i>
-                                                <span th:each="tag : ${post.tags}" class="me-2" th:text="${tag.tagName}">Tag</span>
-                                            </div>
-
+                            <div class="col-lg-6" th:each="post :${allPost}">
+                                <a th:href="@{'/PostDetail/' +${post.postID}}" class="text-decoration-none">
+                                    <article class="card h-100 shadow-sm border-0 overflow-hidden clickable-card">
+                                        <!-- Post Image -->
+                                        <div class="position-relative">
+                                            <img th:src="@{${post.imageUrl}}" class="card-img-top" alt="Post Image"
+                                                 style="height: 250px; object-fit: cover;">
+                                            <span class="badge bg-dark position-absolute bottom-0 end-0 m-2"
+                                                  th:text="${#dates.format(post.publishedAt, 'dd/MM/yyyy')}"></span>
                                         </div>
 
-                                        <p th:text="${post.content}"></p>
+                                        <!-- Post Content -->
+                                        <div class="card-body d-flex flex-column">
+                                            <!-- Title -->
+                                            <h5 class="card-title fw-bold mb-3 text-truncate-2 text-dark"
+                                                th:text="${post.title}"></h5>
 
-                                        <hr>
+                                            <!-- Author -->
+                                            <div class="d-flex align-items-center mb-2 text-muted">
+                                                <i class="bi bi-person-circle me-2"></i>
+                                                <small th:text="${post.users.fullName}"></small>
+                                            </div>
 
-                                        <a th:href="@{'/PostDetail/' +${post.postID}}" class="readmore stretched-link"><span>Read More</span><i class="bi bi-arrow-right"></i></a>
-                                    </div>
+                                            <!-- Content -->
+                                            <p class="card-text flex-grow-1 text-muted text-truncate-3"
+                                               th:text="${post.content}"></p>
 
-                                </article>
+                                            <!-- Tags -->
+                                            <div class="d-flex align-items-center mb-3 mt-auto">
+                                                <i class="bi bi-tags text-warning me-2"></i>
+                                                <div class="flex-wrap">
+                                                    <span th:each="tag, iterStat : ${post.tags}"
+                                                          class="badge bg-light text-dark me-1 mb-1"
+                                                          th:text="${tag.tagName}">Tag
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <!-- Read More Indicator -->
+                                            <div class="pt-2 text-center">
+                                                <span class="text-muted fw-semibold">
+                                                    <span class="me-2">Read More</span>
+                                                    <i class="bi bi-arrow-right"></i>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </article>
+                                </a>
                             </div><!-- End post list item -->
                         </div>
                     </div>
-
-                </section><!-- /Blog Posts Section -->
+                </section>
+                <!-- /Blog Posts Section -->
 
                 <!-- Blog Pagination Section -->
                 <section id="blog-pagination" class="blog-pagination section">
@@ -243,7 +314,7 @@
                             <img th:src="@{${recentPost.imageUrl}}" alt="" class="flex-shrink-0">
                             <div>
                                 <a th:href="@{'/PostDetail/' + ${recentPost.postID}}" th:text="${recentPost.title}"></a>
-                                <time th:text="${#dates.format(recentPost.publishedAt, 'dd MMM yyyy')}"></time>
+                                <time th:text="${#dates.format(recentPost.publishedAt, 'dd/MM/yyyy')}"></time>
                             </div>
                         </div><!-- End recent post item-->
                     </div>
@@ -272,13 +343,15 @@
 
 
     <div class="container copyright text-center mt-4">
-        <p>© <span>Copyright</span> <strong class="px-1 sitename">PersonalBlog</strong> <span>All Rights Reserved</span></p>
+        <p>© <span>Copyright</span> <strong class="px-1 sitename">PersonalBlog</strong> <span>All Rights Reserved</span>
+        </p>
     </div>
 
 </footer>
 
 <!-- Scroll Top -->
-<a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+<a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i
+        class="bi bi-arrow-up-short"></i></a>
 
 <!-- Preloader -->
 <div id="preloader"></div>
@@ -294,8 +367,8 @@
 
 <script>
     fetch("/api/notifications")
-    .then(response => response.json())
-    .then(data -> data.)
+        .then(response => response.json())
+        .then(data -> data.)
 </script>
 </body>
 

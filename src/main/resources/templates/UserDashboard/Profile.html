@@ -401,23 +401,6 @@
             }
         }
 
-        /* Scrollbar Styling */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--primary-gradient);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--secondary-gradient);
-        }
     </style>
 </head>
 
@@ -577,14 +560,16 @@
         <div class="header-social-links d-flex align-items-center pe-3" style="margin-left:auto;">
             <!-- Notification Button -->
             <div class="nav-item dropdown me-3">
-                <a class="nav-link position-relative" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 1.5rem; color: #535353;">
-                    <i class="bi bi-bell"></i>
+                <a class="nav-link position-relative d-flex align-items-center" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="height: 56px; color: #535353;">
+                    <i class="bi bi-bell" style="font-size: 1.5rem;"></i>
+
                     <!-- Badge: show unread count -->
                     <span class="position-absolute top-0 start-100 translate-middle-z badge rounded-pill bg-danger"
                           id="notificationBadge"
                           style="font-size: 0.75rem;"
-                          th:text="${notification != null ? #lists.size(notification.?[!isRead]) : 0}">
-    </span>
+                          th:if="${notification != null and #lists.size(notification.?[!isRead]) > 0}"
+                          th:text="${#lists.size(notification.?[!isRead])}">
+                    </span>
                     <span class="visually-hidden">unread notifications</span>
                 </a>
 
@@ -653,12 +638,6 @@
         </div>
 
         <ul class="nav flex-column mt-4" style="padding: 0 15px;">
-            <li class="nav-item">
-                <a class="nav-link" th:href="@{/dashboard}" style="color: rgba(255,255,255,0.8);">
-                    <i class="bi bi-speedometer2 me-3"></i>
-                    <span class="link-text">Dashboard</span>
-                </a>
-            </li>
 
             <li class="nav-item">
                 <a class="nav-link active" th:href="@{/profile}" style="color: rgba(255,255,255,0.9);">

@@ -52,7 +52,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public List<Notification> findNotificationsByUserID(int userID) {
-        return notificationRepository.findNotificationsByUser_UserID(userID);
+        return notificationRepository.findNotificationsByUser_UserIDOrderByCreatedAtDesc(userID);
     }
 
 }

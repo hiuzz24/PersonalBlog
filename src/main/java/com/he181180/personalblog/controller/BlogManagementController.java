@@ -53,8 +53,8 @@ public class BlogManagementController {
     // Hiển thị form tạo bài viết mới
     @GetMapping("/create")
     public String createPost(Model model) {
-        model.addAttribute("post",new Posts());
-        model.addAttribute("formAction","/blog/create");
+        model.addAttribute("post", new Posts());
+        model.addAttribute("formAction", "/blog/create");
         return "BlogManagement/blogCreation";
     }
 
@@ -105,16 +105,21 @@ public class BlogManagementController {
     // Cập nhật bài viết
     @RequestMapping("/edit/{postID}")
     public String updatePost(@PathVariable("postID") int postID,
-                             Model model) {
+                             Model model,
+                             Authentication authentication) {
+        Users user = currentUserService.getCurrentUser(authentication);
         Posts post = postService.findPostByPostID(postID);
-        List<Integer> selectedTagID = post.getTags().stream()
-                .map(Tags::getTagID)
-                .collect(Collectors.toList());
+       if( user.getUserID() == post.getUsers().getUserID()){
+           List<Integer> selectedTagID = post.getTags().stream()
+                   .map(Tags::getTagID)
+                   .collect(Collectors.toList());
 
-        model.addAttribute("selectedTagID",selectedTagID);
-        model.addAttribute("post",post);
-        model.addAttribute("formAction","/blog/saveUpdate");
-        return "BlogManagement/blogCreation";
+           model.addAttribute("selectedTagID",selectedTagID);
+           model.addAttribute("post",post);
+           model.addAttribute("formAction","/blog/saveUpdate");
+           return "BlogManagement/blogCreation";
+       }
+       return "redirect:/blog";
     }
 
     @RequestMapping("/saveUpdate")
@@ -128,9 +133,8 @@ public class BlogManagementController {
                              Authentication authentication) throws IOException {
         Users user = currentUserService.getCurrentUser(authentication);
         List<Tags> tags = tagService.findTagsByTagID(tagID);
-
+        Posts post = postService.findPostByPostID(postID);
         if (user != null) {
-            Posts post = postService.findPostByPostID(postID);
             post.setTitle(title);
             post.setContent(content);
             post.setImageUrl(imageUrl);
