@@ -286,15 +286,12 @@
 
                     <script>
                         function toggleReplyBox(event, element) {
-                            event.preventDefault(); // Chặn hành vi mặc định của thẻ <a>
+                            event.preventDefault();
 
-                            // Tìm phần tử cha gần nhất có class .comment
                             let commentContainer = element.closest('.comment');
 
-                            // Tìm phần tử .reply-box bên trong comment đó
                             let replyBox = commentContainer.querySelector('.reply-box');
 
-                            // Hiển thị hoặc ẩn phần nhập comment
                             if (replyBox.style.display === "none") {
                                 replyBox.style.display = "block";
                             } else {
@@ -435,7 +432,6 @@
         // Get current username from authentication
         document.addEventListener('DOMContentLoaded', function () {
             connect();
-            // Get username from server-side
             fetch('/api/user/current')
                 .then(response => response.json())
                 .then(data => {
@@ -457,7 +453,6 @@
             stompClient.connect({}, function (frame) {
                 console.log('Connected: ' + frame);
 
-                // Subscribe to private messages
                 stompClient.subscribe('/user/queue/messages', function (message) {
                     const messageData = JSON.parse(message.body);
                     console.log('Received message:', messageData);
@@ -512,8 +507,6 @@
             const chatMessages = document.getElementById('chatMessages');
             const messageDiv = document.createElement('div');
             messageDiv.className = 'message mb-2';
-
-            // Use senderId for comparison instead of username
             const isCurrentUser = message.senderId === currentUserId;
             const alignClass = isCurrentUser ? 'text-end' : 'text-start';
             const bgClass = isCurrentUser ? 'bg-primary text-white' : 'bg-light';
@@ -561,7 +554,6 @@
             });
         }
 
-        // Event listeners
         document.addEventListener('DOMContentLoaded', function () {
             const chatBtn = document.getElementById('chatWithAuthorBtn');
             const chatModal = new bootstrap.Modal(document.getElementById('chatModal'));
@@ -577,15 +569,12 @@
                     currentChatUserId = parseInt(authorId);
                     document.getElementById('chatPartnerName').textContent = authorName;
 
-                    // Connect to WebSocket if not connected
                     if (!stompClient || !stompClient.connected) {
                         connect();
                     }
 
-                    // Load chat history
                     loadChatHistory(authorId);
 
-                    // Show modal
                     chatModal.show();
                 });
             }
@@ -596,7 +585,7 @@
                     const isFollowing = this.classList.contains('btn-primary');
                     const url = isFollowing ? `/api/follows/unfollow/${authorId}` : `/api/follows/follow/${authorId}`;
                     fetch(url, {
-                        method: isFollowing ? 'DELETE' : 'POST', // Sử dụng DELETE cho unfollow
+                        method: isFollowing ? 'DELETE' : 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                             'X-Requested-With': 'XMLHttpRequest'
@@ -655,8 +644,6 @@
                 favoriteBtn.addEventListener('click', function () {
                     const postId = this.getAttribute('data-post-id');
                     const btn = this;
-
-                    // Disable button during request
                     btn.disabled = true;
 
                     fetch(`/favorites/toggle/${postId}`, {
@@ -669,26 +656,20 @@
                         .then(response => response.json())
                         .then(data => {
                             if (data.success) {
-                                // Update button appearance
                                 const icon = btn.querySelector('i');
                                 const span = btn.querySelector('span');
 
                                 if (data.isFavorited) {
-                                    // Post is now favorited
                                     btn.className = 'btn btn-danger';
                                     icon.className = 'bi bi-heart-fill';
                                     span.textContent = 'Saved';
                                 } else {
-                                    // Post is no longer favorited
                                     btn.className = 'btn btn-outline-danger';
                                     icon.className = 'bi bi-heart';
                                     span.textContent = 'Save post';
                                 }
-
-                                // Show success message (optional)
                                 showToast(data.message, 'success');
                             } else {
-                                // Show error message
                                 showToast(data.message || 'An error occurred.', 'error');
                             }
                         })
@@ -697,7 +678,6 @@
                             showToast('An error occurred while saving the post.', 'error');
                         })
                         .finally(() => {
-                            // Re-enable button
                             btn.disabled = false;
                         });
                 });
@@ -705,12 +685,10 @@
 
         });
 
-        // Toast notification function
         function showToast(message, type = 'info') {
 
             const toastContainer = document.getElementById('toastContainer');
             if (!toastContainer) return;
-            // Create toast element
             const toast = document.createElement('div');
             toast.className = `toast align-items-center text-white bg-${type === 'success' ? 'success' : 'danger'} border-0`;
             toast.setAttribute('role', 'alert');
@@ -730,28 +708,21 @@
                 </div>
             `;
             toastContainer.appendChild(toast);
-            // Remove toast after it's hidden
             toast.addEventListener('hidden.bs.toast', function() {
                 toast.remove();
             });
 
 
             document.body.appendChild(toast);
-
-            // Initialize and show toast
             const bsToast = new bootstrap.Toast(toast, {
                 autohide: true,
                 delay: 3000
             });
             bsToast.show();
-
-            // Remove toast element after it's hidden
             toast.addEventListener('hidden.bs.toast', function () {
                 document.body.removeChild(toast);
             });
         }
-
-        // Disconnect when page unloads
         window.addEventListener('beforeunload', function () {
             disconnect();
         });

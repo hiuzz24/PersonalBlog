@@ -108,8 +108,7 @@ public class MainController {
                 return "complete-username"; // Redirect to a page to complete the username
             }
         }
-
-        return "redirect:/explore";
+        return "redirect:/explore"; // Redirect to explore page if user has a username
     }
 
     @PostMapping("/complete-username")

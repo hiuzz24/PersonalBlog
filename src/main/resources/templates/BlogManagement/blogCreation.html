@@ -599,7 +599,6 @@
     }
 
     document.addEventListener("DOMContentLoaded", function () {
-        // Initialize CKEditor
         ClassicEditor
             .create(document.querySelector('#body'), {
                 mediaEmbed: {
@@ -659,7 +658,7 @@
                 console.error('Error initializing CKEditor:', error);
             });
 
-        // Add smooth animations on load
+
         const formSections = document.querySelectorAll('.form-section');
         formSections.forEach((section, index) => {
             section.style.opacity = '0';

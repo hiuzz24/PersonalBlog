@@ -536,16 +536,14 @@
 <script th:src="@{/js/main.js}"></script>
 
 <script>
-    // Filter functionality
     function filterPosts(status) {
         const rows = document.querySelectorAll('#postsTable tbody tr');
         const tabs = document.querySelectorAll('.filter-tab');
 
-        // Update active tab
+
         tabs.forEach(tab => tab.classList.remove('active'));
         event.target.classList.add('active');
-
-        // Filter rows
+      
         rows.forEach(row => {
             const rowStatus = row.getAttribute('data-status');
             if (status === 'all' || rowStatus === status) {
@@ -556,7 +554,7 @@
         });
     }
 
-    // Enhanced search functionality
+
     document.addEventListener('DOMContentLoaded', function() {
         const searchInput = document.querySelector('input[name="search"]');
         if (searchInput) {
