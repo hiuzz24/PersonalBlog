@@ -42,7 +42,8 @@ public interface PostRepository extends JpaRepository<Posts, Integer> {
     @Query("SELECT p FROM Posts p WHERE p.status = 'Pending' AND p.deleted = false")
     List<Posts> findAllPostPending();
 
-    Posts findPostByPostIDAndDeletedFalse(int postID);
+    @Query("select p from Posts p where p.postID = :postID and  p.deleted = false and (p.status = 'Approved' or p.status = 'Pending')")
+    Posts findPostByPostIDAndDeletedFalse(@Param("postID") int postID);
 
     @Query("SELECT COUNT(p) FROM Posts p WHERE p.status = 'Approved' AND p.deleted = false")
     long countApproved();
