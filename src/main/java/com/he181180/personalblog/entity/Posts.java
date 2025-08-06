@@ -2,10 +2,7 @@ package com.he181180.personalblog.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -16,6 +13,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@ToString(exclude = "posts")
 @Entity
 @Table(name = "posts")
 public class Posts {
@@ -35,17 +33,26 @@ public class Posts {
     private String imageUrl;
 
     @Lob
-    @Column(name = "body",columnDefinition = "text")
+    @Column(name = "body",columnDefinition = "mediumtext")
     private String body;
 
-    @Column(name = "is_published",insertable = false)
-    private boolean isPublished;
+    @Column(name = "is_published")
+    private boolean published;
 
-    @Column(name = "published_at",insertable = false)
+    @Column(name = "is_deleted")
+    private boolean deleted;
+
+    @Column(name = "published_at")
     private Timestamp publishedAt;
 
     @Column(name = "updated_at")
     private Timestamp updatedAt;
+
+    @Column(name = "status")
+    private String status;
+
+    @Column(name = "reason_rejected")
+    private String reasonRejected;
 
     @ManyToOne
     @JoinColumn(name = "user_id",nullable = false)

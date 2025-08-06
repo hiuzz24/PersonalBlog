@@ -2,6 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <title>Login</title>
+    <!-- Favicons -->
+    <link th:href="@{/assets/img/favicon.png}" rel="icon">
     <link rel="stylesheet" th:href="@{/css/login.css}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 </head>
@@ -32,13 +34,12 @@
                 ❌ Invalid username or password
             </div>
             <br>
-
             <span>
-                <label style="cursor: pointer">
-                    <input type="checkbox" name="remember"> Remember me
+
+                <label >
                 </label>
 
-                <a style="margin-bottom: 7px; color: white" id="a1" th:href="@{/forgotP}">
+                <a style="margin-bottom: 7px; color: white" id="a1" th:href="@{/forgotPassword}">
                     Forgot password?
                 </a>
             </span>
