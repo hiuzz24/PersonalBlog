@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -23,7 +24,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<Users> findUserByUsername(String username) {
-        return userRepository.findByUsername(username);
+        return userRepository.findByUsernameAndDeletedFalse(username);
     }
 
     @Override
@@ -35,7 +36,10 @@ public class UserServiceImpl implements UserService {
     public Users getCurrentUser() {
         return null;
     }
-
+    @Override
+    public List<Users> getAllUsers() {
+        return userRepository.findAll();
+    }
     @Override
     public Optional<Users> findUserByEmail(String email) {
         return userRepository.findByEmail(email);
@@ -49,6 +53,23 @@ public class UserServiceImpl implements UserService {
     @Override
     public Users findByUsername(String username) {
         return userRepository.findByUsername(username).orElse(null);
+    }
+    @Override
+    public List<Users> findUserByFullNameOrUserName(String name) {
+        return userRepository.findUsersByUsernameOrFullName(name);
+    }
+
+    @Override
+    public void updateRole(int userID,String role) {
+        Users user = userRepository.findUsersByUserID(userID);
+        user.setRole(role);
+        userRepository.save(user);
+    }
+    @Override
+    public void delete(int userID) {
+        Users users = userRepository.findUsersByUserID(userID);
+        users.setDeleted(true);
+        userRepository.save(users);
     }
     @Override
     public Users saveUser(Users user) {
@@ -74,5 +95,27 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<Users> findUserById(int id) {
         return userRepository.findById(id);
+    }
+    @Override
+    public void recover(int userID) {
+        Users users = userRepository.findUsersByUserID(userID);
+        users.setDeleted(false);
+        userRepository.save(users);
+    }
+
+    @Override
+    public Users findUserByUserIDAndDeletedFalse(int userID) {
+        Users user = userRepository.findUsersByUserIDAndDeletedFalse(userID);
+        return user;
+    }
+
+    @Override
+    public List<Users> findFollowerByUserID(int userID) {
+        return userRepository.findFollowerByUserID(userID);
+    }
+
+    @Override
+    public Users findUserByUserNameAndDeletedFalse(String userName) {
+        return userRepository.findUsersByUsernameAndDeletedFalse(userName);
     }
 }

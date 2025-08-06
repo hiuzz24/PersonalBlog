@@ -7,6 +7,7 @@ import org.hibernate.annotations.ColumnDefault;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -27,7 +28,7 @@ public class Users {
     @Column(name = "email")
     private String email;
 
-    @Column(name = "password", nullable = false)
+    @Column(name = "password")
     private String password;
 
     @Column(name = "full_name")
@@ -46,7 +47,7 @@ public class Users {
     private Timestamp createdAt;
 
     @Column(name = "is_deleted",insertable = false)
-    private boolean isDeleted;
+    private boolean deleted;
 
     @OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
     private List<Posts> posts;
@@ -57,8 +58,22 @@ public class Users {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<PasswordResetToken> tokens;
 
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "follows",
+            joinColumns = @JoinColumn(name = "follower_id"),
+            inverseJoinColumns = @JoinColumn(name = "following_id"))
+    private Set<Users> following;
+
+    @ManyToMany(mappedBy = "following")
+    private Set<Users> followers;
+
     public boolean isHasPassword() {
         return password != null && !password.isEmpty();
     }
-}
 
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+    private List<Notification> receiveNotifications;
+
+    @OneToMany(mappedBy = "fromUser",cascade = CascadeType.ALL)
+    private List<Notification> sendNotifications;
+}

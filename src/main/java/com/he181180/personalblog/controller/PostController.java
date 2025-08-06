@@ -2,24 +2,32 @@ package com.he181180.personalblog.controller;
 
 import com.he181180.personalblog.DTO.CommentReplyDTO;
 import com.he181180.personalblog.entity.Comments;
+import com.he181180.personalblog.entity.Notification;
 import com.he181180.personalblog.entity.Posts;
 import com.he181180.personalblog.entity.Users;
 import com.he181180.personalblog.service.*;
+import com.he181180.personalblog.service.TagService;
+import com.he181180.personalblog.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.apache.bcel.generic.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Controller
 public class PostController {
 
@@ -39,6 +47,13 @@ public class PostController {
     private CurrentUserService currentUserService;
     @Autowired
     private FavoriteService favoriteService;
+
+    @Autowired
+    private FollowService followService;
+
+    @Autowired
+    private NotificationService notificationService;
+
 
     @GetMapping("/explore")
     public String explore(@RequestParam(defaultValue = "1") int page, Model model){
@@ -101,9 +116,10 @@ public class PostController {
 
         // Check if post is favorited by current user using CurrentUserService
         boolean isFavorited = false;
+        Users currentUser = null ;
         if (authentication != null) {
             try {
-                Users currentUser = currentUserService.getCurrentUser(authentication);
+                currentUser = currentUserService.getCurrentUser(authentication);
                 if (currentUser != null) {
                     isFavorited = favoriteService.isPostFavorited(currentUser, posts);
                 }
@@ -111,11 +127,19 @@ public class PostController {
                 // Handle exception silently
             }
         }
-        model.addAttribute("isFavorited", isFavorited);
 
+        boolean isFollowing = followService.isFollowing(posts.getUsers().getUserID() , authentication);
+        model.addAttribute("isFavorited", isFavorited);
+        model.addAttribute("isFollowing", isFollowing);
         model.addAttribute("comments", comments);
         model.addAttribute("countComment", countComment);
         return "postDetail";
+    }
+
+    @PostMapping("/uploads/img")
+    @ResponseBody
+    public Map<String,String> uploadImageForCkeditor(@RequestParam("upload")MultipartFile upload) throws IOException {
+        return postService.uploadImageForCkeditor(upload);
     }
 
 }

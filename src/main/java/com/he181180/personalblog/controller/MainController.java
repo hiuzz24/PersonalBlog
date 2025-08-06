@@ -60,16 +60,6 @@ public class MainController {
         return "register";
     }
 
-    @GetMapping("/dashboard")
-    public String dashboard(Authentication authentication,Model model) {
-        String username = authentication.getName();
-        Optional<Users> user = userService.findUserByUsername(username);
-        if (user.isPresent()) {
-            model.addAttribute("user", user.get());
-        }
-        return "UserDashboard/dashboard";
-    }
-
     @PostMapping("/register")
     public String register(@RequestParam String fullName,
                            @RequestParam String username,
@@ -78,16 +68,19 @@ public class MainController {
                            Model model) {
         boolean hasError = false;
 
-        if (userRepository.findByUsername(username).isPresent()) {
+        if (userRepository.findByUsernameAndDeletedFalse(username).isPresent()) {
             model.addAttribute("usernameError", "Username already exists");
             hasError = true;
         }
-        if (userRepository.findByEmail(email).isPresent()) {
+        if (userRepository.findByEmailAndDeletedFalse(email).isPresent()) {
             model.addAttribute("emailError", "Email already exists");
             hasError = true;
         }
 
         if (hasError) {
+            model.addAttribute("fullName", fullName);
+            model.addAttribute("username", username);
+            model.addAttribute("email", email);
             return "register";
         }
         Users newUser = new Users();
@@ -95,8 +88,8 @@ public class MainController {
         newUser.setUsername(username);
         newUser.setEmail(email);
         newUser.setPassword(passwordEncoder.encode(password));
-        newUser.setRole("writer");
-        newUser.setAvatarUrl("/static/img/default-avatar.png");
+        newUser.setRole("WRITER");
+        newUser.setAvatarUrl("/img/user.png");
         userRepository.save(newUser);
         return "redirect:/login";
     }
@@ -105,14 +98,16 @@ public class MainController {
     public String googleLoginSuccess(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, Model model) {
         if (customOAuth2User != null) {
             Users user = customOAuth2User.getUser();
-            
             // If user does not have a username → ask for username
             if (user.getUsername() == null || user.getUsername().isEmpty()) {
+                // Set default avatar for new user
+                user.setAvatarUrl("/img/user.png");
+                userService.saveUser(user);
                 model.addAttribute("email", user.getEmail());
                 return "complete-username"; // Redirect to a page to complete the username
             }
         }
-        return "redirect:/explore";
+        return "redirect:/explore"; // Redirect to explore page if user has a username
     }
 
     @PostMapping("/complete-username")
@@ -141,7 +136,7 @@ public class MainController {
             SecurityContextHolder.getContext().setAuthentication(auth);
         }
 
-        return "redirect:/profile";
+        return "redirect:/explore";
     }
 
     @GetMapping("/forgotPassword")
@@ -195,7 +190,7 @@ public class MainController {
             model.addAttribute("tokenError", "The link is invalid: Invalid token.");
         } else if (passToken.getExpiryDate().before(cal.getTime())) {
             passwordResetTokenRepository.delete(passToken);
-            model.addAttribute("tokenError", "The link is invalid: Token expired and is deleted.");
+            model.addAttribute("tokenError", "The link is invalid: Token expired.");
         } else {
             model.addAttribute("token", token);
         }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml" lang="en">
 
 <head>
     <meta charset="utf-8">
@@ -26,17 +26,40 @@
 
     <!-- Main CSS File -->
     <link th:href="@{/assets/css/main.css}" rel="stylesheet">
+    <style>
+        .author-box {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 8px 12px;
+            display: inline-flex;
+            align-items: center;
+            transition: background-color 0.3s ease;
+        }
 
-    <!-- =======================================================
-    * Template Name: ZenBlog
-    * Template URL: https://bootstrapmade.com/zenblog-bootstrap-blog-template/
-    * Updated: Aug 08 2024 with Bootstrap v5.3.3
-    * Author: BootstrapMade.com
-    * License: https://bootstrapmade.com/license/
-    ======================================================== -->
+        .author-box:hover {
+            background-color: #f0f0f0; /* màu nền khi hover */
+        }
+
+        .author-link {
+            color: #333;
+            font-weight: 500;
+            text-decoration: none;
+            margin-left: 6px;
+            transition: color 0.3s ease;
+        }
+
+        .author-box:hover .author-link {
+            color: #000;           /* đậm màu khi hover */
+            font-weight: 600;
+        }
+    </style>
+
 </head>
 
 <body class="single-post-page">
+
+<!-- Toast Container -->
+<div id="toastContainer"></div>
 
 <header id="header" class="header d-flex align-items-center sticky-top">
     <div class="container position-relative d-flex align-items-center justify-content-between">
@@ -46,52 +69,73 @@
         </a>
 
         <nav id="navmenu" class="navmenu">
-            <ul>
-                <li><a th:href="@{/}">Home</a></li>
-                <li><a href="about.html">About</a></li>
-                <li class="dropdown"><a href="#"><span>Categories</span> <i
-                        class="bi bi-chevron-down toggle-dropdown"></i></a>
-                    <ul>
-                        <li><a href="category.html">Category 1</a></li>
-                        <li class="dropdown"><a href="#"><span>Deep Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-                            <ul>
-                                <li><a href="#">Deep Dropdown 1</a></li>
-                                <li><a href="#">Deep Dropdown 2</a></li>
-                                <li><a href="#">Deep Dropdown 3</a></li>
-                                <li><a href="#">Deep Dropdown 4</a></li>
-                                <li><a href="#">Deep Dropdown 5</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="category.html">Category 2</a></li>
-                        <li><a href="category.html">Category 3</a></li>
-                        <li><a href="category.html">Category 4</a></li>
-                    </ul>
-                </li>
-                <li><a href="contact.html">Contact</a></li>
-            </ul>
             <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
         </nav>
 
-        <div class="header-social-links">
-            <div class="dropdown">
-                <a href="#" class="d-flex align-items-center" id="userDropdown" data-bs-toggle="dropdown"
-                   aria-expanded="false" style="padding:0; border:none; background:none;">
-                    <img th:src="${user != null && user.avatarUrl != null && !#strings.isEmpty(user.avatarUrl) ? user.avatarUrl : '/assets/img/user.png'}"
-                         alt="avatar" style="width:36px; height:36px; border-radius:50%; object-fit:cover;">
+        <div class="header-social-links d-flex align-items-center pe-3" style="margin-left:auto;">
+            <!-- Notification Button -->
+            <div class="nav-item dropdown me-3">
+                <a class="nav-link position-relative d-flex align-items-center" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="height: 56px; color: #535353;">
+                    <i class="bi bi-bell" style="font-size: 1.5rem;"></i>
+                    <!-- Badge: show unread count -->
+                    <span class="position-absolute top-0 start-100 translate-middle-z badge rounded-pill bg-danger"
+                          id="notificationBadge"
+                          style="font-size: 0.75rem;"
+                          th:if="${notification != null and #lists.size(notification.?[!isRead]) > 0}"
+                          th:text="${#lists.size(notification.?[!isRead])}">
+    </span>
+                    <span class="visually-hidden">unread notifications</span>
                 </a>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                    <li>
-                        <form th:action="@{/profile}" method="get" style="display: inline;">
-                            <button type="submit" class="dropdown-item">Profile</button>
-                        </form>
+
+                <!-- Dropdown Menu -->
+                <ul class="dropdown-menu dropdown-menu-end"  aria-labelledby="notificationDropdown" style="min-width: 300px; max-height: 400px; overflow-y: auto;">
+                    <!-- If no notifications -->
+                    <li th:if="${#lists.isEmpty(notification)}">
+                        <span class="dropdown-item-text text-muted">No new notifications</span>
                     </li>
 
-                    <li>
+                    <!-- Show each notification -->
+                    <li th:each="noti : ${notification}">
+                        <a class="dropdown-item"
+                           th:if="${noti.post != null}"
+                           th:href="@{/PostDetail/{id}(id=${noti.post.postID})}">
+                            <span th:text="${noti.message}">New post</span><br>
+                            <small class="text-muted" th:text="${#dates.format(noti.createdAt, 'dd/MM/yyyy HH:mm')}">Time</small>
+                        </a>
+
+                        <a class="dropdown-item"
+                           th:if="${noti.post == null}">
+                            <span th:text="${noti.message}">Notification</span><br>
+                            <small class="text-muted" th:text="${#dates.format(noti.createdAt, 'dd/MM/yyyy HH:mm')}">Time</small>
+                        </a>
+                </ul>
+            </div>
+            <div class="dropdown">
+                <a href="#" class="d-flex align-items-center" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding:0; border:none; background:none;">
+                    <h5 class="sitename mb-0 d-flex align-items-center" style="font-size: 1.2rem; margin-right: 12px; display: flex; align-items: center; height: 56px; line-height: 56px; color: #535353; font-weight: 500;" th:text="${user.fullName != null ? user.fullName : user.username}"></h5>
+                    <img th:src="${user?.avatarUrl != null && !#strings.isEmpty(user.avatarUrl) ? user.avatarUrl : '/assets/img/user.png'}" alt="avatar" style="width:36px; height:36px; border-radius:50%; object-fit:cover;">
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                    <li th:if="${user != null && user.role == 'ADMIN'}">
+                        <form th:action="@{/admin}" style="display: inline;">
+                            <button type="submit" class="dropdown-item" style="border-radius: 8px; transition: all 0.3s ease;">
+                                <i class="bi bi-speedometer2 me-2"></i>Dashboard Admin</button>
+                        </form>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li th:if="${user != null && user.role.toUpperCase() == 'WRITER'}">
+                        <form th:action="@{/profile}" style="display: inline;">
+                            <button type="submit" class="dropdown-item" style="border-radius: 8px; transition: all 0.3s ease;">
+                                <i class="bi bi-person me-2"></i>Profile
+                            </button>
+                        </form>
                         <hr class="dropdown-divider">
                     </li>
                     <li>
                         <form th:action="@{/logout}" method="post" style="display: inline;">
-                            <button type="submit" class="dropdown-item">Logout</button>
+                            <button type="submit" class="dropdown-item text-danger" style="border-radius: 8px; transition: all 0.3s ease;">
+                                <i class="bi bi-box-arrow-right me-2"></i>Logout
+                            </button>
                         </form>
                     </li>
                 </ul>
@@ -102,25 +146,9 @@
 </header>
 
 <main class="main">
-
-    <!-- Page Title -->
-    <div class="page-title">
-        <div class="container d-lg-flex justify-content-between align-items-center">
-            <h1 class="mb-2 mb-lg-0">Single Post</h1>
-            <nav class="breadcrumbs">
-                <ol>
-                    <li><a th:href="@{/}">Home</a></li>
-                    <li class="current">Single Post</li>
-                </ol>
-            </nav>
-        </div>
-    </div><!-- End Page Title -->
-
     <div class="container">
         <div class="row">
-
             <div class="col-lg-8">
-
                 <!-- Blog Details Section -->
                 <section id="blog-details" class="blog-details section">
                     <div class="container">
@@ -135,15 +163,26 @@
 
                             <div class="meta-top">
                                 <ul>
-                                    <li class="d-flex align-items-center"><i class="bi bi-person"
-                                                                             th:text="${postDetail.users.fullName}"></i>
+                                    <li class="d-flex align-items-center ">
+                                        <div class="author-box">
+                                            <i class="bi bi-person"></i>
+                                            <a th:href="@{/author/ProfileUser/{userID}(userID=${postDetail.users.userID})}" class="author-link">
+                                                <span th:text="${postDetail.users.fullName}"></span>
+                                            </a>
+                                        </div>
+                                        <button th:if="${#authentication.name != postDetail.users.username}" type="button" class="btn btn-sm  ms-2 follow-btn"
+                                                th:data-author-id="${postDetail.users.userID}"
+                                                th:classappend="${isFollowing} ? 'btn-primary' : 'btn-outline-primary'"
+                                                style="font-size: 0.75rem; padding: 0.15rem 0.5rem;">
+                                            <i class="bi"
+                                               th:classappend="${isFollowing} ? 'bi-person-check-fill' : 'bi-person-plus'"></i>
+                                            <span th:text="${isFollowing} ? 'Following' : 'Follow'"></span>
+                                        </button>
                                     </li>
                                     <li class="d-flex align-items-center"><i class="bi bi-clock"></i> <a
-                                            href="blog-details.html">
-                                        <time th:text="${postDetail.publishedAt}"></time>
-                                    </a></li>
-                                    <li class="d-flex align-items-center"><i class="bi bi-chat-dots"
-                                                                             th:text="${' ' + postDetail.comments.size() + ' comments'}"></i></a>
+                                        <span th:text="${#dates.format(postDetail.publishedAt,  'dd/MM/yyyy HH:mm')}"></span>
+                                        </a></li>
+                                    <li class="d-flex align-items-center"><i class="bi bi-chat-dots" th:text="${' ' + postDetail.comments.size() + ' comments'}"></i></a>
                                     </li>
                                 </ul>
                             </div><!-- End meta top -->
@@ -153,30 +192,37 @@
                             </div><!-- End post content -->
 
                             <div class="meta-bottom">
-                                <i class="bi bi-tags"></i>
+                                <i class="bi bi-tags text-warning me-2"></i>
                                 <ul class="tags" th:each="tag: ${postDetail.tags}">
-                                    <li><a th:href="@{/tags/{tagID}(tagID = ${tag.tagName})}"
-                                           th:text="${tag.tagName}"></a></li>
+                                    <li><a th:href="@{/tags/{tagID}(tagID = ${tag.tagID})}"
+                                           class="badge bg-light text-dark me-1 mb-1"
+                                           style="font-size: 0.85rem;"
+                                           th:text="${tag.tagName}"></a>
+                                    </li>
                                 </ul>
                             </div><!-- End meta bottom -->
 
-                            <!-- Favorite Button -->
-                            <div class="mt-3 mb-3">
-                                <button type="button" class="btn btn-outline-danger" id="favoriteBtn"
-                                        th:data-post-id="${postDetail.postID}"
-                                        th:classappend="${isFavorited} ? 'btn-danger' : 'btn-outline-danger'">
-                                    <i class="bi" th:classappend="${isFavorited} ? 'bi-heart-fill' : 'bi-heart'"></i>
-                                    <span th:text="${isFavorited} ? 'Đã lưu' : 'Lưu bài viết'"></span>
-                                </button>
-                            </div>
+                            <div class="d-flex mt-3 mb-3">
+                                <!-- Save Post Button:  -->
+                                <div sec:authorize="!hasRole('ADMIN')">
+                                    <button type="button" class="btn"
+                                            id="favoriteBtn"
+                                            th:data-post-id="${postDetail.postID}"
+                                            th:classappend="${isFavorited} ? 'btn-danger' : 'btn-outline-danger'">
+                                        <i class="bi" th:classappend="${isFavorited} ? 'bi-heart-fill' : 'bi-heart'"></i>
+                                        <span th:text="${isFavorited} ? 'Saved' : 'Save post'"></span>
+                                    </button>
+                                </div>
 
-                            <!-- Chat with Author Button (only show if not the author) -->
-                            <div th:if="${#authentication.name != postDetail.users.username}" class="mt-4">
-                                <button type="button" class="btn btn-primary" id="chatWithAuthorBtn"
-                                        th:data-author-id="${postDetail.users.userID}"
-                                        th:data-author-name="${postDetail.users.fullName != null ? postDetail.users.fullName : postDetail.users.username}">
-                                    <i class="bi bi-chat-dots"></i> Chat with the author
-                                </button>
+                                <!-- Chat with Author Button:  -->
+                                <div th:if="${#authentication.name != postDetail.users.username}" class="ms-3">
+                                    <button type="button" class="btn btn-primary"
+                                            id="chatWithAuthorBtn"
+                                            th:data-author-id="${postDetail.users.userID}"
+                                            th:data-author-name="${postDetail.users.fullName != null ? postDetail.users.fullName : postDetail.users.username}">
+                                        <i class="bi bi-chat-dots"></i> Chat with the author
+                                    </button>
+                                </div>
                             </div>
 
 
@@ -189,39 +235,51 @@
                 <section id="blog-comments" class="blog-comments section">
 
                     <div class="container">
-
                         <h4 class="comments-count" th:text="${countComment} +' comments'"></h4>
 
-                        <ol class="comment-list">
+                        <ol class="comment-list" style="list-style: none; padding-left: 0;">
                             <li class="comment" th:each="parent : ${comments}">
-                                <div class="comment-body">
-                                    <div class="comment-author vcard">
-                                        <img class="avatar photo" src="assets/img/blog/comments-1.jpg" alt="">
-                                        <cite class="fn" th:text="${parent.user.username}"></cite>
-                                        <span class="says">says:</span>
-                                    </div>
-                                    <div class="comment-meta">
-                                        <a href="#" th:text="${parent.createdAt}">Date</a>
-                                    </div>
-                                    <p th:text="${parent.content}">Comment content</p>
-                                    <div class="reply">
-                                        <a href="#" class="comment-reply-link" onclick="toggleReplyBox(event, this)">Reply</a>
-                                    </div>
-
-                                    <form action="/comments/add" method="post">
-                                        <div class="reply-box"
-                                             style="display: none; margin-top: 10px; margin-bottom : 10px">
-                                            <input type="hidden" name="parentId" th:value="${parent.commentId}">
-                                            <input type="hidden" name="post.postID" th:value="${post.postID}">
-                                            <textarea placeholder="Enter your reply..." rows="3"
-                                                      name="content" class="form-control" required></textarea>
-                                            <button type="submit" class="btn btn-primary btn-sm mt-2">Submit Reply</button>
+                                <div class="d-flex align-items-start">
+                                    <img class="avatar photo me-2"
+                                         th:src="${parent.user.avatarUrl != null ? parent.user.avatarUrl : '/assets/img/user.png'}"
+                                         alt="avatar"
+                                         style="width:32px; height:32px; border-radius:50%; object-fit:cover; font-size:1.5rem;">
+                                    <div class="comment-body flex-grow-1">
+                                        <div class="comment-author vcard d-flex align-items-center mb-1">
+                                            <cite class="fn fw-bold me-1" style="font-size:1rem;"
+                                                  th:text="${parent.user.username}">User Name</cite>
+                                            <span th:if="${parent.createdAt != null}" class="text-muted ms-2"
+                                                  style="font-size:0.95rem;">| <span
+                                                    th:text="${#dates.format(parent.createdAt, 'dd/MM/yyyy HH:mm')}"></span></span>
+                                            <span th:if="${parent.createdAt == null}"
+                                                  class="text-muted ms-2">| No date</span>
                                         </div>
-                                    </form>
+                                        <p th:utext="${#strings.replace(parent.content, '\n', '<br/>')}"
+                                           style="font-size:1.08rem; border-radius:10px; padding:10px 16px; margin-bottom:0.5rem; line-height:1.7; font-family:'Inter', 'Segoe UI', Arial, sans-serif; letter-spacing:0.01em;">
+                                        </p>
+
+                                        <div class="reply">
+                                            <div class="d-flex align-items-center gap-3 mb-1">
+                                                <a href="#" class="comment-reply-link"
+                                                   onclick="toggleReplyBox(event, this)">Reply</a>
+                                            </div>
+                                        </div>
+                                        <form action="/comments/add" method="post">
+                                            <div class="reply-box"
+                                                 style="display: none; margin-top: 10px; margin-bottom : 10px">
+                                                <input type="hidden" name="parentId" th:value="${parent.commentId}">
+                                                <input type="hidden" name="post.postID" th:value="${post.postID}">
+                                                <textarea placeholder="Enter your reply..." rows="3" name="content"
+                                                          class="form-control" required></textarea>
+                                                <button type="submit" class="btn btn-primary btn-sm mt-2">Submit Reply
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
                                 </div>
-                                <ol class="children" th:if="${parent.children != null and !parent.children.empty}">
+                                <ul class="children" th:if="${parent.children != null and !parent.children.empty}">
                                     <div th:replace="~{comment-recursive :: commentList(childComments=${parent.children})}"></div>
-                                </ol>
+                                </ul>
                             </li>
                         </ol>
                     </div>
@@ -305,9 +363,8 @@
                         <div class="post-item" th:each="relatedPost : ${relatedPosts}">
                             <img th:src="@{${relatedPost.imageUrl}}" alt="" class="flex-shrink-0">
                             <div>
-                                <a th:href="@{'/PostDetail/' + ${relatedPost.postID}}"
-                                   th:text="${relatedPost.title}"></a>
-                                <time th:text="${#dates.format(relatedPost.publishedAt, 'dd MMM yyyy')}"></time>
+                                <a th:href="@{'/PostDetail/' + ${relatedPost.postID}}" th:text="${relatedPost.title}"></a>
+                                <time th:text="${#dates.format(relatedPost.publishedAt, 'dd/MM/yyyy')}"></time>
                             </div>
                         </div><!-- End recent post item-->
                     </div>
@@ -333,16 +390,16 @@
 
     <!-- Chat Modal -->
     <div class="modal fade" id="chatModal" tabindex="-1" aria-labelledby="chatModalLabel" aria-hidden="true"
+         data-bs-backdrop="false" data-bs-keyboard="true"
          style="position: fixed; bottom: 0; right: 60px; left: auto; z-index: 1055; width: 100%; max-width: 400px; margin: 0; pointer-events: none;">
         <div class="modal-dialog modal-lg m-0"
-             style="position: absolute; bottom: 0; right: 0; left: auto; width: 100%; max-width: 400px; margin: 0; pointer-events: auto; transform: none;">
+             style="position: absolute; bottom: 0; right: 0; left: auto; width: 100%; max-width: 400px; margin: 0; transform: none; pointer-events: auto;">
             <div class="modal-content" style="border-radius: 1rem 1rem 0 0; box-shadow: 0 0 20px rgba(0,0,0,0.15);">
                 <div class="modal-header bg-primary text-white rounded-top">
                     <h5 class="modal-title" id="chatModalLabel">
                         <i class="bi bi-chat-dots me-2"></i>Chat with <span id="chatPartnerName" class="fw-bold"></span>
                     </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                            aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-0">
                     <div id="chatMessages" class="chat-messages bg-light"
@@ -362,7 +419,6 @@
             </div>
         </div>
     </div>
-
 
     </div>
 
@@ -511,6 +567,7 @@
             const chatModal = new bootstrap.Modal(document.getElementById('chatModal'));
             const sendBtn = document.getElementById('sendMessageBtn');
             const messageInput = document.getElementById('messageInput');
+            const followBtn = document.querySelector('.follow-btn');
 
             if (chatBtn) {
                 chatBtn.addEventListener('click', function () {
@@ -532,6 +589,54 @@
                     chatModal.show();
                 });
             }
+
+            if (followBtn) {
+                followBtn.addEventListener('click', function () {
+                    const authorId = this.getAttribute('data-author-id');
+                    const isFollowing = this.classList.contains('btn-primary');
+                    const url = isFollowing ? `/api/follows/unfollow/${authorId}` : `/api/follows/follow/${authorId}`;
+                    fetch(url, {
+                        method: isFollowing ? 'DELETE' : 'POST', // Sử dụng DELETE cho unfollow
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        credentials: 'same-origin'
+                    })
+                        .then(response => {
+                            console.log(response);
+                            if (!response.ok) {
+                                return response.json().then(err => {
+                                    throw new Error(err.message || 'An error occurred while performing the operation.');
+                                });
+                            }
+                            return response.json();
+                        })
+                        .then((data) => {
+                            const icon = this.querySelector('i');
+                            const text = this.querySelector('span');
+                            if (isFollowing) {
+                                this.classList.remove('btn-primary');
+                                this.classList.add('btn-outline-primary');
+                                icon.classList.remove('bi-person-check-fill');
+                                icon.classList.add('bi-person-plus');
+                                text.textContent = 'Follow';
+                            } else {
+                                this.classList.remove('btn-outline-primary');
+                                this.classList.add('btn-primary');
+                                icon.classList.remove('bi-person-plus');
+                                icon.classList.add('bi-person-check-fill');
+                                text.textContent = 'Following';
+                            }
+                            showToast(data.message || 'Operation successful', 'success');
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showToast('An error occurred. Try again later', 'error');
+                        }) ;
+                });
+            }
+
 
             if (sendBtn) {
                 sendBtn.addEventListener('click', sendMessage);
@@ -572,24 +677,24 @@
                                     // Post is now favorited
                                     btn.className = 'btn btn-danger';
                                     icon.className = 'bi bi-heart-fill';
-                                    span.textContent = 'Đã lưu';
+                                    span.textContent = 'Saved';
                                 } else {
                                     // Post is no longer favorited
                                     btn.className = 'btn btn-outline-danger';
                                     icon.className = 'bi bi-heart';
-                                    span.textContent = 'Lưu bài viết';
+                                    span.textContent = 'Save post';
                                 }
 
                                 // Show success message (optional)
                                 showToast(data.message, 'success');
                             } else {
                                 // Show error message
-                                showToast(data.message || 'Có lỗi xảy ra', 'error');
+                                showToast(data.message || 'An error occurred.', 'error');
                             }
                         })
                         .catch(error => {
                             console.error('Error:', error);
-                            showToast('Có lỗi xảy ra khi lưu bài viết', 'error');
+                            showToast('An error occurred while saving the post.', 'error');
                         })
                         .finally(() => {
                             // Re-enable button
@@ -602,6 +707,9 @@
 
         // Toast notification function
         function showToast(message, type = 'info') {
+
+            const toastContainer = document.getElementById('toastContainer');
+            if (!toastContainer) return;
             // Create toast element
             const toast = document.createElement('div');
             toast.className = `toast align-items-center text-white bg-${type === 'success' ? 'success' : 'danger'} border-0`;
@@ -621,6 +729,12 @@
                     <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
                 </div>
             `;
+            toastContainer.appendChild(toast);
+            // Remove toast after it's hidden
+            toast.addEventListener('hidden.bs.toast', function() {
+                toast.remove();
+            });
+
 
             document.body.appendChild(toast);
 
@@ -645,14 +759,10 @@
 </main>
 
 <footer id="footer" class="footer dark-background">
-
-
     <div class="container copyright text-center mt-4">
-        <p> 2024 <span>Copyright</span> <strong class="px-1 sitename">PersonalBlog</strong>
-            <span>All Rights Reserved</span>
+        <p><span>Copyright</span> <strong class="px-1 sitename">PersonalBlog</strong> <span>All Rights Reserved</span>
         </p>
     </div>
-
 </footer>
 
 <!-- Scroll Top -->

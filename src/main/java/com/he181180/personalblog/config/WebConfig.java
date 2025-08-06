@@ -9,9 +9,8 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         // Serve uploaded images from project's static/img directory
-        String uploadPath = "file:" + System.getProperty("user.dir") + "/src/main/resources/static/img/";
         registry.addResourceHandler("/img/**")
-                .addResourceLocations(uploadPath);
+                .addResourceLocations("classpath:/static/img/", "file:" + System.getProperty("user.dir") + "/uploads/img/");
 
         // Also serve other static resources
         registry.addResourceHandler("/assets/**")

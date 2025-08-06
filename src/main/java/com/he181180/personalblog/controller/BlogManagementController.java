@@ -13,11 +13,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.util.*;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -42,7 +40,7 @@ public class BlogManagementController {
     @GetMapping
     public String getPostsByUserId(Authentication authentication, Model model) {
         Users user = currentUserService.getCurrentUser(authentication);
-        
+
         if (user != null) {
             List<Posts> userPosts = postService.getPostByUserID(user.getUserID());
             model.addAttribute("posts", userPosts);
@@ -55,8 +53,8 @@ public class BlogManagementController {
     // Hiển thị form tạo bài viết mới
     @GetMapping("/create")
     public String createPost(Model model) {
-        model.addAttribute("post",new Posts());
-        model.addAttribute("formAction","/blog/create");
+        model.addAttribute("post", new Posts());
+        model.addAttribute("formAction", "/blog/create");
         return "BlogManagement/blogCreation";
     }
 
@@ -66,10 +64,10 @@ public class BlogManagementController {
                            @RequestParam String content,
                            @RequestParam List<Integer> tagID,
                            @RequestParam String body,
-                           @RequestParam String imageUrl,
-                           @RequestParam(required = false) MultipartFile fileImage,
+                           @RequestParam(required = false) String imageUrl,
+                           @RequestParam(value = "fileImage",required = false)MultipartFile fileImage,
                            Authentication authentication,
-                           Model model) {
+                           Model model) throws IOException {
 
         List<Tags> tags = tagService.findTagsByTagID(tagID);
 
@@ -84,7 +82,10 @@ public class BlogManagementController {
             post.setBody(body);
             post.setPublishedAt(new Timestamp(new Date().getTime()));
             post.setUsers(user);
-            post.setPublished(true);
+            post.setPublished(false);
+            post.setDeleted(false);
+            post.setStatus("Pending");
+            post.setReasonRejected(null);
             post.setUpdatedAt(new Timestamp(new Date().getTime()));
             try {
                 String finalImage = postService.handleImageUrl(imageUrl, fileImage);
@@ -104,32 +105,36 @@ public class BlogManagementController {
     // Cập nhật bài viết
     @RequestMapping("/edit/{postID}")
     public String updatePost(@PathVariable("postID") int postID,
-                             Model model) {
+                             Model model,
+                             Authentication authentication) {
+        Users user = currentUserService.getCurrentUser(authentication);
         Posts post = postService.findPostByPostID(postID);
-        List<Integer> selectedTagID = post.getTags().stream()
-                .map(Tags::getTagID)
-                .collect(Collectors.toList());
+       if( user.getUserID() == post.getUsers().getUserID()){
+           List<Integer> selectedTagID = post.getTags().stream()
+                   .map(Tags::getTagID)
+                   .collect(Collectors.toList());
 
-        model.addAttribute("selectedTagID",selectedTagID);
-        model.addAttribute("post",post);
-        model.addAttribute("formAction","/blog/saveUpdate");
-        return "BlogManagement/blogCreation";
+           model.addAttribute("selectedTagID",selectedTagID);
+           model.addAttribute("post",post);
+           model.addAttribute("formAction","/blog/saveUpdate");
+           return "BlogManagement/blogCreation";
+       }
+       return "redirect:/blog";
     }
 
     @RequestMapping("/saveUpdate")
     public String saveUpdate(@RequestParam int postID,
                             @RequestParam String title,
-                            @RequestParam List<Integer> tagID,
-                            @RequestParam String content,
-                            @RequestParam String body,
-                            @RequestParam String imageUrl,
-                            @RequestParam(required = false) MultipartFile fileImage,
-                            Authentication authentication) {
+                           @RequestParam List<Integer> tagID,
+                           @RequestParam String content,
+                           @RequestParam String body,
+                           @RequestParam(required = false) String imageUrl,
+                             @RequestParam(value = "fileImage",required = false) MultipartFile fileImage,
+                             Authentication authentication) throws IOException {
         Users user = currentUserService.getCurrentUser(authentication);
         List<Tags> tags = tagService.findTagsByTagID(tagID);
-
+        Posts post = postService.findPostByPostID(postID);
         if (user != null) {
-            Posts post = postService.findPostByPostID(postID);
             post.setTitle(title);
             post.setContent(content);
             post.setImageUrl(imageUrl);
@@ -138,6 +143,7 @@ public class BlogManagementController {
             post.setPublishedAt(post.getPublishedAt());
             post.setUsers(user);
             post.setPublished(true);
+            post.setDeleted(false);
             post.setUpdatedAt(new Timestamp(new Date().getTime()));
             try {
                 String finalImage = postService.handleImageUrl(imageUrl, fileImage);
@@ -158,4 +164,6 @@ public class BlogManagementController {
         postService.deletePost(postID);
         return "redirect:/blog";
     }
-}
+    }
+
+
