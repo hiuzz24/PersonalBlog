@@ -628,6 +628,7 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
+                        // Remove card with animation
                         card.style.transition = 'all 0.3s ease';
                         card.style.transform = 'scale(0)';
                         card.style.opacity = '0';
@@ -635,9 +636,10 @@
                         setTimeout(() => {
                             card.remove();
 
+                            // Check if no more favorites
                             const remainingCards = document.querySelectorAll('.favorite-post-card');
                             if (remainingCards.length === 0) {
-                                location.reload();
+                                location.reload(); // Reload to show empty state
                             }
                         }, 300);
 

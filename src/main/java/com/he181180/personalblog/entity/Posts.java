@@ -9,7 +9,8 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -40,7 +41,7 @@ public class Posts {
     private boolean published;
 
     @Column(name = "is_deleted")
-    private boolean deleted;
+    private Boolean deleted;
 
     @Column(name = "published_at")
     private Timestamp publishedAt;
