@@ -104,6 +104,7 @@ public class PostServiceImpl implements PostService {
         Posts post = postRepository.findPostByIDs(postID);
         if (post != null) {
             post.setPublished(true);
+            post.setDeleted(false);
             postRepository.save(post);
         }
     }

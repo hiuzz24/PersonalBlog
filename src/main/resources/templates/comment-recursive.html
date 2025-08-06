@@ -14,14 +14,14 @@
                 </div>
                 <a href="#" class="comment-reply-link" onclick="toggleReplyBox(event, this)">Reply</a>
             </div>
-        <div action="/comments/add" method="post">
+        <form action="/comments/add" method="post">
             <div class="reply-box" style="display: none; margin-top: 10px; margin-bottom : 10px">
                 <input type="hidden" name="parentId" th:value="${child.commentId}">
                 <input type="hidden" name="post.postID" th:value="${post.postID}">
                 <textarea placeholder="Enter your reply..." rows="3" name="content" class="form-control" required></textarea>
                 <button type="submit" class="btn btn-primary btn-sm mt-2">Submit Reply</button>
             </div>
-        </div>
+        </form>
     </div>
     </div>
     <ul class="children" th:if="${child.children != null and !child.children.empty}">
