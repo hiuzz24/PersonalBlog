@@ -520,13 +520,15 @@
         <div class="header-social-links d-flex align-items-center pe-3" style="margin-left:auto;">
             <!-- Notification Button -->
             <div class="nav-item dropdown me-3">
-                <a class="nav-link position-relative" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 1.5rem; color: #535353;">
-                    <i class="bi bi-bell"></i>
+                <a class="nav-link position-relative d-flex align-items-center" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="height: 56px; color: #535353;">
+                    <i class="bi bi-bell" style="font-size: 1.5rem;"></i>
+
                     <!-- Badge: show unread count -->
                     <span class="position-absolute top-0 start-100 translate-middle-z badge rounded-pill bg-danger"
                           id="notificationBadge"
                           style="font-size: 0.75rem;"
-                          th:text="${notification != null ? #lists.size(notification.?[!isRead]) : 0}">
+                          th:if="${notification != null and #lists.size(notification.?[!isRead]) > 0}"
+                          th:text="${#lists.size(notification.?[!isRead])}">
     </span>
                     <span class="visually-hidden">unread notifications</span>
                 </a>
@@ -619,7 +621,7 @@
                                 Post Title
                             </label>
                             <input type="text" id="title" name="title" th:value="${post.title}"
-                                   required class="form-control" placeholder="Enter an engaging title...">
+                                   class="form-control" placeholder="Enter an engaging title...">
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -629,7 +631,7 @@
                                 Short Description
                             </label>
                             <input type="text" id="content" name="content" th:value="${post.content}"
-                                   required class="form-control" placeholder="Brief description of the post...">
+                                   class="form-control" placeholder="Brief description of the post...">
                         </div>
                     </div>
                 </div>
@@ -740,13 +742,30 @@
 
 <script>
     function validationForm(){
+        const title = document.getElementById("title").value;
+        const content = document.getElementById("content").value;
         const imageUrl = document.getElementById("imageUrl").value;
         const fileImage = document.getElementById("fileImage").files.length;
         const body = window.editor.getData().trim();
         const tagChecked = document.querySelectorAll("input[name=tagID]:checked");
 
+        if(title === ""){
+            alert("please insert title")
+            return false;
+        }
+
+        if(content === ""){
+            alert("please insert content")
+            return false;
+        }
+
         if(tagChecked.length === 0){
             alert("please choose 1 tag for post")
+            return false;
+        }
+
+        if(tagChecked.length > 4){
+            alert("please choose only 4 tags")
             return false;
         }
 

@@ -23,8 +23,9 @@ CREATE TABLE posts (
                        image_url TEXT,
                        body TEXT,
                        status VARCHAR(50) NOT NULL,
-                       reason_rejected TEXT,
+                       reason_rejected MEDIUMTEXT,
                        is_published BOOLEAN,
+                        is_deleted boolean default false,
                        published_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                        updated_at TIMESTAMP NULL DEFAULT NULL,
                        FOREIGN KEY (user_id) REFERENCES users(user_id)
@@ -55,13 +56,35 @@ CREATE TABLE comments (
                           FOREIGN KEY (parent_comment_id) REFERENCES comments(comment_id)
 );
 
+CREATE TABLE follows (
+                         follower_id INT,
+                         following_id INT,
+                         PRIMARY KEY (follower_id, following_id),
+                         FOREIGN KEY (follower_id) REFERENCES users(user_id),
+                         FOREIGN KEY (following_id) REFERENCES users(user_id)
+);
+
+CREATE TABLE notifications(
+    notification_id int auto_increment primary key,
+    user_id int not null,
+    type varchar(50) not null,
+    from_user_id int not null,
+    post_id int,
+    message varchar(255),
+    is_read boolean default false,
+    created_at timestamp default current_timestamp,
+    foreign key (user_id) references users(user_id),
+    foreign key (from_user_id) references users(user_id),
+    foreign key (post_id) references posts(post_id)
+);
+
 INSERT INTO users (username, email, password, full_name, bio, avatar_url, role, is_deleted)
 VALUES
     ('admin', 'admin@blog.vn', 'admin123', 'Admin', 'Admin of the blog.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmjC0CZGGDJbJ4hH1_jLKaMzhL96cwCQ8OeQ&s', 'ADMIN', FALSE),
     ('linhtran', 'linhtran@blog.vn', 'linh123', 'Trần Thị Linh', 'Loves travel and food blogging.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTe7mWcFQ-e97tkOw1TN2252vi4gLuYMTbvXQ&s', 'WRITER', FALSE),
     ('nguyenvananh', 'vananh@blog.vn', 'anh123', 'Nguyễn Văn Anh', 'Passionate about programming and Java.', 'https://i.pinimg.com/736x/b7/91/44/b79144e03dc4996ce319ff59118caf65.jpg', 'WRITER', FALSE);
 
-INSERT INTO posts (post_id, user_id, title, content, image_url, body, status, reason_rejected, is_published, published_at)
+INSERT INTO posts (post_id, user_id, title, content, image_url, body, status, reason_rejected, is_published,is_deleted, published_at)
 VALUES
     -- Post 1
     (1, 1, 'Welcome to the Blog', 'This is the first post by the admin.',
@@ -71,7 +94,7 @@ VALUES
      <p>Whether you re a developer, traveler, foodie, or just someone curious — you ll find something useful here. Stay connected!</p>
 	 <hr>
 	 <p>Start exploring our <strong>latest posts</strong>  and don t forget to follow us on social media for regular updates.</p>',
-	 'Approved', NULL, TRUE, '2024-01-15 10:00:00'),
+	 'Approved', NULL, TRUE,FALSE, '2024-01-15 10:00:00'),
 
 	-- Post 2
 	(2, 2, 'Top 5 Destinations in Vietnam', 'Explore the most beautiful places across the country.',
@@ -86,7 +109,7 @@ VALUES
         <li><strong>Phu Quoc Island:</strong> Tropical paradise with white-sand beaches.</li>
         </ol>
         <p>Start planning your adventure today!</p>',
-	 'Approved', NULL, TRUE, '2024-01-15 10:00:00'),
+	 'Approved', NULL, TRUE,FALSE, '2024-01-15 10:00:00'),
 
 	-- Post 3
 	(3, 3, 'Java Programming Guide', 'Learn how to build Java applications using Spring Boot.',
@@ -100,7 +123,7 @@ VALUES
 	   <li>Practice building RESTful APIs and use Maven/Gradle.</li>
 	 </ul>
 	 <p>With consistency, you ll become confident building full-stack applications in Java.</p>',
-	 'Approved', NULL, TRUE, '2024-01-15 10:00:00'),
+	 'Approved', NULL, TRUE,FALSE, '2024-01-15 10:00:00'),
 
 	-- Post 4
 	(4, 2, 'Getting Started with Spring Boot', 'Spring Boot makes it easy to create stand-alone Spring applications.',
@@ -122,7 +145,7 @@ VALUES
 	}
 	</code></pre>
 	<p>Start with Spring Initializr and you re ready to build REST APIs quickly.</p>',
-     'Approved', NULL, TRUE, '2024-01-15 10:00:00'),
+     'Approved', NULL, TRUE,FALSE, '2024-01-15 10:00:00'),
 
     -- Post 5
     (5, 2, 'Best Street Food in Ho Chi Minh City', 'Discover the best street food in the bustling city.',
@@ -135,7 +158,7 @@ VALUES
 	   <li><strong>Bánh Xèo:</strong> Crispy savory pancake with shrimp and bean sprouts.</li>
 	 </ul>
 	 <p>Head to District 1 and Ben Thanh Market for the best street food experience.</p>',
-	 'Approved', NULL, TRUE, '2024-01-16 14:30:00'),
+	 'Approved', NULL, TRUE,FALSE, '2024-01-16 14:30:00'),
 
 	-- Post 6
 	(6, 3, 'Java 21 New Features Overview', 'Java 21, is the latest Long-Term Support (LTS) release of the Java Development Kit (JDK). It introduces several significant features and enhancements, and improvements to the Foreign Function & Memory API.',
@@ -148,7 +171,7 @@ VALUES
         <li>Improved performance and better support for cloud-native apps.</li>
         </ul>
         <p>Stay updated with the latest LTS version to future-proof your Java applications.</p>',
-	 'Approved', NULL, TRUE, '2024-11-15 10:00:00'),
+	 'Approved', NULL, TRUE,FALSE, '2024-11-15 10:00:00'),
 
 	-- Post 7
 	(7, 3, 'Database Design Best Practices', 'Learn the fundamental principles of database design, including normalization, indexing strategies, and performance optimization techniques for modern applications.',
@@ -161,7 +184,7 @@ VALUES
         <li>Balance data integrity with performance.</li>
         </ul>
         <p>Build solid foundations for reliable and scalable applications.</p>',
-	 'Approved', NULL, TRUE, '2024-01-18 11:45:00'),
+	 'Approved', NULL, TRUE,FALSE, '2024-01-18 11:45:00'),
 
 	-- Post 8
 	(8, 3, 'Hidden Gems in Hanoi Old Quarter', 'Explore the lesser-known attractions in Hanoi Old Quarter. From traditional coffee shops to ancient temples, discover places that most tourists miss.',
@@ -174,7 +197,7 @@ VALUES
 	   <li>Historic architecture and cultural tales.</li>
 	 </ul>
 	 <p>Go beyond the tourist trails and truly feel Hanoi.</p>',
-	 'Approved', NULL, TRUE, '2024-01-19 16:20:00'),
+	 'Approved', NULL, TRUE,FALSE, '2024-01-19 16:20:00'),
 
 	-- Post 9
 	(9, 3, 'Microservices Architecture with Spring Cloud', 'Building scalable microservices using Spring Cloud. This comprehensive guide covers service discovery, configuration management, and inter-service communication.',
@@ -187,7 +210,7 @@ VALUES
         <li>Enable seamless communication with Feign and Gateway.</li>
         </ul>
         <p>Build resilient, scalable systems using proven tools.</p>',
-	 'Approved', NULL, TRUE, '2024-01-20 08:30:00'),
+	 'Approved', NULL, TRUE,FALSE, '2024-01-20 08:30:00'),
 
 	-- Post 10
 	(10, 3, 'RESTful API Design Guidelines', 'Create robust and maintainable REST APIs following industry best practices. Learn about proper HTTP methods, status codes, and resource naming conventions.',
@@ -200,7 +223,7 @@ VALUES
         <li>Name resources clearly and consistently.</li>
         </ul>
         <p>Build APIs that are easy to consume and maintain.</p>',
-	 'Approved', NULL, TRUE, '2024-01-21 13:10:00'),
+	 'Approved', NULL, TRUE,FALSE, '2024-01-21 13:10:00'),
 
 	-- Post 11
 	(11, 3, 'Vietnamese Coffee Culture', 'Dive deep into Vietnam coffee culture, from traditional drip coffee to modern cafe trends. Discover the history and preparation methods of this beloved beverage.',
@@ -213,7 +236,7 @@ VALUES
         <li>Understand the role of coffee in social life.</li>
         </ul>
         <p>Experience Vietnam through its iconic drink.</p>',
-	 'Approved', NULL, TRUE, '2024-01-22 15:45:00'),
+	 'Approved', NULL, TRUE,FALSE, '2024-01-22 15:45:00'),
 
 	-- Post 12
 	(12, 3, 'Docker Containerization for Java Apps', 'Learn how to containerize Java applications using Docker. This tutorial covers creating Dockerfiles, managing dependencies, and deployment strategies.',
@@ -226,7 +249,7 @@ VALUES
         <li>Run containers using <strong>Docker Compose</strong>.</li>
         </ul>
         <p>Take your Java apps to the next level with containerization.</p>',
-	 'Approved', NULL, TRUE, '2024-01-23 10:20:00'),
+	 'Approved', NULL, TRUE,FALSE, '2024-01-23 10:20:00'),
 
 	-- Post 13
 	(13, 3, 'Building Secure Web Applications', 'Security is paramount in web development. Learn about common vulnerabilities, authentication methods, and how to implement security best practices in your applications.',
@@ -239,7 +262,7 @@ VALUES
         <li>Apply input validation and secure coding practices.</li>
         </ul>
         <p>Build apps with trust and resilience from the ground up.</p>',
-	 'Approved', NULL, TRUE, '2024-01-24 12:00:00'),
+	 'Approved', NULL, TRUE,FALSE, '2024-01-24 12:00:00'),
 
 	-- Post 14
 	(14, 3, 'Food Photography Tips for Bloggers','Photographing food is harder than it seems. My photos have improved with practice. Here are the best tips and tricks I can offer about food photography and equipment.',
@@ -252,7 +275,7 @@ VALUES
         <li>Invest in basic gear: tripod, reflectors, and styling props.</li>
         </ul>
         <p>Practice makes perfect – and deliciously aesthetic.</p>',
-	 'Approved', NULL, TRUE, '2024-01-23 10:20:00'),
+	 'Approved', NULL, TRUE,FALSE, '2024-01-23 10:20:00'),
 
 	-- Post 15
 	(15, 3, 'Clean Code Principles in Java', 'Writing clean, maintainable code is essential for long-term project success. Explore key principles and practices that will make your Java code more readable and robust.',
@@ -265,7 +288,7 @@ VALUES
 	   <li>Use <strong>SOLID principles</strong> and avoid code smells.</li>
 	 </ul>
 	 <p>Readable code is maintainable code.</p>',
-	 'Approved', NULL, TRUE, '2024-01-26 09:40:00'),
+	 'Approved', NULL, TRUE,FALSE, '2024-01-26 09:40:00'),
 
 	-- Post 16
 	(16, 2, 'Introduction to NoSQL Databases', 'Explore the world of NoSQL databases, including MongoDB, Redis, and Cassandra. Learn when to use NoSQL vs traditional relational databases.',
@@ -278,7 +301,7 @@ VALUES
         <li>Scale with distributed systems like Cassandra.</li>
         </ul>
         <p>Pick the right tool for the right data scenario.</p>',
-	 'Approved', NULL, TRUE, '2024-01-27 14:15:00');
+	 'Approved', NULL, TRUE,FALSE, '2024-01-27 14:15:00');
 
 INSERT INTO tags (tag_name)
 VALUES
@@ -324,3 +347,10 @@ VALUES
     (2, 3, 'Thanks for the recommendations! I love Da Nang.', NULL),
     (3, 2, 'Great tutorial. Java is awesome!', NULL),
     (3, 3, 'Could you share more Spring Boot resources?', NULL);
+
+
+INSERT INTO follows (follower_id, following_id) VALUES
+(2, 1),
+(3, 1),
+(1, 3);
+

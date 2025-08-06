@@ -14,5 +14,6 @@ public interface TagRepository extends JpaRepository<Tags,Integer> {
             "where p.postID = :postID")
     List<Integer> findTagIDByPostID(@Param("postID") int postID);
 
+
     List<Tags> findTagsByTagIDIn(List<Integer> tagID);
 }

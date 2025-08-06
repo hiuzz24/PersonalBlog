@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -267,11 +266,6 @@ public class ChatController {
     /**
      * Trang chat chính
      */
-    @GetMapping("/admin/chat")
-    @PreAuthorize("hasRole('ADMIN')")
-    public String chatPageForAdmin() {
-        return "AdminDashboard/chatadmin";  // Giao diện riêng cho admin
-    }
     @GetMapping("/chat")
     public String chatPage() {
         return "UserDashboard/chat";

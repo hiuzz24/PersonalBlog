@@ -60,16 +60,6 @@ public class MainController {
         return "register";
     }
 
-    @GetMapping("/dashboard")
-    public String dashboard(Authentication authentication,Model model) {
-        String username = authentication.getName();
-        Optional<Users> user = userService.findUserByUsername(username);
-        if (user.isPresent()) {
-            model.addAttribute("user", user.get());
-        }
-        return "UserDashboard/dashboard";
-    }
-
     @PostMapping("/register")
     public String register(@RequestParam String fullName,
                            @RequestParam String username,
@@ -98,8 +88,8 @@ public class MainController {
         newUser.setUsername(username);
         newUser.setEmail(email);
         newUser.setPassword(passwordEncoder.encode(password));
-        newUser.setRole("writer");
-        newUser.setAvatarUrl("/static/img/default-avatar.png");
+        newUser.setRole("WRITER");
+        newUser.setAvatarUrl("/img/user.png");
         userRepository.save(newUser);
         return "redirect:/login";
     }

@@ -13,9 +13,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.util.*;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -53,8 +55,8 @@ public class BlogManagementController {
     // Hiển thị form tạo bài viết mới
     @GetMapping("/create")
     public String createPost(Model model) {
-        model.addAttribute("post",new Posts());
-        model.addAttribute("formAction","/blog/create");
+        model.addAttribute("post", new Posts());
+        model.addAttribute("formAction", "/blog/create");
         return "BlogManagement/blogCreation";
     }
 
@@ -77,12 +79,12 @@ public class BlogManagementController {
             Posts post = new Posts();
             post.setTitle(title);
             post.setContent(content);
-            post.setImageUrl(imageUrl);
             post.setTags(tags);
             post.setBody(body);
             post.setPublishedAt(new Timestamp(new Date().getTime()));
             post.setUsers(user);
             post.setPublished(false);
+            post.setDeleted(false);
             post.setStatus("Pending");
             post.setReasonRejected(null);
             post.setUpdatedAt(new Timestamp(new Date().getTime()));
@@ -110,54 +112,46 @@ public class BlogManagementController {
                 .map(Tags::getTagID)
                 .collect(Collectors.toList());
 
-        model.addAttribute("selectedTagID",selectedTagID);
-        model.addAttribute("post",post);
-        model.addAttribute("formAction","/blog/saveUpdate");
+        model.addAttribute("selectedTagID", selectedTagID);
+        model.addAttribute("post", post);
+        model.addAttribute("formAction", "/blog/saveUpdate");
         return "BlogManagement/blogCreation";
     }
 
     @RequestMapping("/saveUpdate")
     public String saveUpdate(@RequestParam int postID,
-                            @RequestParam String title,
-                           @RequestParam List<Integer> tagID,
-                           @RequestParam String content,
-                           @RequestParam String body,
-                           @RequestParam(required = false) String imageUrl,
-                             @RequestParam(value = "fileImage",required = false) MultipartFile fileImage,
+                             @RequestParam String title,
+                             @RequestParam List<Integer> tagID,
+                             @RequestParam String content,
+                             @RequestParam String body,
+                             @RequestParam(required = false) String imageUrl,
+                             @RequestParam(value = "fileImage", required = false) MultipartFile fileImage,
                              Authentication authentication) throws IOException {
         Users user = currentUserService.getCurrentUser(authentication);
         List<Tags> tags = tagService.findTagsByTagID(tagID);
 
-        if (user != null) {
-            Posts post = postService.findPostByPostID(postID);
-            post.setTitle(title);
-            post.setContent(content);
-            post.setImageUrl(imageUrl);
-            post.setTags(tags);
-            post.setBody(body);
-            post.setPublishedAt(post.getPublishedAt());
-            post.setUsers(user);
-            post.setPublished(true);
-            post.setUpdatedAt(new Timestamp(new Date().getTime()));
-            try {
-                String finalImage = postService.handleImageUrl(imageUrl, fileImage);
-                post.setImageUrl(finalImage);
-            } catch (Exception e) {
-                // Optionally, you can add a model attribute for error and redirect
-                return "redirect:/blog/edit/" + postID + "?error=img";
-            }
-            postService.savePost(post);
-            return "redirect:/blog";
-        }
-        return "redirect:/blog/edit/" + postID + "?error=user";
+        Posts post = postService.findPostByPostID(postID);
+        post.setTitle(title);
+        post.setContent(content);
+        post.setTags(tags);
+        post.setBody(body);
+        post.setPublishedAt(post.getPublishedAt());
+        post.setUsers(user);
+        post.setPublished(true);
+        post.setDeleted(false);
+        post.setUpdatedAt(new Timestamp(new Date().getTime()));
+
+        String finalImage = postService.handleImageUrl(imageUrl, fileImage);
+        post.setImageUrl(finalImage);
+        postService.savePost(post);
+        return "redirect:/blog";
     }
 
-    // Xóa bài viết
     @RequestMapping("/delete/{postID}")
     public String deletePost(@PathVariable int postID) {
         postService.deletePost(postID);
         return "redirect:/blog";
     }
-    }
+}
 
 
