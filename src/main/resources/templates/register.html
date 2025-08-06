@@ -2,6 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <title>Register</title>
+    <!-- Favicons -->
+    <link th:href="@{/assets/img/favicon.png}" rel="icon">
     <link rel="stylesheet" th:href="@{/css/register.css}">
 </head>
 <body>
@@ -9,28 +11,31 @@
     <div class="register-container">
         <h2 class="title">Register</h2>
 
-        <!-- ✅ Register Form -->
         <form th:action="@{/register}" method="post" class="register-form">
-            <!-- Full Name -->
-            <input placeholder="Full Name" type="text" id="fullName" name="fullName" required>
+            <input placeholder="Full Name" type="text" id="fullName" name="fullName"
+                   th:value="${fullName}" required>
             <br>
 
-            <!-- Username -->
-            <input placeholder="Username" type="text" id="username" name="username" required>
+            <input placeholder="Username" type="text" id="username" name="username"
+                   th:value="${username}" required>
             <div th:if="${usernameError}" style="color: red; font-size: 14px;">
                 <span th:text="${usernameError}">Username error</span>
             </div>
             <br>
 
-            <!-- Email -->
-            <input placeholder="Email" type="text" id="email" name="email" required>
+            <input placeholder="Email" type="text" id="email" name="email"
+                   th:value="${email}" required>
             <div th:if="${emailError}" style="color: red; font-size: 14px;">
                 <span th:text="${emailError}">Email error</span>
             </div>
             <br>
 
-            <!-- Password -->
             <input placeholder="Password" type="password" id="password" name="password" required>
+            <span style="color: red; font-size: 14px;" id="passwordError"></span>
+            <br>
+
+            <input placeholder="Confirm Password" id="matchPassword" type="password" required/>
+            <span style="color: red; font-size: 14px;" id="matchPasswordError"></span>
             <br>
 
             <button type="submit">Sign Up</button>
@@ -44,4 +49,39 @@
     </div>
 </div>
 </body>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.querySelector("form");
+        const password = document.getElementById("password");
+        const confirm = document.getElementById("matchPassword");
+        const passwordError = document.getElementById("passwordError");
+        const matchPasswordError = document.getElementById("matchPasswordError");
+
+        function validatePasswordComplexity(pw) {
+            const minLength = pw.length >= 6;
+            const hasUpperLetter = /[A-Z]/.test(pw);
+            const hasLowerLetter = /[a-z]/.test(pw);
+            const hasNumber = /[0-9]/.test(pw);
+            const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(pw);
+            return minLength && hasUpperLetter && hasLowerLetter && hasNumber && hasSpecialChar;
+        }
+
+        if (form) {
+            form.addEventListener("submit", function (event) {
+                if (!validatePasswordComplexity(password.value)) {
+                    event.preventDefault();
+                    passwordError.style.color = "red";
+                    passwordError.textContent = "Password must be at least 6 characters including at least one uppercase letter, one lowercase letter, one number, and one special character.";
+                } else if (password.value !== confirm.value) {
+                    event.preventDefault();
+                    matchPasswordError.style.color = "red";
+                    matchPasswordError.textContent = "Passwords do not match.";
+                } else {
+                    passwordError.textContent = "";
+                    matchPasswordError.textContent = "";
+                }
+            });
+        }
+    });
+</script>
 </html>

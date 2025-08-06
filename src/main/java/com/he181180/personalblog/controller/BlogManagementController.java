@@ -3,6 +3,7 @@ package com.he181180.personalblog.controller;
 import com.he181180.personalblog.entity.Posts;
 import com.he181180.personalblog.entity.Tags;
 import com.he181180.personalblog.entity.Users;
+import com.he181180.personalblog.service.CurrentUserService;
 import com.he181180.personalblog.service.PostService;
 import com.he181180.personalblog.service.TagService;
 import com.he181180.personalblog.service.UserService;
@@ -11,10 +12,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
@@ -30,19 +34,13 @@ public class BlogManagementController {
     @Autowired
     private TagService tagService;
 
+    @Autowired
+    private CurrentUserService currentUserService;
+
     @GetMapping
-    public String getPostsByUserId(Authentication authentication,Model model) {
-        Users user = null;
-        if (authentication != null) {
-            Object principal = authentication.getPrincipal();
-            if (principal instanceof org.springframework.security.oauth2.core.user.OAuth2User oauth2User) {
-                String email = oauth2User.getAttribute("email");
-                user = userService.findUserByEmail(email).orElse(null);
-            } else {
-                String username = authentication.getName();
-                user = userService.findUserByUsername(username).orElse(null);
-            }
-        }
+    public String getPostsByUserId(Authentication authentication, Model model) {
+        Users user = currentUserService.getCurrentUser(authentication);
+
         if (user != null) {
             List<Posts> userPosts = postService.getPostByUserID(user.getUserID());
             model.addAttribute("posts", userPosts);
@@ -55,8 +53,8 @@ public class BlogManagementController {
     // Hiển thị form tạo bài viết mới
     @GetMapping("/create")
     public String createPost(Model model) {
-        model.addAttribute("post",new Posts());
-        model.addAttribute("formAction","/blog/create");
+        model.addAttribute("post", new Posts());
+        model.addAttribute("formAction", "/blog/create");
         return "BlogManagement/blogCreation";
     }
 
@@ -66,16 +64,16 @@ public class BlogManagementController {
                            @RequestParam String content,
                            @RequestParam List<Integer> tagID,
                            @RequestParam String body,
-                           @RequestParam String imageUrl,
+                           @RequestParam(required = false) String imageUrl,
+                           @RequestParam(value = "fileImage",required = false)MultipartFile fileImage,
                            Authentication authentication,
-                           Model model) {
+                           Model model) throws IOException {
 
         List<Tags> tags = tagService.findTagsByTagID(tagID);
 
-        String username = authentication.getName();
-        Optional<Users> user = userService.findUserByUsername(username);
+        Users user = currentUserService.getCurrentUser(authentication);
 
-        if (user.isPresent()) {
+        if (user != null) {
             Posts post = new Posts();
             post.setTitle(title);
             post.setContent(content);
@@ -83,9 +81,19 @@ public class BlogManagementController {
             post.setTags(tags);
             post.setBody(body);
             post.setPublishedAt(new Timestamp(new Date().getTime()));
-            post.setUsers(user.get());
-            post.setPublished(true);
+            post.setUsers(user);
+            post.setPublished(false);
+            post.setDeleted(false);
+            post.setStatus("Pending");
+            post.setReasonRejected(null);
             post.setUpdatedAt(new Timestamp(new Date().getTime()));
+            try {
+                String finalImage = postService.handleImageUrl(imageUrl, fileImage);
+                post.setImageUrl(finalImage);
+            } catch (Exception e) {
+                model.addAttribute("error", "Lỗi khi xử lý ảnh: " + e.getMessage());
+                return "redirect:/blog/create";
+            }
             postService.savePost(post);
             return "redirect:/blog";
         }
@@ -97,16 +105,21 @@ public class BlogManagementController {
     // Cập nhật bài viết
     @RequestMapping("/edit/{postID}")
     public String updatePost(@PathVariable("postID") int postID,
-                             Model model) {
+                             Model model,
+                             Authentication authentication) {
+        Users user = currentUserService.getCurrentUser(authentication);
         Posts post = postService.findPostByPostID(postID);
-        List<Integer> selectedTagID = post.getTags().stream()
-                .map(Tags::getTagID)
-                .collect(Collectors.toList());
+       if( user.getUserID() == post.getUsers().getUserID()){
+           List<Integer> selectedTagID = post.getTags().stream()
+                   .map(Tags::getTagID)
+                   .collect(Collectors.toList());
 
-        model.addAttribute("selectedTagID",selectedTagID);
-        model.addAttribute("post",post);
-        model.addAttribute("formAction","/blog/saveUpdate");
-        return "BlogManagement/blogCreation";
+           model.addAttribute("selectedTagID",selectedTagID);
+           model.addAttribute("post",post);
+           model.addAttribute("formAction","/blog/saveUpdate");
+           return "BlogManagement/blogCreation";
+       }
+       return "redirect:/blog";
     }
 
     @RequestMapping("/saveUpdate")
@@ -115,25 +128,35 @@ public class BlogManagementController {
                            @RequestParam List<Integer> tagID,
                            @RequestParam String content,
                            @RequestParam String body,
-                           @RequestParam String imageUrl,
-                             Authentication authentication) {
-        String username = authentication.getName();
-        Optional<Users> user = userService.findUserByUsername(username);
+                           @RequestParam(required = false) String imageUrl,
+                             @RequestParam(value = "fileImage",required = false) MultipartFile fileImage,
+                             Authentication authentication) throws IOException {
+        Users user = currentUserService.getCurrentUser(authentication);
         List<Tags> tags = tagService.findTagsByTagID(tagID);
-
         Posts post = postService.findPostByPostID(postID);
-        post.setTitle(title);
-        post.setContent(content);
-        post.setImageUrl(imageUrl);
-        post.setTags(tags);
-        post.setBody(body);
-        post.setPublishedAt(post.getPublishedAt());
-        post.setUsers(user.get());
-        post.setPublished(true);
-        post.setUpdatedAt(new Timestamp(new Date().getTime()));
-        postService.savePost(post);
-        return "redirect:/blog";
+        if (user != null) {
+            post.setTitle(title);
+            post.setContent(content);
+            post.setImageUrl(imageUrl);
+            post.setTags(tags);
+            post.setBody(body);
+            post.setPublishedAt(post.getPublishedAt());
+            post.setUsers(user);
+            post.setPublished(true);
+            post.setDeleted(false);
+            post.setUpdatedAt(new Timestamp(new Date().getTime()));
+            try {
+                String finalImage = postService.handleImageUrl(imageUrl, fileImage);
+                post.setImageUrl(finalImage);
+            } catch (Exception e) {
+                // Optionally, you can add a model attribute for error and redirect
+                return "redirect:/blog/edit/" + postID + "?error=img";
+            }
+            postService.savePost(post);
+            return "redirect:/blog";
         }
+        return "redirect:/blog/edit/" + postID + "?error=user";
+    }
 
     // Xóa bài viết
     @RequestMapping("/delete/{postID}")
@@ -142,3 +165,5 @@ public class BlogManagementController {
         return "redirect:/blog";
     }
     }
+
+

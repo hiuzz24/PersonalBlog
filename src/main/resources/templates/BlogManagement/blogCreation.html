@@ -3,145 +3,731 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tạo bài viết mới</title>
-    <link rel="stylesheet" th:href="@{/css/blog.css}">
+    <title>Create New Post</title>
+    <!-- Favicon -->
+    <link th:href="@{/assets/img/favicon.png}" rel="icon">
+    <link th:href="@{/assets/img/apple-touch-icon.png}" rel="apple-touch-icon">
+
+    <!-- Fonts -->
+    <link th:href="@{https://fonts.googleapis.com}" rel="preconnect">
+    <link th:href="@{https://fonts.gstatic.com}" rel="preconnect" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link th:href="@{/assets/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/assets/vendor/bootstrap-icons/bootstrap-icons.css}" rel="stylesheet">
+    <link th:href="@{/assets/vendor/aos/aos.css}" rel="stylesheet">
+    <link th:href="@{/assets/vendor/swiper/swiper-bundle.min.css}" rel="stylesheet">
+    <link th:href="@{/assets/css/main.css}" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <!-- CKEditor 5 CDN -->
     <script src="https://cdn.ckeditor.com/ckeditor5/40.2.0/classic/ckeditor.js"></script>
+
+    <style>
+        .form-section {
+            margin-bottom: 35px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem;
+        }
+
+        .form-label i {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 0.9rem;
+        }
+
+
+
+        .image-options {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 25px;
+            border: 2px solid rgba(226, 232, 240, 0.8);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            flex: 1;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .radio-option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .radio-option:hover::before {
+            left: 100%;
+        }
+
+        .radio-option:hover {
+            border-color: rgba(102, 126, 234, 0.4);
+            background: rgba(240, 244, 255, 0.9);
+            transform: translateY(-2px);
+        }
+
+        .radio-option:has(input[type="radio"]:checked) {
+            border-color: #667eea;
+            background: rgba(240, 244, 255, 0.9);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .radio-option input[type="radio"]:checked + label {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .image-preview {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        #imgThumbnail {
+            max-width: 350px;
+            max-height: 220px;
+            border-radius: 16px;
+            box-shadow: var(--shadow-soft);
+            transition: all 0.3s ease;
+            object-fit: cover;
+            border: 3px solid rgba(255, 255, 255, 0.8);
+        }
+
+        #imgThumbnail:hover {
+            transform: scale(1.02);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .tag-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .tag-label {
+            padding: 12px 20px;
+            border: 2px solid rgba(226, 232, 240, 0.8);
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            color: #4a5568;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            user-select: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tag-label::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.3s ease;
+        }
+
+        .tag-label:hover::before {
+            width: 200px;
+            height: 200px;
+        }
+
+        .tag-label:hover {
+            border-color: rgba(102, 126, 234, 0.4);
+            background: rgba(240, 244, 255, 0.9);
+            transform: translateY(-2px);
+        }
+
+        input[type="checkbox"]:checked + .tag-label {
+            background: var(--primary-gradient);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .editor-container {
+            border: 2px solid rgba(226, 232, 240, 0.8);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        .editor-container:focus-within {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid rgba(241, 245, 249, 0.8);
+        }
+
+        .btn {
+            padding: 16px 35px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 160px;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.9);
+            color: #6b7280;
+            border: 2px solid rgba(229, 231, 235, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(249, 250, 251, 0.95);
+            border-color: rgba(209, 213, 219, 0.8);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 15px;
+                padding-top: 100px;
+            }
+
+            .dashboard-card {
+                padding: 25px;
+            }
+
+            .image-options {
+                flex-direction: column;
+            }
+
+            .form-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 250px;
+            }
+
+            .header-title {
+                font-size: 2rem;
+            }
+        }
+
+        /* Loading Animation */
+        @keyframes shimmer {
+            0% {
+                background-position: -468px 0;
+            }
+            100% {
+                background-position: 468px 0;
+            }
+        }
+
+        .ck-content img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 10px auto;
+        }
+
+
+        .loading-shimmer {
+            animation: shimmer 1.5s infinite linear;
+            background: linear-gradient(to right, #f6f7f8 0%, #edeef1 20%, #f6f7f8 40%, #f6f7f8 100%);
+            background-size: 800px 104px;
+        }
+
+    </style>
 </head>
 <body>
-<div class="container">
-    <h1>Tạo bài viết mới</h1>
-
-    <form th:action="@{${formAction}}" method="post" class="blog-form">
-        <input type="hidden" name="postID" th:value="${post.postID}">
-        <!-- Tiêu đề -->
-        <div class="form-group">
-            <label for="title">Title:</label>
-            <input type="text" id="title" name="title" th:value="${post.title}" required class="form-control">
+<!-- Header -->
+<header id="header" class="header d-flex align-items-center sticky-top">
+    <div class="container-fluid position-relative d-flex align-items-center justify-content-between px-0" style="gap:0;">
+        <div class="d-flex align-items-center ps-3" style="gap: 0; min-width: 0; height: 56px;">
+            <a th:href="@{/}" class="logo d-flex align-items-center" style="height: 56px; align-items: center; text-decoration: none;">
+                <h1 class="sitename mb-0 d-flex align-items-center" style="font-size: 1.5rem; display: flex; align-items: center; height: 56px; line-height: 56px; background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-left: 7px; font-weight: 700;">PersonalBlog</h1>
+            </a>
         </div>
+        <nav id="navmenu" class="navmenu mx-auto flex-grow-1 d-flex justify-content-center">
+            <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+        </nav>
+        <div class="header-social-links d-flex align-items-center pe-3" style="margin-left:auto;">
+            <!-- Notification Button -->
+            <div class="nav-item dropdown me-3">
+                <a class="nav-link position-relative d-flex align-items-center" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="height: 56px; color: #535353;">
+                    <i class="bi bi-bell" style="font-size: 1.5rem;"></i>
 
-        <div class="form-group">
-            <label for="content">Content:</label>
-            <input type="text" id="content" name="content" th:value="${post.content}" required class="form-control">
-        </div>
+                    <!-- Badge: show unread count -->
+                    <span class="position-absolute top-0 start-100 translate-middle-z badge rounded-pill bg-danger"
+                          id="notificationBadge"
+                          style="font-size: 0.75rem;"
+                          th:if="${notification != null and #lists.size(notification.?[!isRead]) > 0}"
+                          th:text="${#lists.size(notification.?[!isRead])}">
+    </span>
+                    <span class="visually-hidden">unread notifications</span>
+                </a>
 
-        <!-- Ảnh đại diện -->
-        <div class="form-group">
-            <label for="imageUrl">URL ảnh đại diện:</label>
-            <input type="url" id="imageUrl" name="imageUrl" th:value="${post.imageUrl}" class="form-control">
-            <div th:if="${post.imageUrl != null}">
-                <img th:src="@{${post.imageUrl}}" class="img-thumbnail mb-2" style="max-width: 200px;">
+
+                <!-- Dropdown Menu -->
+                <ul class="dropdown-menu dropdown-menu-end"  aria-labelledby="notificationDropdown" style="min-width: 300px; max-height: 400px; overflow-y: auto;">
+                    <!-- If no notifications -->
+                    <li th:if="${#lists.isEmpty(notification)}">
+                        <span class="dropdown-item-text text-muted">No new notifications</span>
+                    </li>
+
+                    <!-- Show each notification -->
+                    <li th:each="noti : ${notification}">
+                        <a class="dropdown-item"
+                           th:if="${noti.post != null}"
+                           th:href="@{/PostDetail/{id}(id=${noti.post.postID})}">
+                            <span th:text="${noti.message}">New post</span><br>
+                            <small class="text-muted" th:text="${#dates.format(noti.createdAt, 'dd/MM/yyyy HH:mm')}">Time</small>
+                        </a>
+
+                        <a class="dropdown-item"
+                           th:if="${noti.post == null}">
+                            <span th:text="${noti.message}">Notification</span><br>
+                            <small class="text-muted" th:text="${#dates.format(noti.createdAt, 'dd/MM/yyyy HH:mm')}">Time</small>
+                        </a>
+                </ul>
+            </div>
+            <div class="dropdown">
+                <a href="#" class="d-flex align-items-center" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding:0; border:none; background:none; transition: all 0.3s ease; text-decoration: none;">
+                    <h5 class="sitename mb-0 d-flex align-items-center" style="font-size: 1.2rem; margin-right: 12px; display: flex; align-items: center; height: 56px; line-height: 56px; color: #535353; font-weight: 500;" th:text="${user.fullName != null ? user.fullName : user.username}"></h5>
+                    <img th:src="${user != null && user.avatarUrl != null && !#strings.isEmpty(user.avatarUrl) ? user.avatarUrl : '/assets/img/user.png'}" alt="avatar" style="width:40px; height:40px; border-radius:50%; object-fit:cover; border: 2px solid rgba(102, 126, 234, 0.3); transition: all 0.3s ease;">
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end shadow-lg" aria-labelledby="userDropdown" style="border: none; border-radius: 12px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px);">
+                    <li th:if="${user != null && user.role == 'ADMIN'}">
+                        <form th:action="@{/admin}" style="display: inline;">
+                            <button type="submit" class="dropdown-item" style="border-radius: 8px; transition: all 0.3s ease;">
+                                <i class="bi bi-speedometer2 me-2"></i>Dashboard Admin</button>
+                        </form>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li th:if="${user != null && user.role.toUpperCase() == 'WRITER'}">
+                        <form th:action="@{/profile}" style="display: inline;">
+                            <button type="submit" class="dropdown-item" style="border-radius: 8px; transition: all 0.3s ease;">
+                                <i class="bi bi-person me-2"></i>Profile
+                            </button>
+                        </form>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li>
+                        <form th:action="@{/logout}" method="post" style="display: inline;">
+                            <button type="submit" class="dropdown-item text-danger" style="border-radius: 8px; transition: all 0.3s ease;">
+                                <i class="bi bi-box-arrow-right me-2"></i>Logout
+                            </button>
+                        </form>
+                    </li>
+                </ul>
             </div>
         </div>
+    </div>
+</header>
 
-        <div class="form-group">
-            <label for="fileImage" class="form-label">Ảnh bài viết:</label>
-            <input type="file" id="fileImage" name="fileImage" class="form-control" accept="image/*">
-            <img th:src="@{/img/user.png}" id="imgThumbnail" class="img-thumbnail" style="width: 200px;" alt="User Image">
+<div class="main-container">
+    <!-- Form Container -->
+    <div class="dashboard-card">
+        <!-- Header Section -->
+        <div class="header-section">
+            <div class="header-icon">
+                <i class="fas fa-edit"></i>
+            </div>
+            <h1 class="header-title">Create New Post</h1>
+            <p class="header-subtitle">Share your ideas and stories with the community</p>
         </div>
 
+        <form th:action="@{${formAction}}" enctype="multipart/form-data" method="post" class="blog-form" onsubmit="return validationForm()">
+            <input type="hidden" name="postID" th:value="${post.postID}">
 
-        <div class="form-group">
-            <label>Tags:</label>
-            <div class="tag-wrapper">
-                <div th:each="tag : ${allTags}">
-                    <input type="checkbox" th:id="'tag_' + ${tag.tagID}" name="tagID"
-                           th:value="${tag.tagID}"
-                           th:checked="${selectedTagID != null and selectedTagID.contains(tag.tagID)}"
-                           hidden>
-                    <label th:for="'tag_' + ${tag.tagID}" class="tag-label" th:text="${tag.tagName}"></label>
+            <!-- Basic Information Section -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    <i class="fas fa-info-circle"></i>
+                    Basic Information
+                </h3>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="title" class="form-label">
+                                <i class="fas fa-heading"></i>
+                                Post Title
+                            </label>
+                            <input type="text" id="title" name="title" th:value="${post.title}"
+                                   class="form-control" placeholder="Enter an engaging title...">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="content" class="form-label">
+                                <i class="fas fa-align-left"></i>
+                                Short Description
+                            </label>
+                            <input type="text" id="content" name="content" th:value="${post.content}"
+                                   class="form-control" placeholder="Brief description of the post...">
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
 
+            <!-- Image Section -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    <i class="fas fa-image"></i>
+                    Featured Image
+                </h3>
 
+                <div class="image-section">
+                    <div class="image-options">
+                        <div class="radio-option">
+                            <input class="form-check-input" type="radio" name="imageOption" id="optionUrl" value="url" checked>
+                            <label class="form-check-label" for="optionUrl">
+                                <i class="fas fa-link"></i>
+                                Enter URL
+                            </label>
+                        </div>
+                        <div class="radio-option">
+                            <input class="form-check-input" type="radio" name="imageOption" id="optionUpload" value="upload">
+                            <label class="form-check-label" for="optionUpload">
+                                <i class="fas fa-upload"></i>
+                                Upload Image
+                            </label>
+                        </div>
+                    </div>
 
-        <!-- Nội dung với CKEditor -->
-        <div class="form-group">
-            <label for="body">Nội dung:</label>
-            <textarea id="body" name="body" th:text="${post.body}"></textarea>
-        </div>
+                        <!-- URL Input -->
+                        <div class="form-group" id="urlInputGroup">
+                            <label for="imageUrl" class="form-label">
+                                <i class="fas fa-globe"></i>
+                                Featured Image URL
+                            </label>
+                            <input type="text" id="imageUrl" name="imageUrl" th:value="${post.imageUrl}"
+                                   class="form-control" placeholder="https://example.com/image.jpg">
+                        </div>
 
-        <!-- Buttons -->
-        <div class="form-actions">
-            <button type="submit" class="btn btn-primary">Đăng bài</button>
-            <a th:href="@{/blog}" class="btn btn-secondary">Hủy</a>
-        </div>
-    </form>
+                    <!-- File Upload -->
+                    <div class="form-group d-none" id="fileInputGroup">
+                        <label for="fileImage" class="form-label">
+                            <i class="fas fa-file-upload"></i>
+                            Choose Image from Computer
+                        </label>
+                        <input type="file" id="fileImage" name="fileImage" class="form-control" accept="image/*">
+                    </div>
+
+                    <!-- Image Preview -->
+                    <div class="image-preview">
+                        <img th:src="${post.imageUrl != null} ? ${post.imageUrl} : @{/img/default-post.png}"
+                             id="imgThumbnail" class="img-fluid" alt="Preview">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tags Section -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    <i class="fas fa-tags"></i>
+                    Post Tags
+                </h3>
+
+                <div class="tag-wrapper">
+                    <div th:each="tag : ${allTags}">
+                        <input type="checkbox" th:id="'tag_' + ${tag.tagID}" name="tagID"
+                               th:value="${tag.tagID}"
+                               th:checked="${selectedTagID != null and selectedTagID.contains(tag.tagID)}"
+                               hidden>
+                        <label th:for="'tag_' + ${tag.tagID}" class="tag-label" th:text="${tag.tagName}"></label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Section -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    <i class="fas fa-pen-fancy"></i>
+                    Post Content
+                </h3>
+
+                <div class="form-group">
+                    <label for="body" class="form-label">
+                        <i class="fas fa-file-alt"></i>
+                        Detailed Content
+                    </label>
+                    <div class="editor-container">
+                        <textarea id="body" name="body" th:text="${post.body}"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-paper-plane"></i>
+                    Publish Post
+                </button>
+                <a th:href="@{/blog}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i>
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
 </div>
 
 <script>
-    ClassicEditor
-        .create(document.querySelector('#body'), {
-            mediaEmbed: {
-                previewsInData: true
-            },
-            toolbar: {
-                items: [
-                    'heading',
-                    '|',
-                    'bold',
-                    'italic',
-                    'link',
-                    'bulletedList',
-                    'numberedList',
-                    '|',
-                    'outdent',
-                    'indent',
-                    '|',
-                    'imageUpload',
-                    'blockQuote',
-                    'insertTable',
-                    'mediaEmbed',
-                    'undo',
-                    'redo',
-                    'alignment',
-                    'fontColor',
-                    'fontSize',
-                    'highlight'
-                ]
-            },
-            language: 'vi',
-            image: {
-                toolbar: [
-                    'imageTextAlternative',
-                    'imageStyle:full',
-                    'imageStyle:side'
-                ]
-            },
-            table: {
-                contentToolbar: [
-                    'tableColumn',
-                    'tableRow',
-                    'mergeTableCells'
-                ]
-            }
-        })
-        .then(editor => {
-            window.editor = editor;
-        })
-        .catch(error => {
-            console.error('Error initializing CKEditor:', error);
+    function validationForm(){
+        const title = document.getElementById("title").value;
+        const content = document.getElementById("content").value;
+        const imageUrl = document.getElementById("imageUrl").value;
+        const fileImage = document.getElementById("fileImage").files.length;
+        const body = window.editor.getData().trim();
+        const tagChecked = document.querySelectorAll("input[name=tagID]:checked");
+
+        if(title === ""){
+            alert("please insert title")
+            return false;
+        }
+
+        if(content === ""){
+            alert("please insert content")
+            return false;
+        }
+
+        if(tagChecked.length === 0){
+            alert("please choose 1 tag for post")
+            return false;
+        }
+
+        if(tagChecked.length > 4){
+            alert("please choose only 4 tags")
+            return false;
+        }
+
+        if(imageUrl === "" && fileImage === 0){
+            alert("please insert image (URL or upload)")
+            return false;
+        }
+
+        if(body === ""){
+            alert("please enter body post")
+            return false;
+        }
+        return true;
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        // Initialize CKEditor
+        ClassicEditor
+            .create(document.querySelector('#body'), {
+                mediaEmbed: {
+                    previewsInData: true
+                },
+                toolbar: {
+                    items: [
+                        'heading',
+                        '|',
+                        'bold',
+                        'italic',
+                        'link',
+                        'bulletedList',
+                        'numberedList',
+                        '|',
+                        'outdent',
+                        'indent',
+                        '|',
+                        'imageUpload',
+                        'blockQuote',
+                        'insertTable',
+                        'mediaEmbed',
+                        'undo',
+                        'redo',
+                        'alignment',
+                        'fontColor',
+                        'fontSize',
+                        'highlight'
+                    ]
+                },
+                language: 'en',
+                image: {
+                    toolbar: [
+                        'imageTextAlternative',
+                        'imageStyle:full',
+                        'imageStyle:side',
+                        'imageStyle:alignLeft',
+                        'imageStyle:alignCenter',
+                        'imageStyle:alignRight'
+                    ],
+                    styles: [
+                        'full',
+                        'side',
+                        'alignLeft',
+                        'alignCenter',
+                        'alignRight'
+                    ]
+                },
+                ckfinder:{
+                    uploadUrl:'/uploads/img'
+                }
+            })
+            .then(editor => {
+                window.editor = editor;
+            })
+            .catch(error => {
+                console.error('Error initializing CKEditor:', error);
+            });
+
+        // Add smooth animations on load
+        const formSections = document.querySelectorAll('.form-section');
+        formSections.forEach((section, index) => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                section.style.transition = 'all 0.6s ease';
+                section.style.opacity = '1';
+                section.style.transform = 'translateY(0)';
+            }, 200 * index);
         });
 
-    document.addEventListener("DOMContentLoaded",function (){
-        let fileImage = document.getElementById("fileImage");
-        fileImage.addEventListener("change",function (){
-            showThumbnail(this);
-        })
-    })
+        let imageUrl = document.getElementById("imageUrl");
+        let imageFile = document.getElementById("fileImage");
 
-    function showThumbnail(fileInput){
-        let file = fileInput.files[0];
-        let reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = function (e){
-           let thumbnail = document.getElementById("imgThumbnail");
-           thumbnail.setAttribute('src',e.target.result);
+        let radioUrl = document.getElementById("optionUrl");
+        let radioUpload = document.getElementById("optionUpload");
+        let urlInputGroup = document.getElementById("urlInputGroup");
+        let fileInputGroup = document.getElementById("fileInputGroup");
+
+        function toggleImageInput() {
+            if (radioUrl.checked) {
+                urlInputGroup.classList.remove("d-none");
+                fileInputGroup.classList.add("d-none");
+                imageUrl.disabled = false;
+                imageFile.disabled = true;
+            } else {
+                urlInputGroup.classList.add("d-none");
+                fileInputGroup.classList.remove("d-none");
+                imageUrl.disabled = true;
+                imageFile.disabled = false;
+            }
         }
-    }
+
+        radioUrl.addEventListener("change", toggleImageInput);
+        radioUpload.addEventListener("change", toggleImageInput);
+        toggleImageInput();
+
+        let fileImage = document.getElementById("fileImage");
+        fileImage.addEventListener("change", function () {
+            showThumbnail(this);
+        });
+
+        function showThumbnail(fileInput) {
+            let file = fileInput.files[0];
+            let reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function (e) {
+                let thumbnail = document.getElementById("imgThumbnail");
+                thumbnail.setAttribute('src', e.target.result);
+            }
+        }
+
+        let inputImageUrl = document.getElementById("imageUrl");
+        inputImageUrl.addEventListener("input",function (){
+            let thumbnail = document.getElementById("imgThumbnail");
+            if(inputImageUrl.value){
+                thumbnail.setAttribute('src',inputImageUrl.value);
+            }else{
+                thumbnail.setAttribute('src','/img/default-post.png');
+            }
+        })
+        if(inputImageUrl.value){
+            document.getElementById("imgThumbnail").setAttribute('src',inputImageUrl.value);
+        }
+    });
 </script>
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>
