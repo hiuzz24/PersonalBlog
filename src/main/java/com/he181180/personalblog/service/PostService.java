@@ -1,6 +1,7 @@
 package com.he181180.personalblog.service;
 
 import com.he181180.personalblog.entity.Posts;
+import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -19,6 +20,7 @@ public interface PostService {
     Optional<Posts> getPostByID(int postID);
     Posts findPostByPostID(int postID);
     List<Posts> getPostByUserID(int userID);
+    Page<Posts> getPostByUserIDPagination(int userID, int page, int size);
     void deletePost(int postID);
     void recoverPost(int postID);
     List<Posts> getAllPosts();
@@ -32,6 +34,6 @@ public interface PostService {
     Map<String,Integer> postPerStatus();
     Map<String,Integer> postPerMonth(int year);
     List<Posts> findAllByUsers_DeletedFalseAndStatusRejected();
-    public Map<String,String> uploadImageForCkeditor(MultipartFile upload) throws IOException;
+    Map<String,String> uploadImageForCkeditor(MultipartFile upload) throws IOException;
 
 }

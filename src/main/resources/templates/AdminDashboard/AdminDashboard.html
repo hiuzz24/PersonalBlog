@@ -149,59 +149,7 @@
             width: 100% !important;
         }
 
-        /* Activity Styles */
-        .activity-list {
-            max-height: 400px;
-            overflow-y: auto;
-        }
 
-        .activity-item {
-            display: flex;
-            align-items: center;
-            padding: 0.75rem 0;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .activity-item:last-child {
-            border-bottom: none;
-        }
-
-        .activity-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 0.75rem;
-            color: white;
-            font-size: 0.875rem;
-        }
-
-        .activity-content {
-            flex: 1;
-        }
-
-        .activity-title {
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: #1e293b;
-            margin-bottom: 0.25rem;
-        }
-
-        .activity-time {
-            font-size: 0.75rem;
-            color: #64748b;
-        }
-
-        /* Quick Actions Button Styles */
-        .btn-outline-primary:hover,
-        .btn-outline-success:hover,
-        .btn-outline-warning:hover,
-        .btn-outline-info:hover {
-            transform: translateX(4px);
-            transition: var(--transition);
-        }
 
         /* Responsive Design */
         @media (max-width: 768px) {
@@ -278,7 +226,7 @@
                             <a th:href="@{/admin/moderate/moderateNewBlogs}" class="dropdown-item">Moderate New Blogs</a>
                         </div>
                     </div>
-                    <a th:href="@{/chat}" class="nav-item nav-link"><i class="far fa-comment-dots"></i>Chat</a>
+                    <a th:href="@{/admin/chat}" class="nav-item nav-link"><i class="fa fa-comment-dots me-2"></i>Chat</a>
                     <a th:href="@{/explore}" class="nav-item nav-link"><i class="fa fa-home me-2"></i>Back to Site</a>
                     <a th:href="@{/logout}" class="nav-item nav-link"><i class="fa fa-sign-out-alt me-2"></i>Logout</a>
                 </div>

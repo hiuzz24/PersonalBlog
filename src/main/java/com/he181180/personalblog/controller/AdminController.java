@@ -1,6 +1,5 @@
 package com.he181180.personalblog.controller;
 
-import com.he181180.personalblog.entity.Posts;
 import com.he181180.personalblog.entity.Users;
 import com.he181180.personalblog.service.PostService;
 import com.he181180.personalblog.service.UserService;
@@ -11,7 +10,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -62,6 +60,4 @@ public class AdminController {
         }
         return postService.postPerMonth(year);
     }
-
-
 }

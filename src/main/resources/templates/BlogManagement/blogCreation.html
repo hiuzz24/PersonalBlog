@@ -25,114 +25,8 @@
     <script src="https://cdn.ckeditor.com/ckeditor5/40.2.0/classic/ckeditor.js"></script>
 
     <style>
-        :root {
-            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            --warning-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-            --glass-bg: rgba(255, 255, 255, 0.1);
-            --glass-border: rgba(255, 255, 255, 0.2);
-            --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.1);
-            --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.15);
-        }
-
-        body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            font-family: 'Inter', sans-serif;
-            min-height: 100vh;
-        }
-
-        /* Enhanced Header */
-        #header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .main-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 25px;
-            padding-top: 100px; /* Account for fixed header */
-        }
-
-        .dashboard-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: var(--shadow-soft);
-            margin-bottom: 25px;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .dashboard-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: var(--primary-gradient);
-            border-radius: 20px 20px 0 0;
-        }
-
-        .dashboard-card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-hover);
-        }
-
-        .header-section {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .header-icon {
-            font-size: 3rem;
-            margin-bottom: 15px;
-            background: var(--primary-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .header-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            color: #2c3e50;
-        }
-
-        .header-subtitle {
-            font-size: 1.1rem;
-            color: #6b7280;
-            font-weight: 400;
-        }
-
         .form-section {
             margin-bottom: 35px;
-        }
-
-        .section-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 25px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .section-title i {
-            background: var(--primary-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-size: 1.2rem;
         }
 
         .form-group {
@@ -157,56 +51,7 @@
             font-size: 0.9rem;
         }
 
-        .form-control {
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 14px 18px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-        }
 
-        .form-control:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-            background: rgba(255, 255, 255, 0.95);
-            outline: none;
-            transform: translateY(-1px);
-        }
-
-        .image-section {
-            background: rgba(248, 250, 252, 0.8);
-            backdrop-filter: blur(10px);
-            border-radius: 16px;
-            padding: 30px;
-            border: 2px solid rgba(203, 213, 224, 0.5);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .image-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: var(--warning-gradient);
-            transform: scaleX(0);
-            transition: transform 0.3s ease;
-        }
-
-        .image-section:hover::before {
-            transform: scaleX(1);
-        }
-
-        .image-section:hover {
-            border-color: rgba(102, 126, 234, 0.3);
-            background: rgba(240, 244, 255, 0.8);
-            transform: translateY(-2px);
-        }
 
         .image-options {
             display: flex;
@@ -461,29 +306,20 @@
             }
         }
 
+        .ck-content img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 10px auto;
+        }
+
+
         .loading-shimmer {
             animation: shimmer 1.5s infinite linear;
             background: linear-gradient(to right, #f6f7f8 0%, #edeef1 20%, #f6f7f8 40%, #f6f7f8 100%);
             background-size: 800px 104px;
         }
 
-        /* Scrollbar Styling */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--primary-gradient);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--secondary-gradient);
-        }
     </style>
 </head>
 <body>
@@ -499,6 +335,45 @@
             <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
         </nav>
         <div class="header-social-links d-flex align-items-center pe-3" style="margin-left:auto;">
+            <!-- Notification Button -->
+            <div class="nav-item dropdown me-3">
+                <a class="nav-link position-relative d-flex align-items-center" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="height: 56px; color: #535353;">
+                    <i class="bi bi-bell" style="font-size: 1.5rem;"></i>
+
+                    <!-- Badge: show unread count -->
+                    <span class="position-absolute top-0 start-100 translate-middle-z badge rounded-pill bg-danger"
+                          id="notificationBadge"
+                          style="font-size: 0.75rem;"
+                          th:if="${notification != null and #lists.size(notification.?[!isRead]) > 0}"
+                          th:text="${#lists.size(notification.?[!isRead])}">
+    </span>
+                    <span class="visually-hidden">unread notifications</span>
+                </a>
+
+
+                <!-- Dropdown Menu -->
+                <ul class="dropdown-menu dropdown-menu-end"  aria-labelledby="notificationDropdown" style="min-width: 300px; max-height: 400px; overflow-y: auto;">
+                    <!-- If no notifications -->
+                    <li th:if="${#lists.isEmpty(notification)}">
+                        <span class="dropdown-item-text text-muted">No new notifications</span>
+                    </li>
+
+                    <!-- Show each notification -->
+                    <li th:each="noti : ${notification}">
+                        <a class="dropdown-item"
+                           th:if="${noti.post != null}"
+                           th:href="@{/PostDetail/{id}(id=${noti.post.postID})}">
+                            <span th:text="${noti.message}">New post</span><br>
+                            <small class="text-muted" th:text="${#dates.format(noti.createdAt, 'dd/MM/yyyy HH:mm')}">Time</small>
+                        </a>
+
+                        <a class="dropdown-item"
+                           th:if="${noti.post == null}">
+                            <span th:text="${noti.message}">Notification</span><br>
+                            <small class="text-muted" th:text="${#dates.format(noti.createdAt, 'dd/MM/yyyy HH:mm')}">Time</small>
+                        </a>
+                </ul>
+            </div>
             <div class="dropdown">
                 <a href="#" class="d-flex align-items-center" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="padding:0; border:none; background:none; transition: all 0.3s ease; text-decoration: none;">
                     <h5 class="sitename mb-0 d-flex align-items-center" style="font-size: 1.2rem; margin-right: 12px; display: flex; align-items: center; height: 56px; line-height: 56px; color: #535353; font-weight: 500;" th:text="${user.fullName != null ? user.fullName : user.username}"></h5>
@@ -545,7 +420,7 @@
             <p class="header-subtitle">Share your ideas and stories with the community</p>
         </div>
 
-        <form th:action="@{${formAction}}" enctype="multipart/form-data" method="post" class="blog-form">
+        <form th:action="@{${formAction}}" enctype="multipart/form-data" method="post" class="blog-form" onsubmit="return validationForm()">
             <input type="hidden" name="postID" th:value="${post.postID}">
 
             <!-- Basic Information Section -->
@@ -563,7 +438,7 @@
                                 Post Title
                             </label>
                             <input type="text" id="title" name="title" th:value="${post.title}"
-                                   required class="form-control" placeholder="Enter an engaging title...">
+                                   class="form-control" placeholder="Enter an engaging title...">
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -573,7 +448,7 @@
                                 Short Description
                             </label>
                             <input type="text" id="content" name="content" th:value="${post.content}"
-                                   required class="form-control" placeholder="Brief description of the post...">
+                                   class="form-control" placeholder="Brief description of the post...">
                         </div>
                     </div>
                 </div>
@@ -683,35 +558,44 @@
 </div>
 
 <script>
-    // Base64 Upload Adapter for CKEditor
-    function Base64UploadAdapter(editor) {
-        editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
-            return new Adapter(loader);
-        };
-    }
+    function validationForm(){
+        const title = document.getElementById("title").value;
+        const content = document.getElementById("content").value;
+        const imageUrl = document.getElementById("imageUrl").value;
+        const fileImage = document.getElementById("fileImage").files.length;
+        const body = window.editor.getData().trim();
+        const tagChecked = document.querySelectorAll("input[name=tagID]:checked");
 
-    class Adapter {
-        constructor(loader) {
-            this.loader = loader;
+        if(title === ""){
+            alert("please insert title")
+            return false;
         }
 
-        upload() {
-            return this.loader.file
-                .then(file => new Promise((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.onload = () => {
-                        resolve({
-                            default: reader.result
-                        });
-                    };
-                    reader.onerror = reject;
-                    reader.readAsDataURL(file);
-                }));
+        if(content === ""){
+            alert("please insert content")
+            return false;
         }
 
-        abort() {
-            // Handle abort if needed
+        if(tagChecked.length === 0){
+            alert("please choose 1 tag for post")
+            return false;
         }
+
+        if(tagChecked.length > 4){
+            alert("please choose only 4 tags")
+            return false;
+        }
+
+        if(imageUrl === "" && fileImage === 0){
+            alert("please insert image (URL or upload)")
+            return false;
+        }
+
+        if(body === ""){
+            alert("please enter body post")
+            return false;
+        }
+        return true;
     }
 
     document.addEventListener("DOMContentLoaded", function () {
@@ -764,8 +648,9 @@
                         'alignRight'
                     ]
                 },
-                // Use base64 adapter for image upload (no server endpoint needed)
-                extraPlugins: [Base64UploadAdapter]
+                ckfinder:{
+                    uploadUrl:'/uploads/img'
+                }
             })
             .then(editor => {
                 window.editor = editor;
@@ -833,7 +718,7 @@
             if(inputImageUrl.value){
                 thumbnail.setAttribute('src',inputImageUrl.value);
             }else{
-                thumbnail.setAttribute('src','/img/user.png');
+                thumbnail.setAttribute('src','/img/default-post.png');
             }
         })
         if(inputImageUrl.value){

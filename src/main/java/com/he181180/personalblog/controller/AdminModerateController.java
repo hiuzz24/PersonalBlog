@@ -1,7 +1,10 @@
 package com.he181180.personalblog.controller;
 
 import com.he181180.personalblog.entity.Posts;
+import com.he181180.personalblog.entity.Users;
+import com.he181180.personalblog.service.NotificationService;
 import com.he181180.personalblog.service.PostService;
+import com.he181180.personalblog.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,6 +22,10 @@ import java.util.List;
 public class AdminModerateController {
     @Autowired
     private PostService postService;
+    @Autowired
+    private NotificationService notifiicationService;
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/moderateNewBlogs")
     public String moderateNewBlog(Model model){
@@ -49,12 +56,15 @@ public class AdminModerateController {
     }
 
     @RequestMapping("/approve/{id}")
-    public String approve(@PathVariable("id") int postID){
+    public String approve(@PathVariable("id") int postID,
+                          @RequestParam("userID")int userID){
         Posts post = postService.findPostByPostID(postID);
+        Users user = userService.findUserByUserIDAndDeletedFalse(userID);
         post.setPublishedAt(new Timestamp(new Date().getTime()));
         post.setStatus("Approved");
         post.setPublished(true);
         postService.savePost(post);
+        notifiicationService.createNotification(user,user,"newPost",post);
         return "redirect:/admin/moderate/moderateNewBlogs";
     }
 

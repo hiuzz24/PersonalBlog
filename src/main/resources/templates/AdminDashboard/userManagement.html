@@ -338,7 +338,7 @@
                         <a th:href="@{/admin/moderate/moderateNewBlogs}" class="dropdown-item">Moderate New Blogs</a>
                     </div>
                 </div>
-                <a th:href="@{/chat}" class="nav-item nav-link"><i class="far fa-comment-dots"></i>Chat</a>
+                <a th:href="@{/admin/chat}" class="nav-item nav-link"><i class="fa fa-comment-dots me-2"></i>Chat</a>
                 <a th:href="@{/explore}" class="nav-item nav-link"><i class="fa fa-home me-2"></i>Back to Site</a>
                 <a th:href="@{/logout}" class="nav-item nav-link"><i class="fa fa-sign-out-alt me-2"></i>Logout</a>
             </div>
@@ -483,7 +483,7 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <div class="date-text" th:text="${#dates.format(user.createdAt, 'MMM dd, yyyy')}"></div>
+                                    <div class="date-text" th:text="${#dates.format(user.createdAt, 'dd/MM/yyyy')}"></div>
                                 </td>
                                 <td>
                                     <div class="action-buttons">

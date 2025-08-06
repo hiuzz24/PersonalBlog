@@ -4,6 +4,7 @@ import com.he181180.personalblog.entity.Posts;
 import com.he181180.personalblog.repository.PostRepository;
 import com.he181180.personalblog.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -38,7 +39,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<Posts> findTop5RecentPosts() {
-        return postRepository.findTop5ByPublishedTrueAndUsers_DeletedFalseOrderByPublishedAtDesc();
+        return postRepository.findTop5ByPublishedTrueAndUsers_DeletedFalseAndDeletedFalseOrderByPublishedAtDesc();
     }
 
     @Override
@@ -78,6 +79,12 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public Page<Posts> getPostByUserIDPagination(int userID, int page, int size) {
+        Pageable pageable = PageRequest.of(page,size);
+        return postRepository.findAllPostsByUserIDPagination(userID,pageable);
+    }
+
+    @Override
     public List<Posts> getPostByUserID(int userID) {
         return postRepository.findAllPostsByUserID(userID);
     }
@@ -87,6 +94,7 @@ public class PostServiceImpl implements PostService {
         Posts post = postRepository.findPostByIDs(postID);
         if (post != null) {
             post.setPublished(false);
+            post.setDeleted(true);
             postRepository.save(post);
         }
     }
@@ -96,13 +104,14 @@ public class PostServiceImpl implements PostService {
         Posts post = postRepository.findPostByIDs(postID);
         if (post != null) {
             post.setPublished(true);
+            post.setDeleted(false);
             postRepository.save(post);
         }
     }
 
     @Override
     public List<Posts> getAllPosts() {
-        return postRepository.findAllByUsers_DeletedFalseAndStatusApproved();
+        return postRepository.findAllByUsers_DeletedFalse();
     }
 
     @Override
@@ -112,19 +121,24 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public String handleImageUrl(String imageUrl, MultipartFile fileImage) throws IOException {
-        if(imageUrl != null && !imageUrl.isEmpty()){
+        if (imageUrl != null && !imageUrl.isEmpty()) {
             return imageUrl;
         }
-         if(!fileImage.isEmpty()){
-             String uploadDir = "D:/uploads/";
-             String fileName = UUID.randomUUID() + "_" +fileImage.getOriginalFilename();
-             Files.createDirectories(Path.of(uploadDir));
-             Path path = Path.of(uploadDir + fileName);
-             Files.copy(fileImage.getInputStream(),path, StandardCopyOption.REPLACE_EXISTING);
-             return "/uploads/" +fileName;
+        if (!fileImage.isEmpty()) {
+            Map<String, String> url = new HashMap<>();
+
+            String uploadDir = System.getProperty("user.dir") + "/uploads/img/";
+            Files.createDirectories(Path.of(uploadDir));
+
+            String fileName = UUID.randomUUID() + "_" + fileImage.getOriginalFilename();
+            Path filePath = Path.of(uploadDir + fileName);
+
+            Files.copy(fileImage.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+            return "/img/" + fileName;
+        }
+        return null;
     }
-         return null;
-}
 
     @Override
     public long countApproved() {
@@ -200,16 +214,19 @@ public class PostServiceImpl implements PostService {
     public List<Posts> findAllByUsers_DeletedFalseAndStatusRejected() {
         return postRepository.findAllByUsers_DeletedFalseAndStatusRejected();
     }
+
     @Override
     public Map<String, String> uploadImageForCkeditor(MultipartFile upload) throws IOException {
-        String uploadDir = "D:/uploads/";
-        String fileName = UUID.randomUUID() + "_" + upload.getOriginalFilename();
+        String uploadDir = System.getProperty("user.dir") + "/uploads/img/";
         Files.createDirectories(Path.of(uploadDir));
-        Path path = Path.of(uploadDir + fileName);
-        Files.copy(upload.getInputStream(),path,StandardCopyOption.REPLACE_EXISTING);
+
+        String fileName = UUID.randomUUID() + "_" + upload.getOriginalFilename();
+        Path filePath = Path.of(uploadDir + fileName);
+
+        Files.copy(upload.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
         Map<String,String> url = new HashMap<>();
-        url.put("url","/uploads/"+fileName);
-        url.put("uploaded","true");
+        url.put("url", "/img/" + fileName);
+        url.put("uploaded", "true");
         return url;
     }
 }

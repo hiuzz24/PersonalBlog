@@ -26,7 +26,16 @@
   --surface-color: #ffffff; /* The surface color is used as a background of boxed elements within sections, such as cards, icon boxes, or other elements that require a visual separation from the global background. */
   --contrast-color: #ffffff; /* Contrast color for text, ensuring readability against backgrounds of accent, heading, or default colors. */
 }
-
+:root {
+  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  --warning-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.1);
+  --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
 /* Nav Menu Colors - The following color variables are used specifically for the navigation menu. They are separate from the global colors to allow for more customization options */
 :root {
   --nav-color: #6a6a6a;  /* The default color of the main navmenu links */
@@ -144,16 +153,10 @@ h6 {
 # Global Header
 --------------------------------------------------------------*/
 .header {
-  --background-color: #f2f2f2;
-  color: var(--default-color);
-  background-color: var(--background-color);
-  padding: 10px 0;
-  transition: all 0.5s;
-  z-index: 997;
-  background: #f2f2f2;
-  box-shadow: 0 2px 8px rgba(60,60,60,0.07);
-  height: 56px;
-  border-bottom: none;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
 }
 
 .header .container-fluid {
@@ -1487,7 +1490,11 @@ section,
   height: 100%;
   object-fit: cover;
 }
-
+.img-thumbnail {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+}
 
 .blog-details .title {
   color: var(--heading-color);
@@ -1624,144 +1631,375 @@ section,
   padding-left: 5px;
 }
 
-/*--------------------------------------------------------------
-# Blog Comments Section
---------------------------------------------------------------*/
+/* Beautiful Comment Section Styles */
 .blog-comments {
-  padding: 10px 0;
+  background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
+  border-radius: 20px;
+  padding: 2rem;
+  margin: 2rem 0;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.blog-comments .comments-count {
-  font-weight: bold;
-}
-
-.blog-comments .comment {
-  margin-top: 30px;
+.comments-count {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #e3f2fd;
   position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-.blog-comments .comment .comment-img {
-  margin-right: 14px;
+.comments-count::before {
+  content: '💬';
+  font-size: 1.2rem;
 }
 
-.blog-comments .comment .comment-img img {
+.comments-count::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
   width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, #4f46e5, #7c3aed);
+  border-radius: 1px;
 }
 
-.blog-comments .comment h5 {
-  font-size: 16px;
-  margin-bottom: 2px;
+.comment-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
-.blog-comments .comment h5 a {
-  font-weight: bold;
-  color: var(--default-color);
-  transition: 0.3s;
+.comment {
+  background: transparent;
+  border-radius: 0;
+  padding: 4px 0;
+  margin-bottom: 8px;
+  box-shadow: none;
+  border: none;
+  transition: none;
+  position: relative;
+  overflow: visible;
 }
 
-.blog-comments .comment h5 a:hover {
-  color: var(--accent-color);
+.comment::before {
+  display: none;
 }
 
-.blog-comments .comment h5 .reply {
-  padding-left: 10px;
-  color: color-mix(in srgb, var(--default-color), transparent 20%);
+.comment:hover {
+  transform: none;
+  box-shadow: none;
 }
 
-.blog-comments .comment h5 .reply i {
-  font-size: 20px;
+.comment:hover::before {
+  opacity: 0;
 }
 
-.blog-comments .comment time {
-  display: block;
-  font-size: 14px;
-  color: color-mix(in srgb, var(--default-color), transparent 40%);
-  margin-bottom: 5px;
+.comment .d-flex.align-items-start {
+  margin-bottom: 4px;
+  gap: 8px;
 }
 
-.blog-comments .comment.comment-reply {
-  padding-left: 40px;
+.comment .avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: none;
+  transition: none;
+  flex-shrink: 0;
 }
 
-/*--------------------------------------------------------------
-# Comment Form Section
---------------------------------------------------------------*/
+.comment:hover .avatar {
+  border-color: transparent;
+}
+
+.comment-body {
+  flex: 1;
+}
+
+.comment-author {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.comment-author .fn {
+  font-weight: 600;
+  color: #1e293b;
+  font-size: 1rem;
+  margin: 0;
+}
+
+.comment-author .text-muted {
+  color: #64748b;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.comment-body p {
+  color: #050505;
+  line-height: 1.34;
+  font-size: 0.9375rem;
+  margin: 0;
+  padding: 8px 12px;
+  background: #f0f2f5;
+  border-radius: 16px;
+  border: none;
+  position: relative;
+  display: inline-block;
+  max-width: fit-content;
+}
+
+.comment-body p::before {
+  display: none;
+}
+
+.reply {
+  margin-top: 0rem;
+}
+
+.comment-reply-link {
+  background: none;
+  border: none;
+  color: #65676b !important;
+  text-decoration: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  cursor: pointer;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.comment-reply-link::before {
+  display: none;
+}
+
+.comment-reply-link:hover {
+  background: #f2f3f5;
+  color: #65676b !important;
+  transform: none;
+  box-shadow: none;
+  text-decoration: underline;
+}
+
+.reply-box {
+  margin-top: 1rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #fefefe 0%, #f8fafc 100%);
+  border-radius: 16px;
+  border: 2px dashed #e2e8f0;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.reply-box .form-control {
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1rem;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.reply-box .form-control:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+  outline: none;
+}
+
+.reply-box .btn {
+  background: linear-gradient(45deg, #4f46e5, #7c3aed);
+  border: none;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.reply-box .btn::before {
+  content: '📤';
+  font-size: 0.8rem;
+}
+
+.reply-box .btn:hover {
+  background: linear-gradient(45deg, #3730a3, #6d28d9);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(79, 70, 229, 0.3);
+}
+
+.children {
+  margin-left: 2rem;
+  margin-top: 1.5rem;
+  position: relative;
+  list-style: none;
+  padding: 0;
+}
+
+.children::before {
+  content: '';
+  position: absolute;
+  left: -1rem;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: transparent;
+}
+
+.children .comment {
+  background: transparent;
+  border: 0px;
+}
+
 .comment-form {
-  padding-top: 10px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: 20px;
+  padding: 2rem;
+  margin: 2rem 0;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.comment-form form {
-  background-color: var(--surface-color);
-  margin-top: 30px;
-  padding: 30px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+.comment-form h4 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-.comment-form form h4 {
-  font-weight: bold;
-  font-size: 22px;
+.comment-form h4::before {
+  content: '✍️';
+  font-size: 1.2rem;
 }
 
-.comment-form form p {
-  font-size: 14px;
+.comment-form p {
+  color: #64748b;
+  margin-bottom: 2rem;
+  font-size: 1rem;
 }
 
-.comment-form form input {
-  background-color: var(--surface-color);
-  color: var(--default-color);
-  border: 1px solid color-mix(in srgb, var(--default-color), transparent 70%);
-  font-size: 14px;
-  border-radius: 4px;
-  padding: 10px 10px;
+.comment-form .form-control {
+  border: 2px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 1.5rem;
+  font-size: 1rem;
+  line-height: 1.6;
+  transition: all 0.3s ease;
+  background: white;
+  min-height: 120px;
 }
 
-.comment-form form input:focus {
-  color: var(--default-color);
-  background-color: var(--surface-color);
-  box-shadow: none;
-  border-color: var(--accent-color);
+.comment-form .form-control:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+  outline: none;
 }
 
-.comment-form form input::placeholder {
-  color: color-mix(in srgb, var(--default-color), transparent 50%);
+.comment-form .btn-primary {
+  background: linear-gradient(45deg, #4f46e5, #7c3aed);
+  border: none;
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 16px;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 auto;
+  margin-top: 1rem;
 }
 
-.comment-form form textarea {
-  background-color: var(--surface-color);
-  color: var(--default-color);
-  border: 1px solid color-mix(in srgb, var(--default-color), transparent 70%);
-  border-radius: 4px;
-  padding: 10px 10px;
-  font-size: 14px;
-  height: 120px;
+.comment-form .btn-primary::before {
+  content: '📤';
+  font-size: 0.9rem;
 }
 
-.comment-form form textarea:focus {
-  color: var(--default-color);
-  box-shadow: none;
-  border-color: var(--accent-color);
-  background-color: var(--surface-color);
+.comment-form .btn-primary:hover {
+  background: linear-gradient(45deg, #3730a3, #6d28d9);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(79, 70, 229, 0.3);
 }
 
-.comment-form form textarea::placeholder {
-  color: color-mix(in srgb, var(--default-color), transparent 50%);
+@media (max-width: 768px) {
+  .blog-comments,
+  .comment-form {
+    padding: 1.5rem;
+    margin: 1rem 0;
+  }
+
+  .children {
+    margin-left: 1rem;
+  }
+
+  .comment .d-flex.align-items-start {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .comment .avatar {
+    width: 40px;
+    height: 40px;
+  }
 }
 
-.comment-form form .form-group {
-  margin-bottom: 25px;
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.comment-form form .btn-primary {
-  border-radius: 4px;
-  padding: 10px 20px;
-  border: 0;
-  background-color: var(--accent-color);
-  color: var(--contrast-color);
+.comment.new-comment {
+  animation: fadeInUp 0.5s ease-out;
 }
 
-.comment-form form .btn-primary:hover {
-  color: var(--contrast-color);
-  background-color: color-mix(in srgb, var(--accent-color), transparent 20%);
+/* Toast Container */
+#toastContainer {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
 }
 
 /*--------------------------------------------------------------
@@ -2195,7 +2433,12 @@ body {
   font-family: 'Inter', sans-serif;
   min-height: 100vh;
 }
-
+.main-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 25px;
+  padding-top: 100px; /* Account for fixed header */
+}
 .dashboard-card {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
@@ -2328,7 +2571,7 @@ body {
 }
 .nav-link i {
   transition: all 0.3s ease;
-  font-size: 18px;
+  font-size: 20px;
   width: 20px;
   display: flex;
   align-items: center;
@@ -2462,6 +2705,17 @@ body {
 }
 
 /* Blog creation image section */
+figure.image > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.img-thumbnail {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+}
+
 .image-section {
   background: rgba(248, 250, 252, 0.8);
   backdrop-filter: blur(10px);
@@ -2485,6 +2739,11 @@ body {
 }
 .image-section:hover::before {
   transform: scaleX(1);
+}
+.image-options {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 25px;
 }
 
 /* Responsive wrapper for dashboard */
