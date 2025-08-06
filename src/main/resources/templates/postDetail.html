@@ -26,6 +26,34 @@
 
     <!-- Main CSS File -->
     <link th:href="@{/assets/css/main.css}" rel="stylesheet">
+    <style>
+        .author-box {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 8px 12px;
+            display: inline-flex;
+            align-items: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .author-box:hover {
+            background-color: #f0f0f0; /* màu nền khi hover */
+        }
+
+        .author-link {
+            color: #333;
+            font-weight: 500;
+            text-decoration: none;
+            margin-left: 6px;
+            transition: color 0.3s ease;
+        }
+
+        .author-box:hover .author-link {
+            color: #000;           /* đậm màu khi hover */
+            font-weight: 600;
+        }
+    </style>
+
 </head>
 
 <body class="single-post-page">
@@ -135,11 +163,13 @@
 
                             <div class="meta-top">
                                 <ul>
-                                    <li class="d-flex align-items-center">
-                                        <i class="bi bi-person"></i>
-                                        <a th:href="@{/author/ProfileUser/{userID}(userID=${postDetail.users.userID})}">
-                                            <span th:text="${postDetail.users.fullName}"></span>
-                                        </a>
+                                    <li class="d-flex align-items-center ">
+                                        <div class="author-box">
+                                            <i class="bi bi-person"></i>
+                                            <a th:href="@{/author/ProfileUser/{userID}(userID=${postDetail.users.userID})}" class="author-link">
+                                                <span th:text="${postDetail.users.fullName}"></span>
+                                            </a>
+                                        </div>
                                         <button th:if="${#authentication.name != postDetail.users.username}" type="button" class="btn btn-sm  ms-2 follow-btn"
                                                 th:data-author-id="${postDetail.users.userID}"
                                                 th:classappend="${isFollowing} ? 'btn-primary' : 'btn-outline-primary'"
@@ -150,7 +180,7 @@
                                         </button>
                                     </li>
                                     <li class="d-flex align-items-center"><i class="bi bi-clock"></i> <a
-                                        <span th:text="${#dates.format(postDetail.publishedAt,  'dd-MM-yyyy HH:mm')}"></span>
+                                        <span th:text="${#dates.format(postDetail.publishedAt,  'dd/MM/yyyy HH:mm')}"></span>
                                         </a></li>
                                     <li class="d-flex align-items-center"><i class="bi bi-chat-dots" th:text="${' ' + postDetail.comments.size() + ' comments'}"></i></a>
                                     </li>
@@ -162,11 +192,13 @@
                             </div><!-- End post content -->
 
                             <div class="meta-bottom">
-                                <i class="bi bi-tags"></i>
+                                <i class="bi bi-tags text-warning me-2"></i>
                                 <ul class="tags" th:each="tag: ${postDetail.tags}">
                                     <li><a th:href="@{/tags/{tagID}(tagID = ${tag.tagID})}"
-                                           th:text="${tag.tagName}"></a></li>
-
+                                           class="badge bg-light text-dark me-1 mb-1"
+                                           style="font-size: 0.85rem;"
+                                           th:text="${tag.tagName}"></a>
+                                    </li>
                                 </ul>
                             </div><!-- End meta bottom -->
 
@@ -218,13 +250,14 @@
                                                   th:text="${parent.user.username}">User Name</cite>
                                             <span th:if="${parent.createdAt != null}" class="text-muted ms-2"
                                                   style="font-size:0.95rem;">| <span
-                                                    th:text="${#dates.format(parent.createdAt, 'dd-MM-yyyy HH:mm')}"></span></span>
+                                                    th:text="${#dates.format(parent.createdAt, 'dd/MM/yyyy HH:mm')}"></span></span>
                                             <span th:if="${parent.createdAt == null}"
                                                   class="text-muted ms-2">| No date</span>
                                         </div>
-                                        <p th:text="${parent.content}"
+                                        <p th:utext="${#strings.replace(parent.content, '\n', '<br/>')}"
                                            style="font-size:1.08rem; border-radius:10px; padding:10px 16px; margin-bottom:0.5rem; line-height:1.7; font-family:'Inter', 'Segoe UI', Arial, sans-serif; letter-spacing:0.01em;">
-                                            Comment content</p>
+                                        </p>
+
                                         <div class="reply">
                                             <div class="d-flex align-items-center gap-3 mb-1">
                                                 <a href="#" class="comment-reply-link"
@@ -331,7 +364,7 @@
                             <img th:src="@{${relatedPost.imageUrl}}" alt="" class="flex-shrink-0">
                             <div>
                                 <a th:href="@{'/PostDetail/' + ${relatedPost.postID}}" th:text="${relatedPost.title}"></a>
-                                <time th:text="${#dates.format(relatedPost.publishedAt, 'dd MMM yyyy')}"></time>
+                                <time th:text="${#dates.format(relatedPost.publishedAt, 'dd/MM/yyyy')}"></time>
                             </div>
                         </div><!-- End recent post item-->
                     </div>

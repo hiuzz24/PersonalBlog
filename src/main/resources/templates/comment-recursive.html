@@ -5,7 +5,7 @@
     <div class="comment-body">
         <div class="comment-author vcard d-flex align-items-center mb-1">
             <cite class="fn fw-bold me-1" style="font-size:1rem;" th:text="${child.user.username}">User Name</cite>
-            <span th:if="${child.createdAt != null}" class="text-muted ms-2" style="font-size:0.95rem;">| <span th:text="${#dates.format(child.createdAt, 'dd-MM-yyyy HH:mm')}"></span></span>
+            <span th:if="${child.createdAt != null}" class="text-muted ms-2" style="font-size:0.95rem;">| <span th:text="${#dates.format(child.createdAt, 'dd/MM/yyyy HH:mm')}"></span></span>
             <span th:if="${child.createdAt == null}" class="text-muted ms-2">| No date</span>
         </div>
         <p th:text="${child.content}" style="font-size:1.08rem; border-radius:10px; padding:10px 16px; margin-bottom:0.5rem; line-height:1.7; font-family:'Inter', 'Segoe UI', Arial, sans-serif; letter-spacing:0.01em;">Comment content</p>
