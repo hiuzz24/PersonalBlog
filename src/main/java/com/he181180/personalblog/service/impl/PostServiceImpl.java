@@ -63,7 +63,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Posts findPostByPostID(int postID) {
-        Posts post = postRepository.findPostByPostID(postID);
+        Posts post = postRepository.findPostByPostIDAndDeletedFalse(postID);
         return post;
     }
 
