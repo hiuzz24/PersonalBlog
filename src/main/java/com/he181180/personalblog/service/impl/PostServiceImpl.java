@@ -68,6 +68,16 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public Posts findPostByPostIDAndDeletedFalse(int postID) {
+        return postRepository.findPostByPostIDAndDeletedFalse(postID);
+    }
+
+    @Override
+    public Posts findPostByPostIDAndDeletedTrue(int postID) {
+        return postRepository.findPostByPostIDAndDeletedTrue(postID);
+    }
+
+    @Override
     public List<Posts> findPostsByTagID(int tagID) {
         return postRepository.findPostsByTagID(tagID);
     }
@@ -117,6 +127,16 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<Posts> findAllPostPending() {
         return postRepository.findAllPostPending();
+    }
+
+    @Override
+    public List<Posts> findAllPostRejectedOrPending() {
+        return postRepository.findAllPostRejectedOrPending();
+    }
+
+    @Override
+    public List<Posts> findAllPostRejected() {
+        return postRepository.findAllPostRejected();
     }
 
     @Override
@@ -229,4 +249,15 @@ public class PostServiceImpl implements PostService {
         url.put("uploaded", "true");
         return url;
     }
+
+
+    @Override
+    public List<Posts> searchPosts(String search) {
+        return postRepository.searchByTitleOrAuthor(search);
+    }
+
+
+
+
+
 }

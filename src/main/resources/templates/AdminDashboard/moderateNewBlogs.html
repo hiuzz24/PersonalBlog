@@ -422,6 +422,7 @@
                                 <span class="input-group-text bg-light border-end-0">
                                     <i class="fas fa-search text-muted"></i>
                                 </span>
+                                <input type="hidden" name="rejectedTab" th:value="${rejectedTab}"/>
                                 <input type="text"
                                        name="search"
                                        class="form-control modern-search border-start-0"
@@ -435,8 +436,16 @@
                     </div>
                     <div class="col-md-4">
                         <div class="filter-tabs justify-content-end">
-                            <a th:href="@{/admin/moderate/moderateNewBlogs}" th:classappend="${!rejectedTab} ? 'active' : ''" class="filter-tab">Pending</a>
-                            <a th:href="@{/admin/moderate/moderateRejectedBlogs}" th:classappend="${rejectedTab} ? 'active' : ''" class="filter-tab">Rejected</a>
+                            <form th:action="@{/admin/moderate/moderateNewBlogs}" method="get" style="display: inline;">
+                                <input type="hidden" name="rejectedTab" value="false" />
+                                <button type="submit" th:classappend="${!rejectedTab} ? 'active' : ''" class="filter-tab">Pending</button>
+                            </form>
+
+                            <form th:action="@{/admin/moderate/moderateNewBlogs}" method="get" style="display: inline;">
+                                <input type="hidden" name="rejectedTab" value="true" />
+                                <button type="submit" th:classappend="${rejectedTab} ? 'active' : ''" class="filter-tab">Rejected</button>
+                            </form>
+
                         </div>
                     </div>
                 </div>

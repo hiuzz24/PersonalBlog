@@ -19,12 +19,20 @@ public interface PostService {
     void savePost(Posts post);
     Optional<Posts> getPostByID(int postID);
     Posts findPostByPostID(int postID);
+
+
+    Posts findPostByPostIDAndDeletedFalse(int postID);
+    Posts findPostByPostIDAndDeletedTrue(int postID);
+
+
+
     List<Posts> getPostByUserID(int userID);
     Page<Posts> getPostByUserIDPagination(int userID, int page, int size);
     void deletePost(int postID);
     void recoverPost(int postID);
     List<Posts> getAllPosts();
-    List<Posts> findAllPostPending();
+
+
     String handleImageUrl(String imageUrl, MultipartFile fileImage) throws IOException;
     long countApproved();
     long countRejected();
@@ -35,5 +43,9 @@ public interface PostService {
     Map<String,Integer> postPerMonth(int year);
     List<Posts> findAllByUsers_DeletedFalseAndStatusRejected();
     Map<String,String> uploadImageForCkeditor(MultipartFile upload) throws IOException;
+    List<Posts> searchPosts(String search);
 
+    List<Posts> findAllPostRejected();
+    List<Posts> findAllPostPending();
+    List<Posts> findAllPostRejectedOrPending();
 }

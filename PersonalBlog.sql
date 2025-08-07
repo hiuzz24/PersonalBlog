@@ -25,7 +25,7 @@ CREATE TABLE posts (
                        status VARCHAR(50) NOT NULL,
                        reason_rejected MEDIUMTEXT,
                        is_published BOOLEAN,
-                        is_deleted boolean default false,
+                       is_deleted boolean default false,
                        published_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                        updated_at TIMESTAMP NULL DEFAULT NULL,
                        FOREIGN KEY (user_id) REFERENCES users(user_id)
