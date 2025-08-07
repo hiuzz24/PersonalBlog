@@ -68,7 +68,7 @@ public class AdminModerateController {
     @RequestMapping("/approve/{id}")
     public String approve(@PathVariable("id") int postID,
                           @RequestParam("userID")int userID){
-        Posts post = postService.findPostByPostID(postID);
+        Posts post = postService.findPostByPostIDAndDeletedFalse(postID);
         Users user = userService.findUserByUserIDAndDeletedFalse(userID);
         post.setPublishedAt(new Timestamp(new Date().getTime()));
         post.setStatus("Approved");
@@ -84,7 +84,6 @@ public class AdminModerateController {
         post.setStatus("Rejected");
         post.setReasonRejected("dwadawdawdad");
         post.setPublished(false);
-        post.setDeleted(true);
         post.setUpdatedAt(new Timestamp(new Date().getTime()));
         postService.savePost(post);
         return "redirect:/admin/moderate/moderateNewBlogs";
@@ -93,11 +92,12 @@ public class AdminModerateController {
     @RequestMapping("/restore/{id}")
     public String restore(@PathVariable("id") int postID){
         Posts post = postService.findPostByPostIDAndDeletedTrue(postID);
-        post.setStatus("Pending");
-        post.setPublished(false);
-        post.setDeleted(false );
-        post.setReasonRejected(null);
-        postService.savePost(post);
+        if(post != null) {
+            post.setStatus("Pending");
+            post.setPublished(false);
+            post.setReasonRejected(null);
+            postService.savePost(post);
+        }
         return "redirect:/admin/moderate/moderateRejectedBlogs";
     }
 

@@ -511,7 +511,8 @@
                             <td>
                                 <div class="action-buttons">
                                     <!-- View Post -->
-                                    <a th:href="@{/admin/moderate/view/{id}(id=${post.postID})}"
+                                    <a th:if="${post.deleted == false}"
+                                       th:href="@{/admin/moderate/view/{id}(id=${post.postID})}"
                                        class="modern-btn btn-info-modern"
                                        title="See details">
                                         <i class="fas fa-eye"></i>
