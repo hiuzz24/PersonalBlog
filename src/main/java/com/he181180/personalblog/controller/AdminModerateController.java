@@ -74,7 +74,6 @@ public class AdminModerateController {
         post.setStatus("Rejected");
         post.setReasonRejected("dwadawdawdad");
         post.setPublished(false);
-        post.setDeleted(true);
         post.setUpdatedAt(new Timestamp(new Date().getTime()));
         postService.savePost(post);
         return "redirect:/admin/moderate/moderateNewBlogs";
@@ -85,7 +84,6 @@ public class AdminModerateController {
         Posts post = postService.findPostByPostID(postID);
         post.setStatus("Pending");
         post.setPublished(false);
-        post.setDeleted(false );
         post.setReasonRejected(null);
         postService.savePost(post);
         return "redirect:/admin/moderate/moderateRejectedBlogs";
@@ -98,7 +96,6 @@ public class AdminModerateController {
         List<Posts> filteredPosts = allPostPending.stream()
                 .filter(post ->
                     post.getTitle().toLowerCase().contains(searchQuery.toLowerCase()) ||
-                    post.getContent().toLowerCase().contains(searchQuery.toLowerCase()) ||
                     post.getUsers().getFullName().toLowerCase().contains(searchQuery.toLowerCase()) ||
                     post.getUsers().getUsername().toLowerCase().contains(searchQuery.toLowerCase())
                 )

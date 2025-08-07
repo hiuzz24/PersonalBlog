@@ -89,4 +89,5 @@ public interface PostRepository extends JpaRepository<Posts, Integer> {
             "JOIN p.users u " +
             "WHERE u.deleted = false AND p.deleted = false AND p.status = 'Rejected'")
     List<Posts> findAllByUsers_DeletedFalseAndStatusRejected();
+
 }
