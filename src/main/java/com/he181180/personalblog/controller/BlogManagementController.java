@@ -7,6 +7,7 @@ import com.he181180.personalblog.service.CurrentUserService;
 import com.he181180.personalblog.service.PostService;
 import com.he181180.personalblog.service.TagService;
 import com.he181180.personalblog.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -91,36 +92,48 @@ public class BlogManagementController {
                 String finalImage = postService.handleImageUrl(imageUrl, fileImage);
                 post.setImageUrl(finalImage);
             } catch (Exception e) {
-                model.addAttribute("error", "Lỗi khi xử lý ảnh: " + e.getMessage());
+                model.addAttribute("error", "Error while processing image: " + e.getMessage());
                 return "redirect:/blog/create";
             }
             postService.savePost(post);
             return "redirect:/blog";
         }
 
-        model.addAttribute("error", "Không thể tạo bài viết");
+        model.addAttribute("error", "Unable to create post");
         return "redirect:/blog/create";
     }
 
-    // Cập nhật bài viết
     @RequestMapping("/edit/{postID}")
     public String updatePost(@PathVariable("postID") int postID,
                              Model model,
-                             Authentication authentication) {
+                             Authentication authentication,
+                             HttpServletRequest request) {
         Users user = currentUserService.getCurrentUser(authentication);
         Posts post = postService.findPostByPostID(postID);
-       if( user.getUserID() == post.getUsers().getUserID()){
-           List<Integer> selectedTagID = post.getTags().stream()
-                   .map(Tags::getTagID)
-                   .collect(Collectors.toList());
 
-           model.addAttribute("selectedTagID",selectedTagID);
-           model.addAttribute("post",post);
-           model.addAttribute("formAction","/blog/saveUpdate");
-           return "BlogManagement/blogCreation";
-       }
-       return "redirect:/blog";
+        if (user != null && post != null && user.getUsername().equals(post.getUsers().getUsername())) {
+            List<Integer> selectedTagID = post.getTags().stream()
+                    .map(Tags::getTagID)
+                    .collect(Collectors.toList());
+
+            model.addAttribute("selectedTagID", selectedTagID);
+            model.addAttribute("post", post);
+            model.addAttribute("formAction", "/blog/saveUpdate");
+            model.addAttribute("pageMode", "edit");
+
+            String referer = request.getHeader("Referer");
+            if (referer != null && (referer.contains("/PostDetail/") || referer.contains("/blog"))) {
+                model.addAttribute("previousPage", referer);
+            } else {
+                model.addAttribute("previousPage", "/blog");
+            }
+
+            return "BlogManagement/blogCreation";
+        }
+
+        return "redirect:/blog";
     }
+
 
     @RequestMapping("/saveUpdate")
     public String saveUpdate(@RequestParam int postID,
@@ -165,5 +178,4 @@ public class BlogManagementController {
         return "redirect:/blog";
     }
     }
-
 

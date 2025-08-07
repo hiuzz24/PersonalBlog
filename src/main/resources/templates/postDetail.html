@@ -202,7 +202,7 @@
                                 </ul>
                             </div><!-- End meta bottom -->
 
-                            <div class="d-flex mt-3 mb-3">
+                            <div class="d-flex mt-3 mb-3 gap-3">
                                 <!-- Save Post Button:  -->
                                 <div sec:authorize="!hasRole('ADMIN')">
                                     <button type="button" class="btn"
@@ -222,6 +222,13 @@
                                             th:data-author-name="${postDetail.users.fullName != null ? postDetail.users.fullName : postDetail.users.username}">
                                         <i class="bi bi-chat-dots"></i> Chat with the author
                                     </button>
+                                </div>
+                                <!-- Edit Post Button: Only visible to the author -->
+                                <div th:if="${#authentication.name == postDetail.users.username}">
+                                    <a th:href="@{'/blog/edit/' + ${postDetail.postID}}" class="btn btn-primary">
+                                        <i class="bi bi-pencil-square me-1"></i>
+                                        Edit Post
+                                    </a>
                                 </div>
                             </div>
 
