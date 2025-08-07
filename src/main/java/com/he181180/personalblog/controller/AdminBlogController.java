@@ -38,4 +38,11 @@ public class AdminBlogController {
         return "redirect:/admin/blog/blogManagement";
     }
 
+    @GetMapping("/search")
+    public String search(@RequestParam("search") String searchQuery, Model model) {
+        List<Posts> posts = postService.searchPosts(searchQuery);
+        model.addAttribute("posts", posts);
+        return "AdminDashboard/blogManagement";
+    }
+
 }

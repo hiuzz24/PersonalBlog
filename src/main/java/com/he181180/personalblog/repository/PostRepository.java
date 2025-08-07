@@ -26,12 +26,12 @@ public interface PostRepository extends JpaRepository<Posts, Integer> {
     @Query(value = """
         SELECT p.* FROM posts p
         JOIN users u ON p.user_id = u.user_id
-        WHERE p.is_published = 1 AND p.is_deleted = 0 AND u.is_deleted = 0
+        WHERE p.is_published = true AND p.is_deleted = false AND u.is_deleted = false
         LIMIT :size OFFSET :start
         """, nativeQuery = true)
     List<Posts> findPostsWithPagination(@Param("start") int start, @Param("size") int size);
 
-    @Query("SELECT p FROM Posts p WHERE p.postID = :postID AND p.users.deleted = false")
+    @Query("SELECT p FROM Posts p WHERE p.postID = :postID AND p.deleted = false ")
     Posts findPostByIDs(@Param("postID") int postID);
 
     @Query("SELECT p FROM Posts p " +
@@ -42,13 +42,25 @@ public interface PostRepository extends JpaRepository<Posts, Integer> {
     @Query("SELECT p FROM Posts p WHERE p.status = 'Pending' AND p.deleted = false")
     List<Posts> findAllPostPending();
 
-    @Query("select p from Posts p where p.postID = :postID and  p.deleted = false and (p.status = 'Approved' or p.status = 'Pending')")
+    @Query("SELECT p FROM Posts p WHERE p.status = 'Rejected'")
+    List<Posts> findAllPostRejected();
+
+    @Query("SELECT p FROM Posts p WHERE (p.status = 'Rejected' or p.status = 'Pending')")
+    List<Posts> findAllPostRejectedOrPending();
+
+    @Query("select p from Posts p where p.postID = :postID and p.deleted = false ")
+    Posts findPostByPostIDAndDeletedTrue(@Param("postID") int postID);
+
+    @Query("select p from Posts p where p.postID = :postID and  p.deleted = false and ( p.status = 'Pending')")
     Posts findPostByPostIDAndDeletedFalse(@Param("postID") int postID);
 
-    @Query("SELECT COUNT(p) FROM Posts p WHERE p.status = 'Approved' AND p.deleted = false")
+    @Query("select p from Posts p where p.postID = :postID and  p.deleted = false ")
+    Posts findPostByPostID(@Param("postID") int postID);
+
+    @Query("SELECT COUNT(p) FROM Posts p WHERE p.status = 'Approved' ")
     long countApproved();
 
-    @Query("SELECT COUNT(p) FROM Posts p WHERE p.status = 'Rejected' AND p.deleted = false")
+    @Query("SELECT COUNT(p) FROM Posts p WHERE p.status = 'Rejected' ")
     long countRejected();
 
     @Query("SELECT p FROM Posts p WHERE p.users.userID = :userID " +
@@ -87,7 +99,12 @@ public interface PostRepository extends JpaRepository<Posts, Integer> {
 
     @Query("SELECT p FROM Posts p " +
             "JOIN p.users u " +
-            "WHERE u.deleted = false AND p.deleted = false AND p.status = 'Rejected'")
+            "WHERE u.deleted = false AND p.deleted = true AND p.published = false AND p.status = 'Rejected'")
     List<Posts> findAllByUsers_DeletedFalseAndStatusRejected();
 
+
+    @Query("SELECT p FROM Posts p WHERE " +
+            "LOWER(p.title) LIKE LOWER(CONCAT('%', :search, '%')) " +
+            "OR LOWER(p.users.fullName) LIKE LOWER(CONCAT('%', :search, '%'))")
+    List<Posts> searchByTitleOrAuthor(@Param("search") String search);
 }

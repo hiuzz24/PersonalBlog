@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -28,14 +29,23 @@ public class AdminModerateController {
     private UserService userService;
 
     @GetMapping("/moderateNewBlogs")
-    public String moderateNewBlog(Model model){
-        List<Posts> allPostPending = postService.findAllPostPending();
+    public String moderateNewBlog(Model model,
+                                  @RequestParam(value = "rejectedTab",defaultValue = "false") Boolean rejectedTab){
 
+        List<Posts> allPostPending = new ArrayList<>();
+
+        if(rejectedTab == false) {
+        allPostPending = postService.findAllPostPending();
+            model.addAttribute("rejectedTab", false);
+        }else {
+            allPostPending = postService.findAllPostRejected();
+            model.addAttribute("rejectedTab", true);
+        }
         model.addAttribute("totalPending", allPostPending.size());
         model.addAttribute("approved", postService.countApproved());
         model.addAttribute("rejected", postService.countRejected());
         model.addAttribute("posts",allPostPending);
-        model.addAttribute("rejectedTab", false);
+
         return "AdminDashboard/moderateNewBlogs";
     }
 
@@ -58,7 +68,7 @@ public class AdminModerateController {
     @RequestMapping("/approve/{id}")
     public String approve(@PathVariable("id") int postID,
                           @RequestParam("userID")int userID){
-        Posts post = postService.findPostByPostID(postID);
+        Posts post = postService.findPostByPostIDAndDeletedFalse(postID);
         Users user = userService.findUserByUserIDAndDeletedFalse(userID);
         post.setPublishedAt(new Timestamp(new Date().getTime()));
         post.setStatus("Approved");
@@ -70,7 +80,7 @@ public class AdminModerateController {
 
     @RequestMapping("/reject/{id}")
     public String reject(@PathVariable("id") int postID){
-        Posts post = postService.findPostByPostID(postID);
+        Posts post = postService.findPostByPostIDAndDeletedFalse(postID);
         post.setStatus("Rejected");
         post.setReasonRejected("dwadawdawdad");
         post.setPublished(false);
@@ -81,21 +91,24 @@ public class AdminModerateController {
 
     @RequestMapping("/restore/{id}")
     public String restore(@PathVariable("id") int postID){
-        Posts post = postService.findPostByPostID(postID);
-        post.setStatus("Pending");
-        post.setPublished(false);
-        post.setReasonRejected(null);
-        postService.savePost(post);
+        Posts post = postService.findPostByPostIDAndDeletedTrue(postID);
+        if(post != null) {
+            post.setStatus("Pending");
+            post.setPublished(false);
+            post.setReasonRejected(null);
+            postService.savePost(post);
+        }
         return "redirect:/admin/moderate/moderateRejectedBlogs";
     }
 
     @RequestMapping("/search")
-    public String search(@RequestParam("search") String searchQuery, Model model){
-        List<Posts> allPostPending = postService.findAllPostPending();
+    public String search(@RequestParam("search") String searchQuery, @RequestParam("rejectedTab") boolean rejectedTab, Model model){
+        List<Posts> allPostPending = postService.findAllPostRejectedOrPending();
 
         List<Posts> filteredPosts = allPostPending.stream()
                 .filter(post ->
                     post.getTitle().toLowerCase().contains(searchQuery.toLowerCase()) ||
+                    post.getContent().toLowerCase().contains(searchQuery.toLowerCase()) ||
                     post.getUsers().getFullName().toLowerCase().contains(searchQuery.toLowerCase()) ||
                     post.getUsers().getUsername().toLowerCase().contains(searchQuery.toLowerCase())
                 )
@@ -105,6 +118,8 @@ public class AdminModerateController {
         model.addAttribute("totalPending", allPostPending.size());
         model.addAttribute("approved", postService.countApproved());
         model.addAttribute("rejected", postService.countRejected());
+
+        model.addAttribute("rejectedTab", rejectedTab);
         model.addAttribute("searchQuery", searchQuery);
         return "AdminDashboard/moderateNewBlogs";
     }
