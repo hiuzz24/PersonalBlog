@@ -47,7 +47,6 @@ public class ChangePasswordController {
         return "UserDashboard/change-password";
     }
 
-
     @PostMapping
     public ResponseEntity<PasswordChangeResponse> changePassword(
             @RequestParam(required = false) String currentPassword,
@@ -86,35 +85,29 @@ public class ChangePasswordController {
                         .body(new PasswordChangeResponse(false, "Please verify your email first.", "EMAIL_NOT_VERIFIED"));
             }
 
-            // Kiểm tra mật khẩu hiện tại
             if (currentPassword == null || !userService.checkPassword(user, currentPassword)) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body(new PasswordChangeResponse(false, "Current password is incorrect.", "CURRENT_PASSWORD_INCORRECT"));
             }
         }
 
-        // Kiểm tra pattern mật khẩu mới
         if (!pattern.matcher(newPassword).matches()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new PasswordChangeResponse(false, "Password must be at least 6 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.", "INVALID_PASSWORD_FORMAT"));
         }
 
-        // Kiểm tra mật khẩu xác nhận
         if (!newPassword.equals(confirmPassword)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new PasswordChangeResponse(false, "New passwords do not match.", "PASSWORDS_NOT_MATCH"));
         }
 
-        // Thay đổi mật khẩu
         userService.changeUserPassword(user, newPassword);
 
-        // Xóa các session attributes
         session.removeAttribute("confirmationCode");
         session.removeAttribute("confirmationCodeTimestamp");
         session.removeAttribute("codeVerified");
         session.removeAttribute("codeVerifiedTimestamp");
 
-        // Invalidate current session để buộc đăng nhập lại
         session.invalidate();
         return ResponseEntity.ok(new PasswordChangeResponse(true, "Password changed successfully. Please log in again with your new password.",null));
     }

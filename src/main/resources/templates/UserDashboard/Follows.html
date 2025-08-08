@@ -733,7 +733,6 @@
                     })
                     .then(data => {
                         showToast(data.message || 'Operation successful', 'success');
-                        // Reload data after follow/unfollow
                         loadDashboardData();
                     })
                     .catch(error => {
@@ -744,7 +743,6 @@
     }
 
     function loadDashboardData() {
-        // Load followers
         fetch('/api/follows/followers', {
             method: 'GET',
             headers: {
@@ -766,7 +764,6 @@
                 showToast('An error occurred while loading followers', 'error');
             });
 
-        // Load following
         fetch('/api/follows/following', {
             method: 'GET',
             headers: {
@@ -789,7 +786,6 @@
             });
     }
 
-    // Load data when page loads
     document.addEventListener('DOMContentLoaded', loadDashboardData);
 </script>
 </body>

@@ -254,7 +254,16 @@
             transform: translateY(-1px);
             box-shadow: var(--shadow-md);
         }
+        .btn-primary-modern {
+            background-color: var(--primary-color);
+            color: white;
+        }
 
+        .btn-primary-modern:hover {
+            background-color: #4338ca;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
         .filter-tabs {
             display: flex;
             gap: 0.5rem;
@@ -426,9 +435,9 @@
                                 <input type="text"
                                        name="search"
                                        class="form-control modern-search border-start-0"
-                                       placeholder="Search by post title, author, or content..."
+                                       placeholder="Search by post title or author..."
                                        aria-label="Search">
-                                <button class="btn btn-info-modern" type="submit">
+                                <button class="btn btn-primary-modern" type="submit">
                                     <i class="fas fa-search me-1"></i>Search
                                 </button>
                             </div>
@@ -472,8 +481,8 @@
                             </td>
                             <td>
                                 <div class="post-info">
-                                    <img th:src="${post.imageUrl != null and !#strings.isEmpty(post.imageUrl)} ? ${post.imageUrl} : '/img/blog-1.jpg'" 
-                                         alt="Thumbnail" 
+                                    <img th:src="${post.imageUrl != null and !#strings.isEmpty(post.imageUrl)} ? ${post.imageUrl} : '/img/blog-1.jpg'"
+                                         alt="Thumbnail"
                                          class="post-thumbnail"
                                          onerror="this.src='/img/blog-1.jpg'">
                                     <div class="post-details">
@@ -582,6 +591,7 @@
     window.addEventListener('load', function() {
         document.getElementById('spinner').classList.remove('show');
     });
+
 </script>
 </body>
 </html>

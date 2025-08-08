@@ -699,7 +699,6 @@
     document.addEventListener('DOMContentLoaded', function() {
         restoreSidebarState();
 
-        // Handle avatar change interactions
         const avatarWrapper = document.querySelector('.avatar-wrapper');
         const changeBox = document.getElementById('changeBox');
 
@@ -709,7 +708,7 @@
         if (avatarFile) {
             avatarFile.addEventListener('change', function() {
                 if (avatarUrl) avatarUrl.value = '';
-                document.getElementById('avatarForm').submit(); // Auto-submit on file select
+                document.getElementById('avatarForm').submit();
             });
         }
 
