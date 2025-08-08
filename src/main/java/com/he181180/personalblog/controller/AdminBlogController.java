@@ -1,6 +1,7 @@
 package com.he181180.personalblog.controller;
 
 import com.he181180.personalblog.entity.Posts;
+import com.he181180.personalblog.entity.Users;
 import com.he181180.personalblog.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -35,6 +36,13 @@ public class AdminBlogController {
     public String recover(@PathVariable("id")int postID){
         postService.recoverPost(postID);
         return "redirect:/admin/blog/blogManagement";
+    }
+
+    @GetMapping("/search")
+    public String search(@RequestParam("search") String searchQuery, Model model) {
+        List<Posts> posts = postService.searchPosts(searchQuery);
+        model.addAttribute("posts", posts);
+        return "AdminDashboard/blogManagement";
     }
 
 }

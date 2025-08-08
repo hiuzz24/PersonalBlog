@@ -385,7 +385,18 @@
             background: rgba(212, 237, 218, 0.9);
             color: #0f5132;
         }
+        .equal-height-row {
+            display: flex;
+            align-items: stretch;
+            min-height: 500px;
+        }
 
+
+        .avatar-section, .info-section {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
         /* Mobile Responsiveness */
         @media (max-width: 768px) {
             .profile-content {
@@ -400,6 +411,7 @@
                 font-size: 2rem;
             }
         }
+
 
     </style>
 </head>
@@ -433,6 +445,16 @@
         }
     }
 
+    function adjustColumnHeights() {
+        // Optional: Add any additional height adjustment logic here
+        const avatarCol = document.querySelector('.col-md-4 .avatar-section');
+        const infoCol = document.querySelector('.col-md-8 .info-section');
+
+        avatarCol.style.minHeight = 'auto';
+        infoCol.style.minHeight = 'auto';
+
+        // Let flexbox handle the equal heights naturally
+    }
     function handleUpload() {
         const input = document.getElementById('avatarFile');
         const preview = document.getElementById('previewAvatar');
@@ -513,9 +535,9 @@
             });
     }
 
-
     document.addEventListener('DOMContentLoaded', function() {
         restoreSidebarState();
+
         const avatarWrapper = document.querySelector('.avatar-wrapper');
         const changeBox = document.getElementById('changeBox');
 
@@ -535,6 +557,8 @@
             });
         }
     });
+    window.addEventListener('resize', adjustColumnHeights);
+
 </script>
 
 <body class="category-page">
@@ -721,9 +745,9 @@
 
                 <!-- Profile Content -->
                 <div class="profile-content">
-                    <div class="row gy-4 align-items-start">
+                    <div class="row equal-height-row gy-4">
                         <!-- Avatar Section -->
-                        <div class="col-md-4">
+                        <div class="col-md-4 ">
                             <div class="avatar-section">
                                 <form th:action="@{/profile/updateAvatar}" method="post" enctype="multipart/form-data" id="avatarForm">
                                     <div class="avatar-wrapper">
@@ -734,7 +758,7 @@
                                     <p class="text-muted mb-3">Click on your avatar to change it</p>
 
                                     <!-- Avatar Change Box -->
-                                    <div id="changeBox" class="change-avatar-box mt-3" style="display:none;">
+                                    <div id="changeBox" class="change-avatar-box" style="display:none;">
                                         <div class="upload-btn-wrapper mb-3">
                                             <button type="button" class="btn btn-secondary w-100" onclick="document.getElementById('avatarFile').click()">
                                                 <i class="bi bi-cloud-upload me-2"></i>
@@ -763,12 +787,13 @@
                         </div>
 
                         <!-- Information Section -->
-                        <div class="col-md-8">
+                        <div class="col-md-8 ">
                             <div class="info-section">
-                                <h3 class="section-title">
-                                    <i class="bi bi-info-circle"></i>
-                                    Personal Information
-                                </h3>
+                                <div>
+                                    <h3 class="section-title">
+                                        <i class="bi bi-info-circle me-2"></i>
+                                        Personal Information
+                                    </h3>
 
                                 <form th:action="@{/profile/update}" th:object="${userUpdateDTO}" method="post">
                                     <div class="row">

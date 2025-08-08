@@ -665,7 +665,6 @@
         const sidebar = document.getElementById('sidebark');
         sidebar.classList.toggle('closed');
 
-
         const isClosed = sidebar.classList.contains('closed');
         sessionStorage.setItem('sidebarClosed', isClosed);
     }
@@ -680,6 +679,7 @@
             sidebar.classList.remove('closed');
         }
     }
+
     let stompClient = null;
     let currentChatUserId = null;
     let currentUsername = null;
@@ -689,6 +689,7 @@
         loadCurrentUserWithRetry();
         loadConversations();
         connect();
+
         document.getElementById('sendMessageBtn').addEventListener('click', sendMessage);
         document.getElementById('messageInput').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
@@ -845,6 +846,7 @@
 
     function selectConversation(userId, userName, avatarUrl) {
         currentChatUserId = userId;
+
         document.querySelectorAll('.conversation-item').forEach(item => {
             item.classList.remove('active');
         });
@@ -852,10 +854,12 @@
         if (selectedItem) {
             selectedItem.classList.add('active');
         }
+
         document.getElementById('chatAreaHeader').style.display = 'block';
         document.getElementById('chatInputArea').style.display = 'block';
         document.getElementById('chatPartnerName').textContent = userName;
         document.getElementById('chatPartnerAvatar').src = avatarUrl;
+
         loadChatHistory(userId);
     }
 
@@ -939,6 +943,7 @@
 
         try {
             const date = new Date(dateTime);
+
             if (isNaN(date.getTime())) {
                 return '';
             }

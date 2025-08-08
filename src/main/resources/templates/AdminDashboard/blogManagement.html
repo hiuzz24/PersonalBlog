@@ -494,13 +494,7 @@
                                            title="Publish Post">
                                             <i class="fas fa-check"></i>
                                         </a>
-                                        <a th:if="${post.published}"
-                                           th:href="@{/admin/blog/delete/{id}(id=${post.postID})}"
-                                           class="modern-btn btn-danger-modern"
-                                           onclick="return confirm('Are you sure you want to unpublish this post?')"
-                                           title="Unpublish Post">
-                                            <i class="fas fa-times"></i>
-                                        </a>
+
                                     </div>
                                 </td>
                             </tr>
@@ -540,10 +534,9 @@
         const rows = document.querySelectorAll('#postsTable tbody tr');
         const tabs = document.querySelectorAll('.filter-tab');
 
-
         tabs.forEach(tab => tab.classList.remove('active'));
         event.target.classList.add('active');
-      
+
         rows.forEach(row => {
             const rowStatus = row.getAttribute('data-status');
             if (status === 'all' || rowStatus === status) {
@@ -553,7 +546,6 @@
             }
         });
     }
-
 
     document.addEventListener('DOMContentLoaded', function() {
         const searchInput = document.querySelector('input[name="search"]');

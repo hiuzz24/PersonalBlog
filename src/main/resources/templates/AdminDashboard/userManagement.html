@@ -487,22 +487,28 @@
                                 </td>
                                 <td>
                                     <div class="action-buttons">
-                                        <a th:if="${!user.deleted}"
-                                           th:href="@{/admin/user/delete/{id}(id=${user.userID})}"
-                                           class="modern-btn btn-danger-modern"
-                                           onclick="return confirm('Are you sure you want to delete this user?')"
-                                           title="Delete User">
-                                            <i class="fas fa-trash"></i>
-                                        </a>
-                                        <a th:if="${user.deleted}"
-                                           th:href="@{/admin/user/recover/{id}(id=${user.userID})}"
-                                           class="modern-btn btn-success-modern"
-                                           onclick="return confirm('Are you sure you want to recover this user?')"
-                                           title="Recover User">
-                                            <i class="fas fa-undo"></i>
-                                        </a>
+                                        <th:block th:if="${user.role != 'ADMIN'}">
+                                            <a th:if="${!user.deleted}"
+                                               th:href="@{/admin/user/delete/{id}(id=${user.userID})}"
+                                               class="modern-btn btn-danger-modern"
+                                               onclick="return confirm('Are you sure you want to delete this user?')"
+                                               title="Delete User">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                            <a th:if="${user.deleted}"
+                                               th:href="@{/admin/user/recover/{id}(id=${user.userID})}"
+                                               class="modern-btn btn-success-modern"
+                                               onclick="return confirm('Are you sure you want to recover this user?')"
+                                               title="Recover User">
+                                                <i class="fas fa-undo"></i>
+                                            </a>
+                                        </th:block>
+                                        <th:block th:if="${user.role == 'ADMIN'}">
+                                            <span class="text-muted"></span>
+                                        </th:block>
                                     </div>
                                 </td>
+
                             </tr>
                         </tbody>
                     </table>

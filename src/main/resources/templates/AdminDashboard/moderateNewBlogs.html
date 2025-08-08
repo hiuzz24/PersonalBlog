@@ -254,7 +254,16 @@
             transform: translateY(-1px);
             box-shadow: var(--shadow-md);
         }
+        .btn-primary-modern {
+            background-color: var(--primary-color);
+            color: white;
+        }
 
+        .btn-primary-modern:hover {
+            background-color: #4338ca;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
         .filter-tabs {
             display: flex;
             gap: 0.5rem;
@@ -422,12 +431,13 @@
                                 <span class="input-group-text bg-light border-end-0">
                                     <i class="fas fa-search text-muted"></i>
                                 </span>
+                                <input type="hidden" name="rejectedTab" th:value="${rejectedTab}"/>
                                 <input type="text"
                                        name="search"
                                        class="form-control modern-search border-start-0"
-                                       placeholder="Search by post title, author, or content..."
+                                       placeholder="Search by post title or author..."
                                        aria-label="Search">
-                                <button class="btn btn-info-modern" type="submit">
+                                <button class="btn btn-primary-modern" type="submit">
                                     <i class="fas fa-search me-1"></i>Search
                                 </button>
                             </div>
@@ -435,8 +445,16 @@
                     </div>
                     <div class="col-md-4">
                         <div class="filter-tabs justify-content-end">
-                            <a th:href="@{/admin/moderate/moderateNewBlogs}" th:classappend="${!rejectedTab} ? 'active' : ''" class="filter-tab">Pending</a>
-                            <a th:href="@{/admin/moderate/moderateRejectedBlogs}" th:classappend="${rejectedTab} ? 'active' : ''" class="filter-tab">Rejected</a>
+                            <form th:action="@{/admin/moderate/moderateNewBlogs}" method="get" style="display: inline;">
+                                <input type="hidden" name="rejectedTab" value="false" />
+                                <button type="submit" th:classappend="${!rejectedTab} ? 'active' : ''" class="filter-tab">Pending</button>
+                            </form>
+
+                            <form th:action="@{/admin/moderate/moderateNewBlogs}" method="get" style="display: inline;">
+                                <input type="hidden" name="rejectedTab" value="true" />
+                                <button type="submit" th:classappend="${rejectedTab} ? 'active' : ''" class="filter-tab">Rejected</button>
+                            </form>
+
                         </div>
                     </div>
                 </div>
@@ -463,8 +481,8 @@
                             </td>
                             <td>
                                 <div class="post-info">
-                                    <img th:src="${post.imageUrl != null and !#strings.isEmpty(post.imageUrl)} ? ${post.imageUrl} : '/img/blog-1.jpg'" 
-                                         alt="Thumbnail" 
+                                    <img th:src="${post.imageUrl != null and !#strings.isEmpty(post.imageUrl)} ? ${post.imageUrl} : '/img/blog-1.jpg'"
+                                         alt="Thumbnail"
                                          class="post-thumbnail"
                                          onerror="this.src='/img/blog-1.jpg'">
                                     <div class="post-details">
@@ -502,7 +520,8 @@
                             <td>
                                 <div class="action-buttons">
                                     <!-- View Post -->
-                                    <a th:href="@{/admin/moderate/view/{id}(id=${post.postID})}"
+                                    <a th:if="${post.deleted == false}"
+                                       th:href="@{/admin/moderate/view/{id}(id=${post.postID})}"
                                        class="modern-btn btn-info-modern"
                                        title="See details">
                                         <i class="fas fa-eye"></i>
@@ -572,6 +591,7 @@
     window.addEventListener('load', function() {
         document.getElementById('spinner').classList.remove('show');
     });
+
 </script>
 </body>
 </html>

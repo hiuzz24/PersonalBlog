@@ -24,6 +24,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
@@ -90,6 +92,8 @@ public class MainController {
         newUser.setPassword(passwordEncoder.encode(password));
         newUser.setRole("WRITER");
         newUser.setAvatarUrl("/img/user.png");
+        newUser.setDeleted(false);
+        newUser.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
         userRepository.save(newUser);
         return "redirect:/login";
     }
@@ -98,7 +102,6 @@ public class MainController {
     public String googleLoginSuccess(@AuthenticationPrincipal CustomOAuth2User customOAuth2User, Model model) {
         if (customOAuth2User != null) {
             Users user = customOAuth2User.getUser();
-
             // If user does not have a username → ask for username
             if (user.getUsername() == null || user.getUsername().isEmpty()) {
                 // Set default avatar for new user
@@ -127,6 +130,7 @@ public class MainController {
         Users user = userRepository.findByEmail(email).orElse(null);
         if (user != null) {
             user.setUsername(username);
+            user.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
             userRepository.save(user);
 
             // Create new CustomUserPrincipal authentication

@@ -43,7 +43,6 @@ public class Posts {
     @Column(name = "is_deleted")
     private Boolean deleted;
 
-
     @Column(name = "published_at")
     private Timestamp publishedAt;
 
