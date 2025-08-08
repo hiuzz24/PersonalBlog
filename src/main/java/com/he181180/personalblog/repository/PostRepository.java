@@ -88,7 +88,7 @@ public interface PostRepository extends JpaRepository<Posts, Integer> {
             "ORDER BY COUNT(p) DESC")
     List<Object[]> top5Author(Pageable pageable);
 
-    @Query("SELECT p.status, COUNT(p) FROM Posts p WHERE p.deleted = false GROUP BY p.status")
+    @Query("SELECT p.status, COUNT(p) FROM Posts p GROUP BY p.status")
     List<Object[]> postPerStatus();
 
     @Query("SELECT MONTH(p.publishedAt), COUNT(p) FROM Posts p " +

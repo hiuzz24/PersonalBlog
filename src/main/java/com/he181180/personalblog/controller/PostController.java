@@ -96,6 +96,7 @@ public class PostController {
         if (posts == null) {
             return "redirect:/explore"; // Redirect to explore if post not found
         }
+
         List<Integer> tagIDs = tagService.findTagIDByPostID(postID);
         List<Posts> postsList = tagIDs.stream().flatMap(tagID -> postService.findPostsByTagID(tagID).stream())
                 .filter(p -> p.getPostID() != postID)

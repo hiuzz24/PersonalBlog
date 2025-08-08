@@ -33,15 +33,15 @@ public class AdminModerateController {
                                   @RequestParam(value = "rejectedTab",defaultValue = "false") Boolean rejectedTab){
 
         List<Posts> allPostPending = new ArrayList<>();
-
+        List<Posts> cntPost = postService.findAllPostPending();
         if(rejectedTab == false) {
-        allPostPending = postService.findAllPostPending();
+            allPostPending = postService.findAllPostPending();
             model.addAttribute("rejectedTab", false);
         }else {
             allPostPending = postService.findAllPostRejected();
             model.addAttribute("rejectedTab", true);
         }
-        model.addAttribute("totalPending", allPostPending.size());
+        model.addAttribute("totalPending", cntPost.size());
         model.addAttribute("approved", postService.countApproved());
         model.addAttribute("rejected", postService.countRejected());
         model.addAttribute("posts",allPostPending);

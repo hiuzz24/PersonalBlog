@@ -80,7 +80,7 @@ CREATE TABLE notifications(
 
 INSERT INTO users (username, email, password, full_name, bio, avatar_url, role, is_deleted)
 VALUES
-    ('admin', 'admin@blog.vn', 'admin123', 'Admin', 'Admin of the blog.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmjC0CZGGDJbJ4hH1_jLKaMzhL96cwCQ8OeQ&s', 'ADMIN', FALSE),
+    ('admin', 'admin@blog.vn', 'admin123', 'Cà Việt Cường ', 'Admin of the blog.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmjC0CZGGDJbJ4hH1_jLKaMzhL96cwCQ8OeQ&s', 'ADMIN', FALSE),
     ('linhtran', 'linhtran@blog.vn', 'linh123', 'Trần Thị Linh', 'Loves travel and food blogging.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTe7mWcFQ-e97tkOw1TN2252vi4gLuYMTbvXQ&s', 'WRITER', FALSE),
     ('nguyenvananh', 'vananh@blog.vn', 'anh123', 'Nguyễn Văn Anh', 'Passionate about programming and Java.', 'https://i.pinimg.com/736x/b7/91/44/b79144e03dc4996ce319ff59118caf65.jpg', 'WRITER', FALSE);
 
