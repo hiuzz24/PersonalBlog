@@ -214,7 +214,7 @@ VALUES
 
 	-- Post 10
 	(10, 3, 'RESTful API Design Guidelines', 'Create robust and maintainable REST APIs following industry best practices. Learn about proper HTTP methods, status codes, and resource naming conventions.',
-	 'https://phpenthusiast.com/theme/assets/images/blog/what_is_rest_api.png',
+	 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTe65EiCtW4sRNcOPlOrQW1d5B_FqC6gXlRtg&s',
 	 '<h2>Designing Better REST APIs</h2>
         <p>Follow key practices for professional API design:</p>
         <ul>

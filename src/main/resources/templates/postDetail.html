@@ -224,7 +224,7 @@
                                     </button>
                                 </div>
                                 <!-- Edit Post Button: Only visible to the author -->
-                                <div th:if="${#authentication.name == postDetail.users.username}">
+                                <div th:if="${#authentication.name == postDetail.users.username}" sec:authorize="!hasRole('ADMIN')">
                                     <a th:href="@{'/blog/edit/' + ${postDetail.postID}}" class="btn btn-primary">
                                         <i class="bi bi-pencil-square me-1"></i>
                                         Edit Post
@@ -238,7 +238,6 @@
                     </div>
                 </section><!-- /Blog Details Section -->
 
-                <!-- Blog Comments Section -->
                 <!-- Blog Comments Section -->
                 <div th:if="${post.status == 'Approved'}">
                     <section id="blog-comments" class="blog-comments section">
@@ -263,9 +262,10 @@
                                                 <span th:if="${parent.createdAt == null}"
                                                       class="text-muted ms-2">| No date</span>
                                             </div>
-                                            <p th:utext="${#strings.replace(parent.content, '\n', '<br/>')}"
-                                               style="font-size:1.08rem; border-radius:10px; padding:10px 16px; margin-bottom:0.5rem; line-height:1.7; font-family:'Inter', 'Segoe UI', Arial, sans-serif; letter-spacing:0.01em;">
+                                            <p th:text="${parent.content}"
+                                               style="font-size:1.08rem; border-radius:10px; padding:10px 16px; margin-bottom:0.5rem; line-height:1.7; font-family:'Inter', 'Segoe UI', Arial, sans-serif; letter-spacing:0.01em; white-space: pre-wrap;">
                                             </p>
+
 
                                             <div class="reply">
                                                 <div class="d-flex align-items-center gap-3 mb-1">

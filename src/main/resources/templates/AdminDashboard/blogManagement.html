@@ -494,13 +494,7 @@
                                            title="Publish Post">
                                             <i class="fas fa-check"></i>
                                         </a>
-                                        <a th:if="${post.published}"
-                                           th:href="@{/admin/blog/delete/{id}(id=${post.postID})}"
-                                           class="modern-btn btn-danger-modern"
-                                           onclick="return confirm('Are you sure you want to unpublish this post?')"
-                                           title="Unpublish Post">
-                                            <i class="fas fa-times"></i>
-                                        </a>
+
                                     </div>
                                 </td>
                             </tr>
